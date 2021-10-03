@@ -82,16 +82,20 @@ public class MiscUtils {
         float qualityFactor = picture.getSize() > fileType.fileSizeLimit ? (float) fileType.fileSizeLimit / picture.getSize() : 1f;
         Thumbnails.Builder<? extends InputStream> builder = Thumbnails.of(picture.getInputStream()).outputFormat("png").scale(scaleFactor).outputQuality(qualityFactor);
 
+//        // Watermark for description pictures
 //        if (fileType == FileType.DESC_PIC) {
 //            BufferedImage waterMark = handleTextWaterMark(nickName);
 //            builder = builder.watermark(Positions.BOTTOM_RIGHT, waterMark, 0.8f);
 //        }
 
-        builder.toFile(FILE_UPLOAD_PATH
-                .concat(File.separator)
-                .concat(fileType.relFilePath)
-                .concat(File.separator)
-                .concat(name));
+        File parentDir = new File(FILE_UPLOAD_PATH, fileType.relFilePath);
+        if (!parentDir.exists()) {
+            if (!parentDir.mkdir()) {
+                throw new IOException();
+            }
+        }
+
+        builder.toFile(new File(parentDir, name));
 
         return name.concat(".").concat("png");
     }
