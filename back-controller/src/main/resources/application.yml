@@ -1,0 +1,9 @@
+server:
+  port: 9535
+
+spring:
+  datasource:
+    username: ${RemotePsqlUser}
+    password: ${RemotePsqlPassword}
+    url: ${RemotePsqlURL}
+    driver-class-name: org.postgresql.Driver

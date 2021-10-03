@@ -1,0 +1,31 @@
+server:
+  port: 9527
+
+spring:
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      username: ${RemotePsqlUser}
+      password: ${RemotePsqlPassword}
+      url: ${RemotePsqlURL}
+      driver-class-name: org.postgresql.Driver
+      # Connection pool config: initial min max
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      # max wait time
+      max-wait: 30000
+      test-while-idle: true
+  servlet:
+    multipart:
+      max-request-size: 30MB
+      max-file-size: 3MB
+
+mybatis:
+  mapper-locations: classpath*:mapper/*Mapper.xml
+  type-aliases-package: www.whaleeye.model
+
+
+knife4j:
+  setting:
+    language: en-US
