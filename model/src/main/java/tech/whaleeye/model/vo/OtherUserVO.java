@@ -9,11 +9,9 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class StoreUserVO implements Serializable {
+public class OtherUserVO implements Serializable {
 
     private Integer id;
-
-    private String phoneNumber;
 
     private String nickname;
 
@@ -33,19 +31,12 @@ public class StoreUserVO implements Serializable {
 
     private String admissionYear;
 
-    private String alipayAccount;
-
     private BigDecimal creditScore;
 
     private BigDecimal totalSoldValue;
 
-    private Boolean secondHandNotification;
-
-    private Boolean agentServiceNotification;
-
-    private Boolean apiTradeNotification;
-
     private Boolean banned;
 
     private Date createdTime;
+
 }

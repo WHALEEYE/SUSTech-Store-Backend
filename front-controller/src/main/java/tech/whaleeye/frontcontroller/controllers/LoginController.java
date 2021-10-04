@@ -13,11 +13,10 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.frontcontroller.config.shiro.LoginToken;
+import tech.whaleeye.misc.constants.VCodeType;
+import tech.whaleeye.misc.constants.Values;
 import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.exceptions.VCodeLimitException;
 import tech.whaleeye.misc.utils.JWTUtils;
@@ -66,8 +65,8 @@ public class LoginController {
         storeUserService.clearVCode(phoneNumber);
 
         // Give the token to the user
-        String jwtToken = JWTUtils.sign(subject.getPrincipal().toString(), JWTUtils.SECRET);
-        httpResponse.setHeader(JWTUtils.AUTH_HEADER, jwtToken);
+        String jwtToken = JWTUtils.sign(subject.getPrincipal().toString(), Values.JWT_SECRET);
+        httpResponse.setHeader(Values.JWT_AUTH_HEADER, jwtToken);
 
         return AjaxResult.setSuccess(true).setMsg("Login success.");
 
@@ -91,24 +90,24 @@ public class LoginController {
             return AjaxResult.setSuccess(false).setMsg("Unknown problem.");
         }
         // If login success, give the token to user
-        String jwtToken = JWTUtils.sign(subject.getPrincipal().toString(), JWTUtils.SECRET);
-        httpResponse.setHeader(JWTUtils.AUTH_HEADER, jwtToken);
+        String jwtToken = JWTUtils.sign(subject.getPrincipal().toString(), Values.JWT_SECRET);
+        httpResponse.setHeader(Values.JWT_AUTH_HEADER, jwtToken);
         return AjaxResult.setSuccess(true).setMsg("Logged in successfully.");
     }
 
     @ApiOperation("send verification code")
-    @GetMapping("/sendVCode")
-    public AjaxResult sendVCode(String phoneNumber) {
+    @GetMapping("/vCode/{phoneNumber}")
+    public AjaxResult sendVCode(@PathVariable("phoneNumber") String phoneNumber) {
         if (phoneNumber.length() != 11) {
             return AjaxResult.setSuccess(false).setMsg("Invalid phone number.");
         }
         String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {
-            if (storeUserService.setVCode(phoneNumber, vCode) <= 0) {
+            if (storeUserService.setVCode(phoneNumber, vCode, VCodeType.LOGIN) <= 0) {
                 log.error("Phone number [" + phoneNumber + "]: verification code failed to set.");
                 return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
             }
-            if (!TencentCloudUtils.sendVCode(phoneNumber, vCode)) {
+            if (!TencentCloudUtils.sendVCode(phoneNumber, vCode, VCodeType.LOGIN)) {
                 log.error("Phone number [" + phoneNumber + "]: verification code failed to send.");
                 return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
             }

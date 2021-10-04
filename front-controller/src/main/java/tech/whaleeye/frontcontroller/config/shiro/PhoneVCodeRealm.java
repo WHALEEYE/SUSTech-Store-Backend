@@ -30,7 +30,10 @@ public class PhoneVCodeRealm extends AuthorizingRealm {
             throw new UnknownAccountException();
         } else if (storeUser.getBanned()) {
             throw new LockedAccountException();
-        } else if (storeUser.getVCodeExpireTime() == null || storeUser.getVCode() == null || new Date().after(storeUser.getVCodeExpireTime())) {
+        } else if (storeUser.getVCodeExpireTime() == null
+                || storeUser.getVCode() == null
+                || storeUser.getVCodeType() != 1
+                || new Date().after(storeUser.getVCodeExpireTime())) {
             throw new IncorrectCredentialsException();
         }
         return new SimpleAuthenticationInfo(storeUser.getId(), storeUser.getVCode(), getName());

@@ -1,5 +1,6 @@
 package tech.whaleeye.service;
 
+import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.model.entity.StoreUser;
 
 public interface StoreUserService {
@@ -10,7 +11,9 @@ public interface StoreUserService {
 
     StoreUser getStoreUserById(Integer userId);
 
-    Integer setVCode(String phoneNumber, String vCode);
+    Integer setVCode(String phoneNumber, String vCode, VCodeType vCodeType);
+
+    Integer followUser(Integer userId, Integer followedId);
 
     void clearVCode(String phoneNumber);
 

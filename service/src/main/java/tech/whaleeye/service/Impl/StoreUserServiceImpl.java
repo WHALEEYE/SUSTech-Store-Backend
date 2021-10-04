@@ -5,10 +5,11 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.whaleeye.mapper.StoreUserMapper;
+import tech.whaleeye.misc.constants.VCodeType;
+import tech.whaleeye.misc.constants.Values;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.exceptions.VCodeLimitException;
 import tech.whaleeye.misc.utils.MiscUtils;
-import tech.whaleeye.misc.utils.TencentCloudUtils;
 import tech.whaleeye.model.entity.StoreUser;
 import tech.whaleeye.service.StoreUserService;
 
@@ -38,9 +39,9 @@ public class StoreUserServiceImpl implements StoreUserService {
     }
 
     @Override
-    public Integer setVCode(String phoneNumber, String vCode) {
+    public Integer setVCode(String phoneNumber, String vCode, VCodeType vCodeType) {
         Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.MINUTE, TencentCloudUtils.V_CODE_EXPIRE_TIME_MIN - 1);
+        cal.add(Calendar.MINUTE, Values.V_CODE_EXPIRE_TIME_MINUTES - 1);
         StoreUser storeUser = storeUserMapper.getStoreUserByPhoneNumber(phoneNumber);
         if (storeUser == null) {
             if (storeUserMapper.registerStoreUser(phoneNumber) <= 0) {
@@ -48,12 +49,19 @@ public class StoreUserServiceImpl implements StoreUserService {
             }
         } else if (storeUser.getBanned()) {
             throw new LockedAccountException();
-        } else if (storeUser.getVCodeExpireTime() != null && storeUser.getVCodeExpireTime().after(cal.getTime())) {
+        } else if (storeUser.getVCodeExpireTime() != null
+                && storeUser.getVCodeType() == vCodeType.getTypeCode()
+                && storeUser.getVCodeExpireTime().after(cal.getTime())) {
             // The interval of two sending requests are smaller than 1 minute
             throw new VCodeLimitException();
         }
         cal.add(Calendar.MINUTE, 1);
-        return storeUserMapper.setVCode(phoneNumber, vCode, cal.getTime());
+        return storeUserMapper.setVCode(phoneNumber, vCode, cal.getTime(), vCodeType.getTypeCode());
+    }
+
+    @Override
+    public Integer followUser(Integer userId, Integer followedId) {
+        return storeUserMapper.followUser(userId, followedId);
     }
 
     @Override

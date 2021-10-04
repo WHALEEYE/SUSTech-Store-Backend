@@ -5,6 +5,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.crypto.SecureRandomNumberGenerator;
 import org.apache.shiro.util.ByteSource;
 import org.springframework.web.multipart.MultipartFile;
+import tech.whaleeye.misc.constants.UploadFileType;
+import tech.whaleeye.misc.constants.Values;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 
 import javax.imageio.ImageIO;
@@ -22,8 +24,6 @@ public class MiscUtils {
 //        String password = "What1sth1s";
 //        System.out.println(new Md5Hash(password, getSaltFromHex(a), 1024));
 //    }
-    private final static String FILE_UPLOAD_PATH = System.getenv("SUSTechStoreUpload");
-
 
     /**
      * Get the user ID of the current user. The user's ID can only be got after the user has logged in.
@@ -70,16 +70,16 @@ public class MiscUtils {
      * @param fileType specifies the type of this picture, such as avatar, good description pictures etc.
      * @return the filename of the processed picture
      */
-    public static String processPicture(MultipartFile picture, FileType fileType) throws IOException {
+    public static String processPicture(MultipartFile picture, UploadFileType fileType) throws IOException {
         String name = UUID.randomUUID().toString().replaceAll("-", "");
         BufferedImage image = ImageIO.read(picture.getInputStream());
-        if (image == null || (fileType == FileType.AVATAR && image.getWidth() != image.getHeight())) {
+        if (image == null || (fileType == UploadFileType.AVATAR && image.getWidth() != image.getHeight())) {
             throw new InvalidValueException();
         }
 
         // Compress and rename
-        float scaleFactor = (float) fileType.heightLimit / image.getHeight();
-        float qualityFactor = picture.getSize() > fileType.fileSizeLimit ? (float) fileType.fileSizeLimit / picture.getSize() : 1f;
+        float scaleFactor = (float) fileType.getHeightLimit() / image.getHeight();
+        float qualityFactor = picture.getSize() > fileType.getFileSizeLimit() ? (float) fileType.getFileSizeLimit() / picture.getSize() : 1f;
         Thumbnails.Builder<? extends InputStream> builder = Thumbnails.of(picture.getInputStream()).outputFormat("png").scale(scaleFactor).outputQuality(qualityFactor);
 
 //        // Watermark for description pictures
@@ -88,7 +88,7 @@ public class MiscUtils {
 //            builder = builder.watermark(Positions.BOTTOM_RIGHT, waterMark, 0.8f);
 //        }
 
-        File parentDir = new File(FILE_UPLOAD_PATH, fileType.relFilePath);
+        File parentDir = new File(Values.FILE_UPLOAD_PATH, fileType.getRelFilePath());
         if (!parentDir.exists()) {
             if (!parentDir.mkdir()) {
                 throw new IOException();
@@ -124,17 +124,4 @@ public class MiscUtils {
 //        return image;
 //    }
 
-    public enum FileType {
-        AVATAR(200 * 1024, 400, "avatar"), DESC_PIC(2 * 1024 * 1024, 1080, "desc");
-        // Max file size (Bytes)
-        long fileSizeLimit;
-        long heightLimit;
-        String relFilePath;
-
-        FileType(long fileSizeLimit, long heightLimit, String relFilePath) {
-            this.fileSizeLimit = fileSizeLimit;
-            this.heightLimit = heightLimit;
-            this.relFilePath = relFilePath;
-        }
-    }
 }

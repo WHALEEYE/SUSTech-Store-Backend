@@ -9,6 +9,7 @@ import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.Claim;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import tech.whaleeye.misc.constants.Values;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -19,13 +20,6 @@ import java.util.Map.Entry;
  * @author whaleeye
  **/
 public class JWTUtils {
-
-    // secret (private key)
-    public static final String SECRET = "_=|Hn^0(nprgJPw=";
-    // HTTP header
-    public static final String AUTH_HEADER = "JWT-Token";
-    // expire time (5 minutes)
-    private static final long EXPIRE_TIME = 5 * 60 * 1000;
 
     /**
      * Verify the correctness of the token.
@@ -70,7 +64,7 @@ public class JWTUtils {
      */
     public static String sign(String userId, String secret) {
         try {
-            Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+            Date date = new Date(System.currentTimeMillis() + Values.JWT_EXPIRE_TIME_SECOND);
             Algorithm algorithm = Algorithm.HMAC256(secret);
             // Add information of user id into the signature
             return JWT.create().withClaim("userId", userId).withExpiresAt(date).sign(algorithm);
@@ -117,7 +111,7 @@ public class JWTUtils {
         DecodedJWT jwt = JWT.decode(token);
         Map<String, Claim> claims = jwt.getClaims();
         try {
-            Date date = new Date(System.currentTimeMillis() + EXPIRE_TIME);
+            Date date = new Date(System.currentTimeMillis() + Values.JWT_EXPIRE_TIME_SECOND);
             Algorithm algorithm = Algorithm.HMAC256(secret);
             Builder builder = JWT.create().withExpiresAt(date);
             for (Entry<String, Claim> entry : claims.entrySet()) {

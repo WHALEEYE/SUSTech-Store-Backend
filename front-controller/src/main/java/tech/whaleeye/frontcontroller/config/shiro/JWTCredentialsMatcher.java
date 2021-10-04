@@ -9,7 +9,7 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import tech.whaleeye.misc.utils.JWTUtils;
+import tech.whaleeye.misc.constants.Values;
 
 public class JWTCredentialsMatcher implements CredentialsMatcher {
 
@@ -24,7 +24,7 @@ public class JWTCredentialsMatcher implements CredentialsMatcher {
         String token = authenticationToken.getCredentials().toString();
         String userId = authenticationToken.getPrincipal().toString();
         try {
-            Algorithm algorithm = Algorithm.HMAC256(JWTUtils.SECRET);
+            Algorithm algorithm = Algorithm.HMAC256(Values.JWT_SECRET);
             JWTVerifier verifier = JWT.require(algorithm).withClaim("userId", userId).build();
             verifier.verify(token);
             return true;

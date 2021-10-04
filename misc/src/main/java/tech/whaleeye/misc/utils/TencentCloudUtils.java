@@ -8,23 +8,25 @@ import com.tencentcloudapi.sms.v20210111.SmsClient;
 import com.tencentcloudapi.sms.v20210111.models.SendSmsRequest;
 import com.tencentcloudapi.sms.v20210111.models.SendSmsResponse;
 import com.tencentcloudapi.sms.v20210111.models.SendStatus;
+import tech.whaleeye.misc.constants.SMSTemplate;
+import tech.whaleeye.misc.constants.VCodeType;
+import tech.whaleeye.misc.constants.Values;
 
 public class TencentCloudUtils {
-
-    public static final int V_CODE_EXPIRE_TIME_MIN = 5;
 
     /**
      * Send the verification code to user.
      *
      * @param phoneNumber the phone number of the user
      * @param vCode       the verification code to be sent
+     * @param vCodeType   the type of the verification code
      * @return whether the verification code is successfully sent or not
      * @throws TencentCloudSDKException if there are server side errors when sending verification code, for example, wrong secret id or key
      **/
-    public static boolean sendVCode(String phoneNumber, String vCode) throws TencentCloudSDKException {
+    public static boolean sendVCode(String phoneNumber, String vCode, VCodeType vCodeType) throws TencentCloudSDKException {
         String[] phoneNumberSet = {"+86" + phoneNumber};
-        String[] templateParamSet = {vCode, V_CODE_EXPIRE_TIME_MIN + ""};
-        SendStatus[] resultSet = sendSMS(Template.V_CODE, phoneNumberSet, templateParamSet);
+        String[] templateParamSet = {vCode, Values.V_CODE_EXPIRE_TIME_MINUTES + ""};
+        SendStatus[] resultSet = sendSMS(vCodeType.getSmsTemplate(), phoneNumberSet, templateParamSet);
         return resultSet[0].getCode().equals("Ok");
     }
 
@@ -43,12 +45,12 @@ public class TencentCloudUtils {
     /**
      * Send SMS to the users.
      *
-     * @param template         the SMS template, for example, verification code
+     * @param SMSTemplate    the SMS SMSTemplate, for example, verification code
      * @param phoneNumberSet   the users that are sent SMS
-     * @param templateParamSet the parameters needed by {@param template}
+     * @param templateParamSet the parameters needed by {@param SMSTemplate}
      * @return an array of {@link SendStatus} object, each object corresponds to the sending status of one user
      **/
-    private static SendStatus[] sendSMS(Template template, String[] phoneNumberSet, String[] templateParamSet) throws TencentCloudSDKException {
+    private static SendStatus[] sendSMS(SMSTemplate SMSTemplate, String[] phoneNumberSet, String[] templateParamSet) throws TencentCloudSDKException {
         /* 必要步骤：
          * 实例化一个认证对象，入参需要传入腾讯云账户密钥对secretId，secretKey。
          * 这里采用的是从环境变量读取的方式，需要在环境变量中先设置这两个值。
@@ -116,7 +118,7 @@ public class TencentCloudUtils {
         req.setExtendCode(extendCode);
 
         /* 模板 ID: 必须填写已审核通过的模板 ID。模板ID可登录 [短信控制台] 查看 */
-        req.setTemplateId(template.templateId);
+        req.setTemplateId(SMSTemplate.getTemplateId());
 
         /* 下发手机号码，采用 E.164 标准，+[国家或地区码][手机号]
          * 示例如：+8613711112222， 其中前面有一个+号 ，86为国家码，13711112222为手机号，最多不要超过200个手机号 */
@@ -132,13 +134,4 @@ public class TencentCloudUtils {
         return res.getSendStatusSet();
     }
 
-    public enum Template {
-        V_CODE("1144020");
-
-        String templateId;
-
-        Template(String templateId) {
-            this.templateId = templateId;
-        }
-    }
 }

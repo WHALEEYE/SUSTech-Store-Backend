@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
+import tech.whaleeye.misc.constants.Values;
 import tech.whaleeye.misc.utils.JWTUtils;
 
 import javax.servlet.ServletRequest;
@@ -70,7 +71,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
      */
     @Override
     protected boolean isLoginAttempt(ServletRequest request, ServletResponse response) {
-        return ((HttpServletRequest) request).getHeader(JWTUtils.AUTH_HEADER) == null;
+        return ((HttpServletRequest) request).getHeader(Values.JWT_AUTH_HEADER) == null;
     }
 
     /**
@@ -99,7 +100,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
     @Override
     protected AuthenticationToken createToken(ServletRequest servletRequest, ServletResponse servletResponse) {
         HttpServletRequest httpServletRequest = (HttpServletRequest) servletRequest;
-        String authorization = httpServletRequest.getHeader(JWTUtils.AUTH_HEADER);
+        String authorization = httpServletRequest.getHeader(Values.JWT_AUTH_HEADER);
         return new JWTToken(authorization);
     }
 
@@ -126,10 +127,10 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         String newToken = null;
         if (token instanceof JWTToken) {
-            newToken = JWTUtils.refreshTokenExpired(token.getCredentials().toString(), JWTUtils.SECRET);
+            newToken = JWTUtils.refreshTokenExpired(token.getCredentials().toString(), Values.JWT_SECRET);
         }
         if (newToken != null)
-            httpResponse.setHeader(JWTUtils.AUTH_HEADER, newToken);
+            httpResponse.setHeader(Values.JWT_AUTH_HEADER, newToken);
         return true;
     }
 

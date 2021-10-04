@@ -24,6 +24,7 @@
         <result property="banned" column="banned" jdbcType="BOOLEAN"/>
         <result property="vCode" column="v_code" jdbcType="VARCHAR"/>
         <result property="vCodeExpireTime" column="v_code_expire_time" jdbcType="TIMESTAMP"/>
+        <result property="vCodeType" column="v_code_type" jdbcType="INTEGER"/>
         <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
         <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
     </resultMap>
@@ -49,6 +50,7 @@
                banned,
                v_code,
                v_code_expire_time,
+               v_code_type,
                created_time,
                updated_time
         from store_user
@@ -76,6 +78,7 @@
                banned,
                v_code,
                v_code_expire_time,
+               v_code_type,
                created_time,
                updated_time
         from store_user
@@ -103,6 +106,7 @@
                banned,
                v_code,
                v_code_expire_time,
+               v_code_type,
                created_time,
                updated_time
         from store_user
@@ -114,10 +118,16 @@
         values (#{phoneNumber})
     </insert>
 
+    <insert id="followUser">
+        insert into follow_relation (followed_id, follower_id, created_time)
+        values (#{followedId}, #{followerId}, now())
+    </insert>
+
     <update id="setVCode">
         update store_user
         set v_code             = #{vCode},
-            v_code_expire_time = #{vCodeExpireTime}
+            v_code_expire_time = #{vCodeExpireTime},
+            v_code_type        = #{vCodeType}
         where phone_number = #{phoneNumber}
           and banned = false
     </update>
