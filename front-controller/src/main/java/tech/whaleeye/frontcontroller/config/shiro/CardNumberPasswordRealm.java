@@ -37,7 +37,7 @@ public class CardNumberPasswordRealm extends AuthorizingRealm {
     public boolean supports(AuthenticationToken authenticationToken) {
         if (authenticationToken instanceof UsernamePasswordToken) {
             LoginToken loginToken = (LoginToken) authenticationToken;
-            return loginToken.getLoginType() == LoginToken.LoginType.CARD_PWD;
+            return loginToken.getLoginType() == LoginType.CARD_PWD;
         } else {
             return false;
         }

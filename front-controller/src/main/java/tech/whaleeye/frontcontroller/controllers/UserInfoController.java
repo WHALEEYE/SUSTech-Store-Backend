@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import tech.whaleeye.misc.constants.UploadFileType;
 import tech.whaleeye.misc.ajax.AjaxResult;
+import tech.whaleeye.misc.constants.UploadFileType;
 import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
@@ -35,7 +35,7 @@ public class UserInfoController {
     ModelMapper modelMapper;
 
     @ApiOperation("get other user's information")
-    @GetMapping("/others/{userId}")
+    @GetMapping("/info/{userId}")
     public AjaxResult getOtherInfo(@PathVariable("userId") Integer userId) {
         StoreUser otherUser = storeUserService.getStoreUserById(userId);
         if (otherUser == null) {
@@ -50,7 +50,7 @@ public class UserInfoController {
     }
 
     @ApiOperation("get current user's information")
-    @GetMapping("/current")
+    @GetMapping("/info")
     public AjaxResult getInfo() {
         StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
         if (storeUser == null) {
@@ -61,7 +61,7 @@ public class UserInfoController {
     }
 
     @ApiOperation("set user password")
-    @PostMapping("/setPassword")
+    @PutMapping("/password")
     public AjaxResult setPassword(String password) {
         if (storeUserService.updatePassword(MiscUtils.currentUserId(), password, true) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
@@ -70,7 +70,7 @@ public class UserInfoController {
     }
 
     @ApiOperation("set alipay account")
-    @PostMapping("/setAlipayAccount")
+    @PutMapping("/alipay")
     public AjaxResult setAlipayAccount(String alipayAccount) {
         if (storeUserService.updateAlipayAccount(MiscUtils.currentUserId(), alipayAccount, true) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to set alipay account.");
@@ -78,8 +78,21 @@ public class UserInfoController {
         return AjaxResult.setSuccess(true).setMsg("Success.");
     }
 
+    @ApiOperation("set card number")
+    @PutMapping("/cardNumber")
+    public AjaxResult setCardNumber(String cardNumber) {
+        try {
+            if (storeUserService.setCardNumber(MiscUtils.currentUserId(), cardNumber) <= 0) {
+                return AjaxResult.setSuccess(false).setMsg("Failed to set card number");
+            }
+        } catch (InvalidValueException e) {
+            return AjaxResult.setSuccess(false).setMsg("Invalid card number.");
+        }
+        return AjaxResult.setSuccess(true).setMsg("Card number set successfully.");
+    }
+
     @ApiOperation("update password")
-    @PostMapping("/updatePassword")
+    @PatchMapping("/password")
     public AjaxResult updatePassword(String vCode, String newPassword) {
         StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
         if (storeUser.getVCodeExpireTime() == null
@@ -97,7 +110,7 @@ public class UserInfoController {
     }
 
     @ApiOperation("update alipay account")
-    @PostMapping("/updateAlipay")
+    @PatchMapping("/alipay")
     public AjaxResult updateAlipayAccount(String vCode, String alipayAccount) {
         StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
         if (storeUser.getVCodeExpireTime() == null
@@ -114,21 +127,8 @@ public class UserInfoController {
         return AjaxResult.setSuccess(true).setMsg("Alipay account has updated successfully.");
     }
 
-    @ApiOperation("set card number")
-    @PostMapping("/setCardNumber")
-    public AjaxResult setCardNumber(String cardNumber) {
-        try {
-            if (storeUserService.setCardNumber(MiscUtils.currentUserId(), cardNumber) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to set card number");
-            }
-        } catch (InvalidValueException e) {
-            return AjaxResult.setSuccess(false).setMsg("Invalid card number.");
-        }
-        return AjaxResult.setSuccess(true).setMsg("Card number set successfully.");
-    }
-
     @ApiOperation("update self introduction")
-    @PostMapping("/updateIntro")
+    @PatchMapping("/intro")
     public AjaxResult updateIntroduction(String introduction) {
         try {
             if (storeUserService.updateIntroduction(MiscUtils.currentUserId(), introduction) <= 0) {
@@ -141,7 +141,7 @@ public class UserInfoController {
     }
 
     @ApiOperation("update nickname")
-    @PostMapping("/updateNickname")
+    @PatchMapping("/nickname")
     public AjaxResult updateNickname(String nickname) {
         try {
             if (storeUserService.updateNickname(MiscUtils.currentUserId(), nickname) <= 0) {
@@ -154,7 +154,7 @@ public class UserInfoController {
     }
 
     @ApiOperation("update sex")
-    @PostMapping("/updateSex")
+    @PatchMapping("/sex")
     public AjaxResult updateNickname(Boolean sex) {
         if (storeUserService.updateSex(MiscUtils.currentUserId(), sex) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to update sex information.");
@@ -163,7 +163,7 @@ public class UserInfoController {
     }
 
     @ApiOperation("update notifications")
-    @PostMapping("/updateNotifications")
+    @PatchMapping("/notifications")
     public AjaxResult updateNotifications(Boolean secondHandNotification, Boolean agentServiceNotification, Boolean apiTradeNotification) {
         if (storeUserService.updateNotifications(MiscUtils.currentUserId(), secondHandNotification, agentServiceNotification, apiTradeNotification) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to update notification settings.");
@@ -172,7 +172,7 @@ public class UserInfoController {
     }
 
     @ApiOperation("update user avatar")
-    @PostMapping("/updateAvt")
+    @PatchMapping("/avatar")
     public AjaxResult updateAvatar(@RequestPart MultipartFile avatar) {
         try {
             String avatarPath = MiscUtils.processPicture(avatar, UploadFileType.AVATAR);

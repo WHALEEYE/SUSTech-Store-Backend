@@ -6,6 +6,7 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
+import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.model.entity.StoreUser;
 import tech.whaleeye.service.StoreUserService;
 
@@ -32,7 +33,7 @@ public class PhoneVCodeRealm extends AuthorizingRealm {
             throw new LockedAccountException();
         } else if (storeUser.getVCodeExpireTime() == null
                 || storeUser.getVCode() == null
-                || storeUser.getVCodeType() != 1
+                || storeUser.getVCodeType() != VCodeType.LOGIN.getTypeCode()
                 || new Date().after(storeUser.getVCodeExpireTime())) {
             throw new IncorrectCredentialsException();
         }
@@ -43,7 +44,7 @@ public class PhoneVCodeRealm extends AuthorizingRealm {
     public boolean supports(AuthenticationToken authenticationToken) {
         if (authenticationToken instanceof UsernamePasswordToken) {
             LoginToken loginToken = (LoginToken) authenticationToken;
-            return loginToken.getLoginType() == LoginToken.LoginType.PHONE_CODE;
+            return loginToken.getLoginType() == LoginType.PHONE_CODE;
         } else {
             return false;
         }

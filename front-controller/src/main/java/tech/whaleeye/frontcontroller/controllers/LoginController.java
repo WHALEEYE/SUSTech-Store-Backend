@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.frontcontroller.config.shiro.LoginToken;
+import tech.whaleeye.frontcontroller.config.shiro.LoginType;
 import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.misc.constants.Values;
 import tech.whaleeye.misc.ajax.AjaxResult;
@@ -48,7 +49,7 @@ public class LoginController {
         }
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         Subject subject = SecurityUtils.getSubject();
-        LoginToken token = new LoginToken(phoneNumber, VCode, LoginToken.LoginType.PHONE_CODE);
+        LoginToken token = new LoginToken(phoneNumber, VCode, LoginType.PHONE_CODE);
         try {
             subject.login(token);
         } catch (UnknownAccountException uae) {
@@ -77,7 +78,7 @@ public class LoginController {
     public AjaxResult cardLogin(ServletResponse response, String cardNumber, String password) {
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         Subject subject = SecurityUtils.getSubject();
-        LoginToken token = new LoginToken(cardNumber, password, LoginToken.LoginType.CARD_PWD);
+        LoginToken token = new LoginToken(cardNumber, password, LoginType.CARD_PWD);
         try {
             subject.login(token);
         } catch (UnknownAccountException uae) {
@@ -96,7 +97,7 @@ public class LoginController {
     }
 
     @ApiOperation("send verification code")
-    @GetMapping("/vCode/{phoneNumber}")
+    @PostMapping("/vCode/{phoneNumber}")
     public AjaxResult sendVCode(@PathVariable("phoneNumber") String phoneNumber) {
         if (phoneNumber.length() != 11) {
             return AjaxResult.setSuccess(false).setMsg("Invalid phone number.");

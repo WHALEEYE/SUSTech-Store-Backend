@@ -12,7 +12,4 @@ public class LoginToken extends UsernamePasswordToken {
         this.loginType = loginType;
     }
 
-    public enum LoginType {
-        PHONE_CODE, CARD_PWD
-    }
 }

@@ -4,10 +4,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.misc.utils.MiscUtils;
@@ -28,8 +25,21 @@ public class StoreUserController {
     @Autowired
     ModelMapper modelMapper;
 
+    @ApiOperation("Follow One User")
+    @PostMapping("/follow/{followedId}")
+    public AjaxResult followUser(@PathVariable("followedId") Integer followedId) {
+        try {
+            if (storeUserService.followUser(MiscUtils.currentUserId(), followedId) <= 0) {
+                return AjaxResult.setSuccess(false).setMsg("Failed to Follow");
+            }
+            return AjaxResult.setSuccess(true).setMsg("Followed Successfully");
+        } catch (Exception e) {
+            return AjaxResult.setSuccess(false).setMsg("Failed to Follow");
+        }
+    }
+
     @ApiOperation("cancel user account")
-    @GetMapping("/cancel")
+    @DeleteMapping("/cancel")
     public AjaxResult cancelAccount(String vCode) {
         StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
         if (storeUser.getVCodeExpireTime() == null
@@ -42,18 +52,5 @@ public class StoreUserController {
         storeUserService.clearVCode(storeUser.getPhoneNumber());
         storeUserService.deleteStoreUser(MiscUtils.currentUserId(), MiscUtils.currentUserId());
         return AjaxResult.setSuccess(true).setMsg("Account has cancelled successfully.");
-    }
-
-    @ApiOperation("Follow One User")
-    @GetMapping("/follow/{followedId}")
-    public AjaxResult followUser(@PathVariable("followedId") Integer followedId) {
-        try {
-            if (storeUserService.followUser(MiscUtils.currentUserId(), followedId) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to Follow");
-            }
-            return AjaxResult.setSuccess(true).setMsg("Followed Successfully");
-        } catch (Exception e) {
-            return AjaxResult.setSuccess(false).setMsg("Failed to Follow");
-        }
     }
 }

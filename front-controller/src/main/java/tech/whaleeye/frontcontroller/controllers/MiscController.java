@@ -7,9 +7,7 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.misc.exceptions.VCodeLimitException;
@@ -31,8 +29,8 @@ public class MiscController {
     StoreUserService storeUserService;
 
     @ApiOperation("send verification code after login")
-    @GetMapping("/vCode")
-    public AjaxResult sendUserVCode(Integer vCodeType) {
+    @PostMapping("/vCode/{vCodeType}")
+    public AjaxResult sendUserVCode(@PathVariable("vCodeType") Integer vCodeType) {
         StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
         String phoneNumber = storeUser.getPhoneNumber();
         String vCode = String.format("%06d", new Random().nextInt(1000000));
