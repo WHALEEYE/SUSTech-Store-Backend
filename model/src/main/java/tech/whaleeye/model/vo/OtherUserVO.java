@@ -13,6 +13,8 @@ public class OtherUserVO implements Serializable {
 
     private Integer id;
 
+    private String phoneNumber;
+
     private String nickname;
 
     private String cardNumber;
@@ -24,12 +26,6 @@ public class OtherUserVO implements Serializable {
      * true: male; false: female
      */
     private Boolean sex;
-    /**
-     * 1: UG Student; 2: Research Student; 3: Faculty
-     */
-    private Integer career;
-
-    private String admissionYear;
 
     private BigDecimal creditScore;
 

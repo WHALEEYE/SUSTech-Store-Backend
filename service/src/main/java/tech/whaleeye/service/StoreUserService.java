@@ -11,6 +11,8 @@ public interface StoreUserService {
 
     StoreUser getStoreUserById(Integer userId);
 
+    Integer registerStoreUser(String phoneNumber);
+
     Integer setVCode(String phoneNumber, String vCode, VCodeType vCodeType);
 
     Integer followUser(Integer userId, Integer followedId);

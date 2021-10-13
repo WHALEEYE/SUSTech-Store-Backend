@@ -28,7 +28,7 @@ public interface StoreUserMapper {
 
     Integer updateAlipayAccount(@Param("userId") Integer userId, @Param("alipayAccount") String alipayAccount, @Param("firstTime") Boolean firstTime);
 
-    Integer setCardNumber(@Param("userId") Integer userId, @Param("cardNumber") String cardNumber, @Param("career") Integer career, @Param("admissionYear") Integer admissionYear);
+    Integer setCardNumber(@Param("userId") Integer userId, @Param("cardNumber") String cardNumber);
 
     Integer updateIntroduction(@Param("userId") Integer userId, @Param("introduction") String introduction);
 

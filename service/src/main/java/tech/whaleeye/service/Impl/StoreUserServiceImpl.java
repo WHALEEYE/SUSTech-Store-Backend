@@ -1,6 +1,5 @@
 package tech.whaleeye.service.Impl;
 
-import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,7 +12,6 @@ import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.StoreUser;
 import tech.whaleeye.service.StoreUserService;
 
-import java.time.LocalDate;
 import java.util.Calendar;
 
 @Service
@@ -39,17 +37,16 @@ public class StoreUserServiceImpl implements StoreUserService {
     }
 
     @Override
+    public Integer registerStoreUser(String phoneNumber) {
+        return storeUserMapper.registerStoreUser(phoneNumber);
+    }
+
+    @Override
     public Integer setVCode(String phoneNumber, String vCode, VCodeType vCodeType) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, Values.V_CODE_EXPIRE_TIME_MINUTES - 1);
         StoreUser storeUser = storeUserMapper.getStoreUserByPhoneNumber(phoneNumber);
-        if (storeUser == null) {
-            if (storeUserMapper.registerStoreUser(phoneNumber) <= 0) {
-                return 0;
-            }
-        } else if (storeUser.getBanned()) {
-            throw new LockedAccountException();
-        } else if (storeUser.getVCodeExpireTime() != null
+        if (storeUser.getVCodeExpireTime() != null
                 && storeUser.getVCodeType() == vCodeType.getTypeCode()
                 && storeUser.getVCodeExpireTime().after(cal.getTime())) {
             // The interval of two sending requests are smaller than 1 minute
@@ -86,40 +83,7 @@ public class StoreUserServiceImpl implements StoreUserService {
 
     @Override
     public Integer setCardNumber(Integer userId, String cardNumber) {
-        if (cardNumber.length() != 8) {
-            throw new InvalidValueException();
-        }
-        Integer career = null, admissionYear = null;
-        boolean validCard = true;
-        switch (cardNumber.charAt(0)) {
-            case '1':
-            case '2':
-                switch (cardNumber.charAt(3)) {
-                    case '1':
-                        career = 1;
-                        break;
-                    case '4':
-                    case '5':
-                    case '6':
-                        career = 2;
-                        break;
-                    default:
-                        validCard = false;
-                        break;
-                }
-                admissionYear = Integer.parseInt("20" + cardNumber.substring(1, 3));
-                break;
-            case '3':
-                career = 3;
-                break;
-            default:
-                validCard = false;
-                break;
-        }
-        if (!validCard || (admissionYear != null && admissionYear > LocalDate.now().getYear())) {
-            throw new InvalidValueException();
-        }
-        return storeUserMapper.setCardNumber(userId, cardNumber, career, admissionYear);
+        return storeUserMapper.setCardNumber(userId, cardNumber);
     }
 
     @Override

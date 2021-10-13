@@ -44,7 +44,9 @@ public class UserInfoController {
             if (userId.equals(MiscUtils.currentUserId())) {
                 return AjaxResult.setSuccess(true).setData(modelMapper.map(otherUser, StoreUserVO.class));
             } else {
-                return AjaxResult.setSuccess(true).setData(modelMapper.map(otherUser, OtherUserVO.class));
+                OtherUserVO otherUserVO = modelMapper.map(otherUser, OtherUserVO.class);
+                otherUserVO.setPhoneNumber(otherUser.getPhoneNumber().substring(0, 3) + "****" + otherUser.getPhoneNumber().substring(8));
+                return AjaxResult.setSuccess(true).setData(otherUserVO);
             }
         }
     }
@@ -80,13 +82,10 @@ public class UserInfoController {
 
     @ApiOperation("set card number")
     @PutMapping("/cardNumber")
-    public AjaxResult setCardNumber(String cardNumber) {
-        try {
-            if (storeUserService.setCardNumber(MiscUtils.currentUserId(), cardNumber) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to set card number");
-            }
-        } catch (InvalidValueException e) {
-            return AjaxResult.setSuccess(false).setMsg("Invalid card number.");
+    public AjaxResult setCardNumber(String cardNumber, String vCode) {
+        // TODO: Find a way to verify that the card number is the same with the email receiving the v code
+        if (storeUserService.setCardNumber(MiscUtils.currentUserId(), cardNumber) <= 0) {
+            return AjaxResult.setSuccess(false).setMsg("Failed to set card number");
         }
         return AjaxResult.setSuccess(true).setMsg("Card number set successfully.");
     }

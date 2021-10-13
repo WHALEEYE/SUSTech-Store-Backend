@@ -13,15 +13,19 @@ import org.modelmapper.ModelMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import tech.whaleeye.frontcontroller.config.shiro.LoginToken;
 import tech.whaleeye.frontcontroller.config.shiro.LoginType;
+import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.misc.constants.Values;
-import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.exceptions.VCodeLimitException;
 import tech.whaleeye.misc.utils.JWTUtils;
 import tech.whaleeye.misc.utils.TencentCloudUtils;
+import tech.whaleeye.model.entity.StoreUser;
 import tech.whaleeye.service.StoreUserService;
 
 import javax.servlet.ServletResponse;
@@ -96,11 +100,17 @@ public class LoginController {
         return AjaxResult.setSuccess(true).setMsg("Logged in successfully.");
     }
 
-    @ApiOperation("send verification code")
+    @ApiOperation("send verification code for login")
     @PostMapping("/vCode/{phoneNumber}")
     public AjaxResult sendVCode(@PathVariable("phoneNumber") String phoneNumber) {
         if (phoneNumber.length() != 11) {
             return AjaxResult.setSuccess(false).setMsg("Invalid phone number.");
+        }
+        StoreUser storeUser = storeUserService.getStoreUserByPhoneNumber(phoneNumber);
+        if (storeUser == null) {
+            if (storeUserService.registerStoreUser(phoneNumber) <= 0) {
+                return AjaxResult.setSuccess(false).setMsg("Failed to register. Please try again later or contact with the administrator.");
+            }
         }
         String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {
@@ -115,8 +125,6 @@ public class LoginController {
         } catch (TencentCloudSDKException e) {
             log.error("Phone number [" + phoneNumber + "]: verification code failed to send (internal error).");
             return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
-        } catch (LockedAccountException e) {
-            return AjaxResult.setSuccess(false).setMsg("The account is banned.");
         } catch (VCodeLimitException e) {
             return AjaxResult.setSuccess(false).setMsg("The request is too often.");
         }

@@ -13,8 +13,6 @@
         <result property="introduction" column="introduction" jdbcType="VARCHAR"/>
         <result property="avatarPath" column="avatar_path" jdbcType="VARCHAR"/>
         <result property="sex" column="sex" jdbcType="BOOLEAN"/>
-        <result property="career" column="career" jdbcType="INTEGER"/>
-        <result property="admissionYear" column="admission_year" jdbcType="INTEGER"/>
         <result property="alipayAccount" column="alipay_account" jdbcType="VARCHAR"/>
         <result property="creditScore" column="credit_score" jdbcType="OTHER"/>
         <result property="totalSoldValue" column="total_sold_value" jdbcType="OTHER"/>
@@ -39,8 +37,6 @@
                introduction,
                avatar_path,
                sex,
-               career,
-               admission_year,
                alipay_account,
                credit_score,
                total_sold_value,
@@ -67,8 +63,6 @@
                introduction,
                avatar_path,
                sex,
-               career,
-               admission_year,
                alipay_account,
                credit_score,
                total_sold_value,
@@ -95,8 +89,6 @@
                introduction,
                avatar_path,
                sex,
-               career,
-               admission_year,
                alipay_account,
                credit_score,
                total_sold_value,
@@ -154,8 +146,6 @@
     <update id="setCardNumber">
         update store_user
         set card_number    = #{cardNumber},
-            career         = #{career},
-            admission_year = #{admissionYear},
             updated_time   = now()
         where id = #{userId}
           and banned = false

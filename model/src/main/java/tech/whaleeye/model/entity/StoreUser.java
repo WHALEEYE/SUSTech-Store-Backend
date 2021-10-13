@@ -30,12 +30,6 @@ public class StoreUser implements Serializable {
      * true: male; false: female
      */
     private Boolean sex;
-    /**
-     * 1: UG Student; 2: Research Student; 3: Faculty
-     */
-    private Integer career;
-
-    private Integer admissionYear;
 
     private String alipayAccount;
 
