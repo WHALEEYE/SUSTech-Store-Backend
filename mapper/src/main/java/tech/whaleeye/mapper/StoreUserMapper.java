@@ -2,7 +2,7 @@ package tech.whaleeye.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
+import org.springframework.lang.Nullable;
 import tech.whaleeye.model.entity.StoreUser;
 
 import java.util.Date;
@@ -10,19 +10,13 @@ import java.util.Date;
 @Mapper
 public interface StoreUserMapper {
 
-    StoreUser getStoreUserByPhoneNumber(String phoneNumber);
-
-    StoreUser getStoreUserByCardNumber(String cardNumber);
-
-    StoreUser getStoreUserById(Integer userId);
+    StoreUser getStoreUser(@Nullable @Param("phoneNumber") String phoneNumber,
+                           @Nullable @Param("cardNumber") String cardNumber,
+                           @Nullable @Param("userId") Integer userId);
 
     Integer registerStoreUser(String phoneNumber);
 
     Integer followUser(@Param("followerId") Integer userId, @Param("followedId") Integer followedId);
-
-    Integer setVCode(@Param("phoneNumber") String phoneNumber, @Param("vCode") String vCode, @Param("vCodeExpireTime") Date vCodeExpireTime, @Param("vCodeType") Integer vCodeType);
-
-    void clearVCode(String phoneNumber);
 
     Integer updatePassword(@Param("userId") Integer userId, @Param("password") String password, @Param("salt") String salt, @Param("firstTime") Boolean firstTime);
 

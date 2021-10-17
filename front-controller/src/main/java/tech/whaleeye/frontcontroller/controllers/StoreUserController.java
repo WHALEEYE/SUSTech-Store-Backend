@@ -8,10 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.misc.utils.MiscUtils;
-import tech.whaleeye.model.entity.StoreUser;
+import tech.whaleeye.model.entity.VCodeRecord;
 import tech.whaleeye.service.StoreUserService;
-
-import java.util.Date;
+import tech.whaleeye.service.VCodeRecordService;
 
 
 @RestController
@@ -21,6 +20,9 @@ public class StoreUserController {
 
     @Autowired
     StoreUserService storeUserService;
+
+    @Autowired
+    VCodeRecordService vCodeRecordService;
 
     @Autowired
     ModelMapper modelMapper;
@@ -41,15 +43,11 @@ public class StoreUserController {
     @ApiOperation("cancel user account")
     @DeleteMapping("/cancel")
     public AjaxResult cancelAccount(String vCode) {
-        StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
-        if (storeUser.getVCodeExpireTime() == null
-                || storeUser.getVCode() == null
-                || storeUser.getVCodeType() != VCodeType.CANCEL_ACCOUNT.getTypeCode()
-                || new Date().after(storeUser.getVCodeExpireTime())
-                || !storeUser.getVCode().equals(vCode)) {
+        VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CANCEL_ACCOUNT);
+        if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
             return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
         }
-        storeUserService.clearVCode(storeUser.getPhoneNumber());
+        vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
         storeUserService.deleteStoreUser(MiscUtils.currentUserId(), MiscUtils.currentUserId());
         return AjaxResult.setSuccess(true).setMsg("Account has cancelled successfully.");
     }

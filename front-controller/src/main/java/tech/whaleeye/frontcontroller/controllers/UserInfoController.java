@@ -14,12 +14,13 @@ import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.StoreUser;
+import tech.whaleeye.model.entity.VCodeRecord;
 import tech.whaleeye.model.vo.OtherUserVO;
 import tech.whaleeye.model.vo.StoreUserVO;
 import tech.whaleeye.service.StoreUserService;
+import tech.whaleeye.service.VCodeRecordService;
 
 import java.io.IOException;
-import java.util.Date;
 
 @Api("Check and Modify User Information")
 @RequestMapping("/userInfo")
@@ -30,6 +31,9 @@ public class UserInfoController {
 
     @Autowired
     StoreUserService storeUserService;
+
+    @Autowired
+    VCodeRecordService vCodeRecordService;
 
     @Autowired
     ModelMapper modelMapper;
@@ -93,36 +97,28 @@ public class UserInfoController {
     @ApiOperation("update password")
     @PatchMapping("/password")
     public AjaxResult updatePassword(String vCode, String newPassword) {
-        StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
-        if (storeUser.getVCodeExpireTime() == null
-                || storeUser.getVCode() == null
-                || storeUser.getVCodeType() != VCodeType.CHANGE_PASSWORD.getTypeCode()
-                || new Date().after(storeUser.getVCodeExpireTime())
-                || !storeUser.getVCode().equals(vCode)) {
+        VCodeRecord vCodeRecord = vCodeRecordService.getLatestAccountVCode(MiscUtils.currentUserId(), VCodeType.CHANGE_PASSWORD);
+        if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
             return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
         }
         if (storeUserService.updatePassword(MiscUtils.currentUserId(), newPassword, false) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to update password.");
         }
-        storeUserService.clearVCode(storeUser.getPhoneNumber());
+        vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
         return AjaxResult.setSuccess(true).setMsg("Password has updated successfully.");
     }
 
     @ApiOperation("update alipay account")
     @PatchMapping("/alipay")
     public AjaxResult updateAlipayAccount(String vCode, String alipayAccount) {
-        StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
-        if (storeUser.getVCodeExpireTime() == null
-                || storeUser.getVCode() == null
-                || storeUser.getVCodeType() != VCodeType.CHANGE_ALIPAY.getTypeCode()
-                || new Date().after(storeUser.getVCodeExpireTime())
-                || !storeUser.getVCode().equals(vCode)) {
+        VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CHANGE_ALIPAY);
+        if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
             return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
         }
         if (storeUserService.updateAlipayAccount(MiscUtils.currentUserId(), alipayAccount, false) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to update alipay account.");
         }
-        storeUserService.clearVCode(storeUser.getPhoneNumber());
+        vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
         return AjaxResult.setSuccess(true).setMsg("Alipay account has updated successfully.");
     }
 

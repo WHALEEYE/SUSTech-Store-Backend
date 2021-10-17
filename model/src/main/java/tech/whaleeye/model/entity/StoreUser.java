@@ -45,14 +45,6 @@ public class StoreUser implements Serializable {
 
     private Boolean banned;
 
-    private String vCode;
-
-    private Date vCodeExpireTime;
-    /**
-     * 0: Login; 1: Change Password; 2: Change Alipay; 3: Cancel Account
-     */
-    private Integer vCodeType;
-
     private Date createdTime;
 
     private Date updatedTime;

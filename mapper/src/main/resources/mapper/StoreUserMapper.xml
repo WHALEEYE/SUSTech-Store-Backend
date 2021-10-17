@@ -20,89 +20,41 @@
         <result property="agentServiceNotification" column="agent_service_notification" jdbcType="BOOLEAN"/>
         <result property="apiTradeNotification" column="api_trade_notification" jdbcType="BOOLEAN"/>
         <result property="banned" column="banned" jdbcType="BOOLEAN"/>
-        <result property="vCode" column="v_code" jdbcType="VARCHAR"/>
-        <result property="vCodeExpireTime" column="v_code_expire_time" jdbcType="TIMESTAMP"/>
-        <result property="vCodeType" column="v_code_type" jdbcType="INTEGER"/>
         <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
         <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <select id="getStoreUserByPhoneNumber" resultMap="BaseResultMap" parameterType="String">
+    <select id="getStoreUser" resultMap="BaseResultMap">
         select id,
-               phone_number,
-               nickname,
-               card_number,
-               password,
-               salt,
-               introduction,
-               avatar_path,
-               sex,
-               alipay_account,
-               credit_score,
-               total_sold_value,
-               second_hand_notification,
-               agent_service_notification,
-               api_trade_notification,
-               banned,
-               v_code,
-               v_code_expire_time,
-               v_code_type,
-               created_time,
-               updated_time
+        phone_number,
+        nickname,
+        card_number,
+        password,
+        salt,
+        introduction,
+        avatar_path,
+        sex,
+        alipay_account,
+        credit_score,
+        total_sold_value,
+        second_hand_notification,
+        agent_service_notification,
+        api_trade_notification,
+        banned,
+        created_time,
+        updated_time
         from store_user
-        where phone_number = #{phoneNumber}
-    </select>
-
-    <select id="getStoreUserByCardNumber" resultMap="BaseResultMap" parameterType="String">
-        select id,
-               phone_number,
-               nickname,
-               card_number,
-               password,
-               salt,
-               introduction,
-               avatar_path,
-               sex,
-               alipay_account,
-               credit_score,
-               total_sold_value,
-               second_hand_notification,
-               agent_service_notification,
-               api_trade_notification,
-               banned,
-               v_code,
-               v_code_expire_time,
-               v_code_type,
-               created_time,
-               updated_time
-        from store_user
-        where card_number = #{cardNumber}
-    </select>
-
-    <select id="getStoreUserById" resultMap="BaseResultMap" parameterType="Integer">
-        select id,
-               phone_number,
-               nickname,
-               card_number,
-               password,
-               salt,
-               introduction,
-               avatar_path,
-               sex,
-               alipay_account,
-               credit_score,
-               total_sold_value,
-               second_hand_notification,
-               agent_service_notification,
-               api_trade_notification,
-               banned,
-               v_code,
-               v_code_expire_time,
-               v_code_type,
-               created_time,
-               updated_time
-        from store_user
-        where id = #{userId}
+        <where>
+            <if test="userId != null and userId != '' or userId == 0">
+                and id = #{userId}
+            </if>
+            <if test="phoneNumber != null and phoneNumber != ''">
+                and phone_number = #{phoneNumber}
+            </if>
+            <if test="cardNumber != null and cardNumber != ''">
+                and card_number = #{cardNumber}
+            </if>
+        </where>
     </select>
 
     <insert id="registerStoreUser" parameterType="String">
@@ -114,22 +66,6 @@
         insert into follow_relation (followed_id, follower_id, created_time)
         values (#{followedId}, #{followerId}, now())
     </insert>
-
-    <update id="setVCode">
-        update store_user
-        set v_code             = #{vCode},
-            v_code_expire_time = #{vCodeExpireTime},
-            v_code_type        = #{vCodeType}
-        where phone_number = #{phoneNumber}
-          and banned = false
-    </update>
-
-    <update id="clearVCode" parameterType="String">
-        update store_user
-        set v_code             = null,
-            v_code_expire_time = null
-        where phone_number = #{phoneNumber}
-    </update>
 
     <update id="updatePassword">
         update store_user
@@ -145,8 +81,8 @@
 
     <update id="setCardNumber">
         update store_user
-        set card_number    = #{cardNumber},
-            updated_time   = now()
+        set card_number  = #{cardNumber},
+            updated_time = now()
         where id = #{userId}
           and banned = false
           and card_number is null

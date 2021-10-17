@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tech.whaleeye.mapper.VCodeRecordMapper">
+
+    <resultMap id="BaseResultMap" type="tech.whaleeye.model.entity.VCodeRecord">
+        <!--@Table v_code_record-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="storeUserId" column="store_user_id" jdbcType="INTEGER"/>
+        <result property="phoneCard" column="phone_card" jdbcType="VARCHAR"/>
+        <result property="vCode" column="v_code" jdbcType="VARCHAR"/>
+        <result property="expireTime" column="expire_time" jdbcType="TIMESTAMP"/>
+        <result property="type" column="type" jdbcType="INTEGER"/>
+        <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
+        <result property="usedTime" column="used_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="getLatest" resultMap="BaseResultMap">
+        select id,
+        store_user_id,
+        phone_number,
+        card_number,
+        v_code,
+        expire_time,
+        type,
+        created_time,
+        used_time
+        from v_code_record where
+        type = #{type}
+        <if test="availOnly == true">
+            and used_time is null
+            and expire_time &gt;= now()
+        </if>
+        <if test="userId != null and userId != '' or userId == 0">
+            and store_user_id = #{userId}
+        </if>
+        <if test="phoneNumber != null and phoneNumber != ''">
+            and phone_number = #{phoneNumber}
+        </if>
+        order by created_time desc
+        limit 1
+    </select>
+
+    <insert id="insertVCodeRecord" parameterType="tech.whaleeye.model.entity.VCodeRecord">
+        insert into v_code_record (id, store_user_id, phone_number, card_number, v_code, expire_time, type,
+                                   created_time, used_time)
+        values (default, #{userId}, #{phoneNumber}, #{cardNumber}, #{vCode}, #{expireTime}, #{type}, default, null)
+    </insert>
+
+    <update id="setVCodeUsed">
+        update v_code_record
+        set used_time = now()
+        where id = #{vCodeId}
+    </update>
+</mapper>

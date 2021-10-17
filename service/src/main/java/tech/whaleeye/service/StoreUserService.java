@@ -13,11 +13,7 @@ public interface StoreUserService {
 
     Integer registerStoreUser(String phoneNumber);
 
-    Integer setVCode(String phoneNumber, String vCode, VCodeType vCodeType);
-
     Integer followUser(Integer userId, Integer followedId);
-
-    void clearVCode(String phoneNumber);
 
     Integer updatePassword(Integer userId, String password, Boolean firstTime);
 

@@ -97,6 +97,7 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/test/**", "anon");
 
         filterChainDefinitionMap.put("/login/**", "anon");
+        filterChainDefinitionMap.put("/vCode/login/**", "anon");
         filterChainDefinitionMap.put("/**", "jwtFilter");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
