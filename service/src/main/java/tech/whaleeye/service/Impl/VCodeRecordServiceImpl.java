@@ -18,30 +18,25 @@ public class VCodeRecordServiceImpl implements VCodeRecordService {
     private VCodeRecordMapper vCodeRecordMapper;
 
     @Override
-    public VCodeRecord getLatestLoginVCode(String phoneNumber) {
-        return vCodeRecordMapper.getLatest(null, phoneNumber, VCodeType.LOGIN.getTypeCode(), false);
-    }
-
-    @Override
-    public VCodeRecord getLatestAccountVCode(Integer userId, VCodeType vCodeType) {
-        return vCodeRecordMapper.getLatest(userId, null, vCodeType.getTypeCode(), false);
-    }
-
-    @Override
     public VCodeRecord getLatestAvailLoginVCode(String phoneNumber) {
-        return vCodeRecordMapper.getLatest(null, phoneNumber, VCodeType.LOGIN.getTypeCode(), true);
+        return vCodeRecordMapper.getLatest(null, phoneNumber, null, VCodeType.LOGIN.getTypeCode(), true);
     }
 
     @Override
     public VCodeRecord getLatestAvailAccountVCode(Integer userId, VCodeType vCodeType) {
-        return vCodeRecordMapper.getLatest(userId, null, vCodeType.getTypeCode(), true);
+        return vCodeRecordMapper.getLatest(userId, null, null, vCodeType.getTypeCode(), true);
+    }
+
+    @Override
+    public VCodeRecord getLatestAvailEmailVCode(Integer userId, String cardNumber) {
+        return vCodeRecordMapper.getLatest(userId, null, cardNumber, VCodeType.EMAIL_VERIFICATION.getTypeCode(), true);
     }
 
     @Override
     public Integer setLoginVCode(String phoneNumber, String vCode) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, Values.V_CODE_EXPIRE_TIME_MINUTES - 1);
-        VCodeRecord vCodeRecord = vCodeRecordMapper.getLatest(null, phoneNumber, VCodeType.LOGIN.getTypeCode(), false);
+        VCodeRecord vCodeRecord = vCodeRecordMapper.getLatest(null, phoneNumber, null, VCodeType.LOGIN.getTypeCode(), false);
         if (vCodeRecord != null && vCodeRecord.getExpireTime().after(cal.getTime())) {
             // The interval of two sending requests are smaller than 1 minute
             throw new VCodeLimitException();
@@ -54,7 +49,7 @@ public class VCodeRecordServiceImpl implements VCodeRecordService {
     public Integer setAccountVCode(Integer userId, String vCode, VCodeType vCodeType) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, Values.V_CODE_EXPIRE_TIME_MINUTES - 1);
-        VCodeRecord vCodeRecord = vCodeRecordMapper.getLatest(userId, null, vCodeType.getTypeCode(), false);
+        VCodeRecord vCodeRecord = vCodeRecordMapper.getLatest(userId, null, null, vCodeType.getTypeCode(), false);
         if (vCodeRecord != null && vCodeRecord.getExpireTime().after(cal.getTime())) {
             // The interval of two sending requests are smaller than 1 minute
             throw new VCodeLimitException();
@@ -64,16 +59,16 @@ public class VCodeRecordServiceImpl implements VCodeRecordService {
     }
 
     @Override
-    public Integer setMailVCode(Integer userId, String cardNumber, String vCode) {
+    public Integer setEmailVCode(Integer userId, String cardNumber, String vCode) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, Values.V_CODE_EXPIRE_TIME_MINUTES - 1);
-        VCodeRecord vCodeRecord = vCodeRecordMapper.getLatest(userId, null, VCodeType.MAIL_VERIFICATION.getTypeCode(), false);
+        VCodeRecord vCodeRecord = vCodeRecordMapper.getLatest(userId, null, cardNumber, VCodeType.EMAIL_VERIFICATION.getTypeCode(), false);
         if (vCodeRecord != null && vCodeRecord.getExpireTime().after(cal.getTime())) {
             // The interval of two sending requests are smaller than 1 minute
             throw new VCodeLimitException();
         }
         cal.add(Calendar.MINUTE, 1);
-        return vCodeRecordMapper.insertVCodeRecord(userId, null, cardNumber, vCode, cal.getTime(), VCodeType.MAIL_VERIFICATION.getTypeCode());
+        return vCodeRecordMapper.insertVCodeRecord(userId, null, cardNumber, vCode, cal.getTime(), VCodeType.EMAIL_VERIFICATION.getTypeCode());
     }
 
     @Override

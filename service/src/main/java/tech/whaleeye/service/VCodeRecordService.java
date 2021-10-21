@@ -5,19 +5,17 @@ import tech.whaleeye.model.entity.VCodeRecord;
 
 public interface VCodeRecordService {
 
-    VCodeRecord getLatestLoginVCode(String phoneNumber);
-
-    VCodeRecord getLatestAccountVCode(Integer userId, VCodeType vCodeType);
-
     VCodeRecord getLatestAvailLoginVCode(String phoneNumber);
 
     VCodeRecord getLatestAvailAccountVCode(Integer userId, VCodeType vCodeType);
+
+    VCodeRecord getLatestAvailEmailVCode(Integer userId, String cardNumber);
 
     Integer setLoginVCode(String phoneNumber, String vCode);
 
     Integer setAccountVCode(Integer userId, String vCode, VCodeType vCodeType);
 
-    Integer setMailVCode(Integer userId, String cardNumber, String vCode);
+    Integer setEmailVCode(Integer userId, String cardNumber, String vCode);
 
     void setVCodeUsed(Integer vCodeId);
 }

@@ -11,6 +11,7 @@ import java.util.Date;
 public interface VCodeRecordMapper {
     VCodeRecord getLatest(@Nullable @Param("userId") Integer userId,
                           @Nullable @Param("phoneNumber") String phoneNumber,
+                          @Nullable @Param("cardNumber") String cardNumber,
                           @Param("type") Integer type,
                           @Param("availOnly") Boolean availOnly);
 

@@ -19,99 +19,91 @@ public class EmailUtils {
     // TODO: make the email template prettier
     private static final String EMAIL_TEMPLATE = "";
 
-    // TODO: Change it into a Util Method
-    // TODO: Convert all the comments into English
-    public static void main(String[] args) throws GeneralSecurityException, MessagingException {
+    public static void sendVCodeEmail(String receiveEmail, String vCode) throws GeneralSecurityException, MessagingException {
         Properties prop = new Properties();
-        prop.setProperty("mail.host", EMAIL_SVR);  // 设置QQ邮件服务器
-        prop.setProperty("mail.transport.protocol", "smtp"); // 邮件发送协议
-        prop.setProperty("mail.smtp.auth", "true"); // 需要验证用户名密码
+        // set the mail server
+        prop.setProperty("mail.host", EMAIL_SVR);
+        // set the protocol of sending emails
+        prop.setProperty("mail.transport.protocol", "smtp");
+        // need to authorize
+        prop.setProperty("mail.smtp.auth", "true");
 
-        // QQ邮箱设置SSL加密
+        // set ssl encryption
         MailSSLSocketFactory sf = new MailSSLSocketFactory();
         sf.setTrustAllHosts(true);
         prop.put("mail.smtp.ssl.enable", "true");
         prop.put("mail.smtp.ssl.socketFactory", sf);
 
-        //1、创建定义整个应用程序所需的环境信息的 Session 对象
         Session session = Session.getDefaultInstance(prop, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                //传入发件人的姓名和授权码
+                // Set the email address and password of the sender
                 return new PasswordAuthentication(EMAIL, EMAIL_PWD);
             }
         });
 
-        //2、通过session获取transport对象
         Transport transport = session.getTransport();
 
-        //3、通过transport对象邮箱用户名和授权码连接邮箱服务器
         transport.connect(EMAIL_SVR, EMAIL, EMAIL_PWD);
 
-        //4、创建邮件,传入session对象
-        MimeMessage mimeMessage = complexEmail(session);
+        MimeMessage mimeMessage = complexEmail(session, receiveEmail, vCode);
 
-        //5、发送邮件
         transport.sendMessage(mimeMessage, mimeMessage.getAllRecipients());
 
-        //6、关闭连接
         transport.close();
-
-
     }
 
-    public static MimeMessage complexEmail(Session session) throws MessagingException {
-        //消息的固定信息
+    public static MimeMessage complexEmail(Session session, String receiveEmail, String VCode) throws MessagingException {
+
         MimeMessage mimeMessage = new MimeMessage(session);
 
-        //发件人
+        // set sender
         mimeMessage.setFrom(new InternetAddress(EMAIL));
-        //收件人
-        mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress("11911413@mail.sustech.edu.cn"));
-        //邮件标题
+        // set receiver
+        mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress(receiveEmail));
+        // set subject
         mimeMessage.setSubject("[Deal!] Your Verification Code");
 
-        //邮件内容
-        //准备图片数据
+        // set the content of the email
+        // prepare pictures
         MimeBodyPart image = new MimeBodyPart();
         DataHandler handler = new DataHandler(new FileDataSource("misc\\src\\main\\resources\\logo_temp.png"));
         image.setDataHandler(handler);
-        image.setContentID("logo.png"); //设置图片id
+        // set the id of the picture (can be used by cid)
+        image.setContentID("logo.png");
 
-        //准备文本
+        // prepare text
         MimeBodyPart text = new MimeBodyPart();
-        text.setContent("<div style=\"margin: auto;text-align: left\"><img src='cid:logo.png' style=\"transform: scale(0.4)\" alt=\"wrong\"></div>\n" +
-                "<div>\n" +
-                "    Your verification code is <u style=\"color: blue\">990099</u>, please enter.\n" +
-                "</div>\n", "text/html;charset=utf-8");
+        text.setContent(String.format("<div style=\"margin: auto;text-align: left\"><img src='cid:logo.png' style=\"transform: scale(0.4)\" alt=\"wrong\"></div>\n<div>\n    Your verification code is <u style=\"color: blue\">%s</u>, please enter.\n</div>\n", VCode), "text/html;charset=utf-8");
 
-        //拼装邮件正文
+        // assemble the pictures and the text into an email
         MimeMultipart mimeMultipart = new MimeMultipart();
         mimeMultipart.addBodyPart(image);
         mimeMultipart.addBodyPart(text);
-        mimeMultipart.setSubType("related");//文本和图片内嵌成功
+        mimeMultipart.setSubType("related");
 
-//        //附件
+//        // prepare appendix
 //        MimeBodyPart appendix = new MimeBodyPart();
 //        appendix.setDataHandler(new DataHandler(new FileDataSource("")));
 //        appendix.setFileName("test.txt");
 
 
-
-//        //将拼装好的正文内容设置为主体
+//        // set the assembled content as the main part
 //        MimeBodyPart contentText = new MimeBodyPart();
 //        contentText.setContent(mimeMultipart);
 //
-//        //拼接附件
+//        // attach the appendix
 //        MimeMultipart allFile = new MimeMultipart();
-//        allFile.addBodyPart(appendix);//附件
-//        allFile.addBodyPart(contentText);//正文
-//        allFile.setSubType("mixed"); //正文和附件都存在邮件中，所有类型设置为mixed
+//        allFile.addBodyPart(appendix);
+//        allFile.addBodyPart(contentText);
+//        allFile.setSubType("mixed");
 //
 //
-        //放到Message消息中
+        // put the content into the message
         mimeMessage.setContent(mimeMultipart);
-        mimeMessage.saveChanges();//保存修改
+
+        // save
+        mimeMessage.saveChanges();
 
         return mimeMessage;
     }

@@ -23,7 +23,7 @@ public class TencentCloudUtils {
      * @return whether the verification code is successfully sent or not
      * @throws TencentCloudSDKException if there are server side errors when sending verification code, for example, wrong secret id or key
      **/
-    public static boolean sendVCode(String phoneNumber, String vCode, VCodeType vCodeType) throws TencentCloudSDKException {
+    public static boolean sendVCodeSMS(String phoneNumber, String vCode, VCodeType vCodeType) throws TencentCloudSDKException {
         String[] phoneNumberSet = {"+86" + phoneNumber};
         String[] templateParamSet = {vCode, Values.V_CODE_EXPIRE_TIME_MINUTES + ""};
         SendStatus[] resultSet = sendSMS(vCodeType.getSmsTemplate(), phoneNumberSet, templateParamSet);

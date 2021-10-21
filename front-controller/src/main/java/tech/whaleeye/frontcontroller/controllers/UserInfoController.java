@@ -87,17 +87,21 @@ public class UserInfoController {
     @ApiOperation("set card number")
     @PutMapping("/cardNumber")
     public AjaxResult setCardNumber(String cardNumber, String vCode) {
-        // TODO: Find a way to verify that the card number is the same with the email receiving the v code
+        VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailEmailVCode(MiscUtils.currentUserId(), cardNumber);
+        if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
+            return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
+        }
         if (storeUserService.setCardNumber(MiscUtils.currentUserId(), cardNumber) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to set card number");
         }
+        vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
         return AjaxResult.setSuccess(true).setMsg("Card number set successfully.");
     }
 
     @ApiOperation("update password")
     @PatchMapping("/password")
     public AjaxResult updatePassword(String vCode, String newPassword) {
-        VCodeRecord vCodeRecord = vCodeRecordService.getLatestAccountVCode(MiscUtils.currentUserId(), VCodeType.CHANGE_PASSWORD);
+        VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CHANGE_PASSWORD);
         if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
             return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
         }

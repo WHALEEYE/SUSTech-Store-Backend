@@ -33,6 +33,9 @@
         <if test="userId != null and userId != '' or userId == 0">
             and store_user_id = #{userId}
         </if>
+        <if test="cardNumber != null and cardNumber != ''">
+            and card_number = #{cardNumber}
+        </if>
         <if test="phoneNumber != null and phoneNumber != ''">
             and phone_number = #{phoneNumber}
         </if>

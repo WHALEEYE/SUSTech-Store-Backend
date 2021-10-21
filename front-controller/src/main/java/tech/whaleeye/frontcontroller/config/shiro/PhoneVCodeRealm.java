@@ -31,7 +31,7 @@ public class PhoneVCodeRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         LoginToken loginToken = (LoginToken) authenticationToken;
         StoreUser storeUser = storeUserService.getStoreUserByPhoneNumber(loginToken.getUsername());
-        VCodeRecord vCodeRecord = vCodeRecordService.getLatestLoginVCode(loginToken.getUsername());
+        VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailLoginVCode(loginToken.getUsername());
         if (storeUser == null) {
             throw new UnknownAccountException();
         } else if (storeUser.getBanned()) {

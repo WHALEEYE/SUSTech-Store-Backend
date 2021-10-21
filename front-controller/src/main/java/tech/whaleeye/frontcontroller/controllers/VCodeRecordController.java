@@ -13,12 +13,15 @@ import org.springframework.web.bind.annotation.RestController;
 import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.misc.exceptions.VCodeLimitException;
+import tech.whaleeye.misc.utils.EmailUtils;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.misc.utils.TencentCloudUtils;
 import tech.whaleeye.model.entity.StoreUser;
 import tech.whaleeye.service.StoreUserService;
 import tech.whaleeye.service.VCodeRecordService;
 
+import javax.mail.MessagingException;
+import java.security.GeneralSecurityException;
 import java.util.Random;
 
 @RestController
@@ -51,7 +54,7 @@ public class VCodeRecordController {
                 log.error("Phone number [" + phoneNumber + "]: verification code failed to set.");
                 return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
             }
-            if (!TencentCloudUtils.sendVCode(phoneNumber, vCode, VCodeType.LOGIN)) {
+            if (!TencentCloudUtils.sendVCodeSMS(phoneNumber, vCode, VCodeType.LOGIN)) {
                 log.error("Phone number [" + phoneNumber + "]: verification code failed to send.");
                 return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
             }
@@ -73,7 +76,7 @@ public class VCodeRecordController {
             if (vCodeRecordService.setAccountVCode(storeUser.getId(), vCode, VCodeType.values()[vCodeType]) <= 0) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
             }
-            if (!TencentCloudUtils.sendVCode(storeUser.getPhoneNumber(), vCode, VCodeType.values()[vCodeType])) {
+            if (!TencentCloudUtils.sendVCodeSMS(storeUser.getPhoneNumber(), vCode, VCodeType.values()[vCodeType])) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
             }
         } catch (TencentCloudSDKException e) {
@@ -87,9 +90,20 @@ public class VCodeRecordController {
 
     @ApiOperation("send verification code to email")
     @PostMapping("/email/{cardNumber}")
-    public AjaxResult sendEmailVCode(@PathVariable("cardNumber") Integer cardNumber) {
-        // TODO: send email of verification code to <cardNumber>@mail.sustech.edu.cn
-        // TODO: set verification code
-        return null;
+    public AjaxResult sendEmailVCode(@PathVariable("cardNumber") String cardNumber) {
+        String receiveEmail = cardNumber.concat("@mail.sustech.edu.cn");
+        String vCode = String.format("%06d", new Random().nextInt(1000000));
+        try {
+            if (vCodeRecordService.setEmailVCode(MiscUtils.currentUserId(), cardNumber, vCode) <= 0) {
+                return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
+            }
+            EmailUtils.sendVCodeEmail(receiveEmail, vCode);
+        } catch (GeneralSecurityException | MessagingException e) {
+            log.error("User ID [" + MiscUtils.currentUserId() + "]: verification code mail failed to send (Internal Error).");
+            return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
+        } catch (VCodeLimitException e) {
+            return AjaxResult.setSuccess(false).setMsg("The request is too often.");
+        }
+        return AjaxResult.setSuccess(true).setMsg("Success.");
     }
 }
