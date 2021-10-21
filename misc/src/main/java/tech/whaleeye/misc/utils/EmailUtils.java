@@ -16,7 +16,11 @@ public class EmailUtils {
     private static final String EMAIL = System.getenv("SUSTechStoreEmail");
     private static final String EMAIL_PWD = System.getenv("SUSTechStoreEmailPWD");
     private static final String EMAIL_SVR = System.getenv("SUSTechStoreEmailSVR");
+    // TODO: make the email template prettier
+    private static final String EMAIL_TEMPLATE = "";
 
+    // TODO: Change it into a Util Method
+    // TODO: Convert all the comments into English
     public static void main(String[] args) throws GeneralSecurityException, MessagingException {
         Properties prop = new Properties();
         prop.setProperty("mail.host", EMAIL_SVR);  // 设置QQ邮件服务器
@@ -63,25 +67,23 @@ public class EmailUtils {
         //发件人
         mimeMessage.setFrom(new InternetAddress(EMAIL));
         //收件人
-        mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress("xxx"));
+        mimeMessage.setRecipient(Message.RecipientType.TO, new InternetAddress("11911413@mail.sustech.edu.cn"));
         //邮件标题
-        mimeMessage.setSubject("带图片和附件的邮件");
+        mimeMessage.setSubject("[Deal!] Your Verification Code");
 
         //邮件内容
         //准备图片数据
         MimeBodyPart image = new MimeBodyPart();
-        DataHandler handler = new DataHandler(new FileDataSource("xxx"));
+        DataHandler handler = new DataHandler(new FileDataSource("misc\\src\\main\\resources\\logo_temp.png"));
         image.setDataHandler(handler);
-        image.setContentID("test.png"); //设置图片id
+        image.setContentID("logo.png"); //设置图片id
 
         //准备文本
         MimeBodyPart text = new MimeBodyPart();
-        text.setContent("这是一段文本<img src='cid:test.png'>", "text/html;charset=utf-8");
-
-        //附件
-        MimeBodyPart appendix = new MimeBodyPart();
-        appendix.setDataHandler(new DataHandler(new FileDataSource("xxx")));
-        appendix.setFileName("test.txt");
+        text.setContent("<div style=\"margin: auto;text-align: left\"><img src='cid:logo.png' style=\"transform: scale(0.4)\" alt=\"wrong\"></div>\n" +
+                "<div>\n" +
+                "    Your verification code is <u style=\"color: blue\">990099</u>, please enter.\n" +
+                "</div>\n", "text/html;charset=utf-8");
 
         //拼装邮件正文
         MimeMultipart mimeMultipart = new MimeMultipart();
@@ -89,19 +91,26 @@ public class EmailUtils {
         mimeMultipart.addBodyPart(text);
         mimeMultipart.setSubType("related");//文本和图片内嵌成功
 
-        //将拼装好的正文内容设置为主体
-        MimeBodyPart contentText = new MimeBodyPart();
-        contentText.setContent(mimeMultipart);
-
-        //拼接附件
-        MimeMultipart allFile = new MimeMultipart();
-        allFile.addBodyPart(appendix);//附件
-        allFile.addBodyPart(contentText);//正文
-        allFile.setSubType("mixed"); //正文和附件都存在邮件中，所有类型设置为mixed
+//        //附件
+//        MimeBodyPart appendix = new MimeBodyPart();
+//        appendix.setDataHandler(new DataHandler(new FileDataSource("")));
+//        appendix.setFileName("test.txt");
 
 
+
+//        //将拼装好的正文内容设置为主体
+//        MimeBodyPart contentText = new MimeBodyPart();
+//        contentText.setContent(mimeMultipart);
+//
+//        //拼接附件
+//        MimeMultipart allFile = new MimeMultipart();
+//        allFile.addBodyPart(appendix);//附件
+//        allFile.addBodyPart(contentText);//正文
+//        allFile.setSubType("mixed"); //正文和附件都存在邮件中，所有类型设置为mixed
+//
+//
         //放到Message消息中
-        mimeMessage.setContent(allFile);
+        mimeMessage.setContent(mimeMultipart);
         mimeMessage.saveChanges();//保存修改
 
         return mimeMessage;
