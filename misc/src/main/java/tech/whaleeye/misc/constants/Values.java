@@ -10,7 +10,7 @@ public class Values {
     // secret (private key)
     public static final String JWT_SECRET = "_=|Hn^0(nprgJPw=";
     // HTTP header
-    public static final String JWT_AUTH_HEADER = "JWT-Token";
+    public static final String JWT_AUTH_HEADER = "Authorize";
     // expire time (5 minutes)
     public static final long JWT_EXPIRE_TIME_SECOND = 5 * 60 * 1000;
 
