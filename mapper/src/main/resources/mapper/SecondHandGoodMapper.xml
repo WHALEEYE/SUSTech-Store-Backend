@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tech.whaleeye.mapper.SecondHandGoodMapper">
+
+    <resultMap id="BaseResultMap" type="tech.whaleeye.model.entity.SecondHandGood">
+        <!--@Table second_hand_good-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="typeId" column="type_id" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="price" column="price" jdbcType="OTHER"/>
+        <result property="publisher" column="publisher" jdbcType="INTEGER"/>
+        <result property="sold" column="sold" jdbcType="BOOLEAN"/>
+        <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
+        <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="getGoodsByPublisher" resultMap="BaseResultMap">
+        select id,
+        type_id,
+        title,
+        description,
+        price,
+        publisher,
+        sold,
+        created_time,
+        updated_time
+        from second_hand_good
+        where publisher = #{publisher}
+        <if test="notSold == true">
+            and not sold
+        </if>
+        order by sold, created_time desc
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="countGoodsByPublisher" resultType="Integer">
+        select count(*)
+        from second_hand_good
+        where publisher = #{publisher}
+        <if test="notSold == true">
+            and not sold
+        </if>
+    </select>
+
+    <insert id="insertSecondHandGood">
+        insert into second_hand_good (id, type_id, title, description, price, publisher, sold, created_time,
+                                      updated_time)
+        values (default, #{typeId}, #{title}, #{description}, #{price}, #{publisher}, false, now(), now())
+    </insert>
+
+    <update id="updateGoodInfo">
+        update second_hand_good
+        set type_id      = #{typeId},
+            title        = #{title},
+            description  = #{description},
+            updated_time = now()
+        where publisher = #{publisher}
+          and not sold
+          and id = #{goodId}
+    </update>
+
+    <update id="setGoodSold">
+        update second_hand_good
+        set sold         = true,
+            updated_time = now()
+        where id = #{goodId}
+    </update>
+</mapper>

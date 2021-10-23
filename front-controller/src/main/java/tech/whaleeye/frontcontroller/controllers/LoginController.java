@@ -1,5 +1,6 @@
 package tech.whaleeye.frontcontroller.controllers;
 
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -25,8 +26,8 @@ import tech.whaleeye.service.VCodeRecordService;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 
+@Api("Login Controller")
 @RestController
-@ApiOperation("Login Controller")
 @RequestMapping("/login")
 public class LoginController {
 

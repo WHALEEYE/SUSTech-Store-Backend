@@ -14,8 +14,8 @@ import tech.whaleeye.model.vo.StoreUserVO;
 import tech.whaleeye.service.StoreUserService;
 
 @Api("Controllers For Test")
-@RequestMapping("/test")
 @RestController
+@RequestMapping("/test")
 public class TestController {
 
     @Autowired

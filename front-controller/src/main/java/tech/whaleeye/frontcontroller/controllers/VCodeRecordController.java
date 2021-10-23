@@ -24,8 +24,8 @@ import javax.mail.MessagingException;
 import java.security.GeneralSecurityException;
 import java.util.Random;
 
-@RestController
 @Api("Verification Code Sending")
+@RestController
 @RequestMapping("/vCode")
 public class VCodeRecordController {
 

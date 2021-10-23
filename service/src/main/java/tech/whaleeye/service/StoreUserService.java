@@ -1,6 +1,5 @@
 package tech.whaleeye.service;
 
-import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.model.entity.StoreUser;
 
 public interface StoreUserService {
@@ -15,7 +14,9 @@ public interface StoreUserService {
 
     Integer followUser(Integer userId, Integer followedId);
 
-    Integer updatePassword(Integer userId, String password, Boolean firstTime);
+    Integer setPassword(Integer userId, String password);
+
+    Integer updatePassword(Integer userId, String password);
 
     Integer setCardNumber(Integer userId, String cardNumber);
 
@@ -23,7 +24,9 @@ public interface StoreUserService {
 
     Integer updateNickname(Integer userId, String nickname);
 
-    Integer updateAlipayAccount(Integer userId, String alipayAccount, Boolean firstTime);
+    Integer setAlipayAccount(Integer userId, String alipayAccount);
+
+    Integer updateAlipayAccount(Integer userId, String alipayAccount);
 
     Integer updateSex(Integer userId, Boolean sex);
 

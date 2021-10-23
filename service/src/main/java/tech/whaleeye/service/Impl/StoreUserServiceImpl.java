@@ -4,17 +4,10 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.whaleeye.mapper.StoreUserMapper;
-import tech.whaleeye.mapper.VCodeRecordMapper;
-import tech.whaleeye.misc.constants.VCodeType;
-import tech.whaleeye.misc.constants.Values;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
-import tech.whaleeye.misc.exceptions.VCodeLimitException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.StoreUser;
-import tech.whaleeye.model.entity.VCodeRecord;
 import tech.whaleeye.service.StoreUserService;
-
-import java.util.Calendar;
 
 @Service
 public class StoreUserServiceImpl implements StoreUserService {
@@ -48,18 +41,33 @@ public class StoreUserServiceImpl implements StoreUserService {
     }
 
     @Override
-    public Integer updatePassword(Integer userId, String password, Boolean firstTime) {
+    public Integer setPassword(Integer userId, String password) {
         String hexSalt = MiscUtils.generateSalt(8);
         password = new Md5Hash(password, MiscUtils.getSaltFromHex(hexSalt), 1024).toHex();
-        return storeUserMapper.updatePassword(userId, password, hexSalt, firstTime);
+        return storeUserMapper.updatePassword(userId, password, hexSalt, true);
     }
 
     @Override
-    public Integer updateAlipayAccount(Integer userId, String alipayAccount, Boolean firstTime) {
+    public Integer updatePassword(Integer userId, String password) {
+        String hexSalt = MiscUtils.generateSalt(8);
+        password = new Md5Hash(password, MiscUtils.getSaltFromHex(hexSalt), 1024).toHex();
+        return storeUserMapper.updatePassword(userId, password, hexSalt, false);
+    }
+
+    @Override
+    public Integer setAlipayAccount(Integer userId, String alipayAccount) {
         if (alipayAccount.length() > 50) {
             throw new InvalidValueException();
         }
-        return storeUserMapper.updateAlipayAccount(userId, alipayAccount, firstTime);
+        return storeUserMapper.updateAlipayAccount(userId, alipayAccount, true);
+    }
+
+    @Override
+    public Integer updateAlipayAccount(Integer userId, String alipayAccount) {
+        if (alipayAccount.length() > 50) {
+            throw new InvalidValueException();
+        }
+        return storeUserMapper.updateAlipayAccount(userId, alipayAccount, false);
     }
 
     @Override

@@ -13,8 +13,8 @@ import tech.whaleeye.service.StoreUserService;
 import tech.whaleeye.service.VCodeRecordService;
 
 
-@RestController
 @Api("Controls Store User Accounts and Relationships")
+@RestController
 @RequestMapping("/storeUser")
 public class StoreUserController {
 

@@ -73,7 +73,6 @@
         salt = #{salt},
         updated_time = now()
         where id = #{userId}
-        and banned = false
         <if test="firstTime == true">
             and password is null
         </if>
@@ -84,7 +83,6 @@
         set card_number  = #{cardNumber},
             updated_time = now()
         where id = #{userId}
-          and banned = false
           and card_number is null
     </update>
 
@@ -93,7 +91,6 @@
         set introduction = #{introduction},
             updated_time = now()
         where id = #{userId}
-          and banned = false
     </update>
 
     <update id="updateNickname">
@@ -101,7 +98,6 @@
         set nickname     = #{nickname},
             updated_time = now()
         where id = #{userId}
-          and banned = false
     </update>
 
     <update id="updateAlipayAccount">
@@ -109,7 +105,6 @@
         set alipay_account = #{alipayAccount},
         updated_time = now()
         where id = #{userId}
-        and banned = false
         <if test="firstTime == true">
             and alipay_account is null
         </if>
@@ -120,7 +115,6 @@
         set sex          = #{sex},
             updated_time = now()
         where id = #{userId}
-          and banned = false
     </update>
 
     <update id="updateNotifications">
@@ -130,7 +124,6 @@
             api_trade_notification     = #{apiTradeNotification},
             updated_time               = now()
         where id = #{userId}
-          and banned = false
     </update>
 
     <update id="updateAvatar">
@@ -138,7 +131,6 @@
         set avatar_path  = #{avatarPath},
             updated_time = now()
         where id = #{userId}
-          and banned = false
     </update>
 
     <delete id="deleteStoreUser">

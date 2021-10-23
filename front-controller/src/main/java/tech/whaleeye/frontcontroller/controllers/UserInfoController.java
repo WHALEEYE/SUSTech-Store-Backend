@@ -23,8 +23,8 @@ import tech.whaleeye.service.VCodeRecordService;
 import java.io.IOException;
 
 @Api("Check and Modify User Information")
-@RequestMapping("/userInfo")
 @RestController
+@RequestMapping("/userInfo")
 public class UserInfoController {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -69,7 +69,7 @@ public class UserInfoController {
     @ApiOperation("set user password")
     @PutMapping("/password")
     public AjaxResult setPassword(String password) {
-        if (storeUserService.updatePassword(MiscUtils.currentUserId(), password, true) <= 0) {
+        if (storeUserService.setPassword(MiscUtils.currentUserId(), password) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
         }
         return AjaxResult.setSuccess(true).setMsg("Success.");
@@ -78,7 +78,7 @@ public class UserInfoController {
     @ApiOperation("set alipay account")
     @PutMapping("/alipay")
     public AjaxResult setAlipayAccount(String alipayAccount) {
-        if (storeUserService.updateAlipayAccount(MiscUtils.currentUserId(), alipayAccount, true) <= 0) {
+        if (storeUserService.setAlipayAccount(MiscUtils.currentUserId(), alipayAccount) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to set alipay account.");
         }
         return AjaxResult.setSuccess(true).setMsg("Success.");
@@ -105,7 +105,7 @@ public class UserInfoController {
         if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
             return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
         }
-        if (storeUserService.updatePassword(MiscUtils.currentUserId(), newPassword, false) <= 0) {
+        if (storeUserService.updatePassword(MiscUtils.currentUserId(), newPassword) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to update password.");
         }
         vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
@@ -119,7 +119,7 @@ public class UserInfoController {
         if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
             return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
         }
-        if (storeUserService.updateAlipayAccount(MiscUtils.currentUserId(), alipayAccount, false) <= 0) {
+        if (storeUserService.updateAlipayAccount(MiscUtils.currentUserId(), alipayAccount) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to update alipay account.");
         }
         vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
