@@ -1,22 +1,30 @@
 package tech.whaleeye.service;
 
-import tech.whaleeye.model.entity.SecondHandGood;
+import tech.whaleeye.model.dto.SecondHandGoodDTO;
+import tech.whaleeye.model.vo.BriefGoodVO;
+import tech.whaleeye.model.vo.FullGoodVO;
+import tech.whaleeye.model.vo.GoodTypeVO;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 public interface SecondHandGoodService {
 
-    List<SecondHandGood> getAllGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo);
+    FullGoodVO getGoodById(Integer goodId);
 
-    List<SecondHandGood> getUnsoldGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo);
+    List<BriefGoodVO> getAllGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo);
+
+    List<BriefGoodVO> getUnsoldGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo);
+
+    GoodTypeVO getGoodTypeById(Integer typeId);
+
+    List<GoodTypeVO> getAllGoodTypes();
 
     Integer countAllGoodsByPublisher(Integer publisher);
 
     Integer countUnsoldGoodsByPublisher(Integer publisher);
 
-    Integer insertSecondHandGood(Integer typeId, String title, String description, BigDecimal price, Integer publisher);
+    Integer insertSecondHandGood(SecondHandGoodDTO secondHandGood);
 
-    Integer updateGoodInfo(Integer typeId, String title, String description, Integer publisher, Integer goodId);
+    Integer updateGoodInfo(SecondHandGoodDTO secondHandGood);
 
 }

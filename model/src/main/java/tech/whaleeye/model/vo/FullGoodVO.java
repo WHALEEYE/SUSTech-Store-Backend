@@ -3,13 +3,13 @@ package tech.whaleeye.model.vo;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
-public class BriefGoodVO implements Serializable {
+public class FullGoodVO {
 
     private Integer id;
 
@@ -25,7 +25,7 @@ public class BriefGoodVO implements Serializable {
 
     private Boolean sold;
 
-    private String mainPicPath;
+    private List<GoodPictureVO> pictureList;
 
     private Date createdTime;
 

@@ -268,7 +268,6 @@ execute procedure on_delete_second_hand_order();
 
 create table if not exists good_picture
 (
-    id           serial primary key,
     good_id      int          not null references second_hand_good (id) on delete cascade,
     picture_path varchar(255) not null,
     sort_no      int          not null,

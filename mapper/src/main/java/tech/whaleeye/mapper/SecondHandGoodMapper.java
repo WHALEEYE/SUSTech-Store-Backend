@@ -2,13 +2,15 @@ package tech.whaleeye.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import tech.whaleeye.model.dto.SecondHandGoodDTO;
 import tech.whaleeye.model.entity.SecondHandGood;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
 public interface SecondHandGoodMapper {
+
+    SecondHandGood getGoodById(@Param("goodId") Integer goodId);
 
     List<SecondHandGood> getGoodsByPublisher(@Param("publisher") Integer publisher,
                                              @Param("notSold") Boolean notSold,
@@ -17,17 +19,9 @@ public interface SecondHandGoodMapper {
 
     Integer countGoodsByPublisher(@Param("publisher") Integer publisher, @Param("notSold") Boolean notSold);
 
-    Integer insertSecondHandGood(@Param("typeId") Integer typeId,
-                                 @Param("title") String title,
-                                 @Param("description") String description,
-                                 @Param("price") BigDecimal price,
-                                 @Param("publisher") Integer publisher);
+    Integer insertSecondHandGood(SecondHandGoodDTO secondHandGood);
 
-    Integer updateGoodInfo(@Param("typeId") Integer typeId,
-                           @Param("title") String title,
-                           @Param("description") String description,
-                           @Param("publisher") Integer publisher,
-                           @Param("goodId") Integer goodId);
+    Integer updateGoodInfo(SecondHandGoodDTO secondHandGood);
 
     Integer setGoodSold(@Param("goodId") Integer goodId);
 

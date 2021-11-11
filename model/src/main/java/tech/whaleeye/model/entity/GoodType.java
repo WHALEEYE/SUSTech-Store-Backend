@@ -8,11 +8,11 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class GoodPicture implements Serializable {
+public class GoodType implements Serializable {
 
-    private Integer goodId;
+    private Integer id;
 
-    private String goodPath;
+    private String typeName;
 
     private Integer sortNo;
 

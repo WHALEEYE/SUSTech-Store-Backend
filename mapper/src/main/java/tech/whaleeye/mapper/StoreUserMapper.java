@@ -38,4 +38,5 @@ public interface StoreUserMapper {
     Integer updateAvatar(@Param("userId") Integer userId, @Param("avatarPath") String avatarPath);
 
     void deleteStoreUser(@Param("userId") Integer userId, @Param("deleteUserId") Integer deleteUserId);
+
 }

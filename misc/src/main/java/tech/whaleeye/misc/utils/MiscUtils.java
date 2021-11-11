@@ -18,7 +18,7 @@ import java.util.UUID;
 
 public class MiscUtils {
 
-    //    public static void main(String[] args) {
+//    public static void main(String[] args) {
 //        String a = generateSalt(8);
 //        System.out.println(a);
 //        String password = "What1sth1s";
@@ -61,7 +61,6 @@ public class MiscUtils {
         }
         return ByteSource.Util.bytes(saltByte);
     }
-
 
     /**
      * Compress and rename one picture.

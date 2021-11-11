@@ -1,19 +1,20 @@
-package tech.whaleeye.model.vo;
+package tech.whaleeye.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;
+import tech.whaleeye.model.vo.GoodPictureVO;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
-public class BriefGoodVO implements Serializable {
+public class SecondHandGoodDTO implements Serializable {
 
     private Integer id;
 
-    private GoodTypeVO goodTypeVO;
+    private Integer typeId;
 
     private String title;
 
@@ -23,12 +24,6 @@ public class BriefGoodVO implements Serializable {
 
     private Integer publisher;
 
-    private Boolean sold;
-
-    private String mainPicPath;
-
-    private Date createdTime;
-
-    private Date updatedTime;
+    private List<GoodPictureVO> pictureList;
 
 }

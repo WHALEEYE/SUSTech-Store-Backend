@@ -23,4 +23,5 @@ public interface VCodeRecordMapper {
                               @Param("type") Integer type);
 
     void setVCodeUsed(@Param("vCodeId") Integer vCodeId);
+
 }
