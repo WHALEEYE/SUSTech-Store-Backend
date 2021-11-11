@@ -4,14 +4,39 @@
 
     <resultMap id="BaseResultMap" type="tech.whaleeye.model.entity.GoodPicture">
         <!--@Table good_picture-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="goodId" column="good_id" jdbcType="INTEGER"/>
         <result property="picturePath" column="picture_path" jdbcType="VARCHAR"/>
         <result property="sortNo" column="sort_no" jdbcType="INTEGER"/>
         <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <select id="getMainPicByGoodId" resultMap="BaseResultMap">
-
+    <select id="getPicByGoodId" resultMap="BaseResultMap">
+        select id, good_id, picture_path, sort_no, created_time
+        from good_picture
+        where good_id = #{goodId}
+        order by sort_no
+        <if test="main == true">
+            limit 1
+        </if>
     </select>
+
+    <insert id="insertGoodPicture">
+        insert into good_picture (id, good_id, picture_path, sort_no, created_time)
+        values (default, #{goodId}, #{picturePath}, #{sortNo}, now())
+    </insert>
+
+    <update id="updateSortNo">
+        update good_picture
+        set sort_no = #{sortNo}
+        where id = #{pictureId};
+    </update>
+
+    <delete id="deleteGoodPicture">
+        delete
+        from good_picture
+        where id = #{pictureId}
+    </delete>
+
 
 </mapper>
