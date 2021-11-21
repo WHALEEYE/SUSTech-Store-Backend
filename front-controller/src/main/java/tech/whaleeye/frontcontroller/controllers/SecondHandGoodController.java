@@ -144,7 +144,7 @@ public class SecondHandGoodController {
 
     @ApiOperation("update good information")
     @PutMapping("info")
-    AjaxResult updateGoodInfo(SecondHandGoodDTO secondHandGood) {
+    AjaxResult updateGoodInfo(@RequestBody SecondHandGoodDTO secondHandGood) {
         try {
             secondHandGood.setPublisher(MiscUtils.currentUserId());
             if (secondHandGoodService.updateGoodInfo(secondHandGood) > 0) {
