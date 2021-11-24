@@ -31,19 +31,17 @@
 
     <select id="getGoodsByPublisher" resultMap="BaseResultMap">
         select id,
-        type_id,
-        title,
-        description,
-        price,
-        publisher,
-        sold,
-        created_time,
-        updated_time
+               type_id,
+               title,
+               description,
+               price,
+               publisher,
+               sold,
+               created_time,
+               updated_time
         from second_hand_good
         where publisher = #{publisher}
-        <if test="notSold == true">
-            and not sold
-        </if>
+          and case #{status} when 1 then not sold when 2 then sold end
         order by sold, created_time desc
         limit #{pageSize} offset #{offset}
     </select>

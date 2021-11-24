@@ -13,7 +13,7 @@ public interface SecondHandGoodMapper {
     SecondHandGood getGoodById(@Param("goodId") Integer goodId);
 
     List<SecondHandGood> getGoodsByPublisher(@Param("publisher") Integer publisher,
-                                             @Param("notSold") Boolean notSold,
+                                             @Param("status") Integer status,
                                              @Param("pageSize") Integer pageSize,
                                              @Param("offset") Integer offset);
 

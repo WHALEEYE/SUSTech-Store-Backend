@@ -44,23 +44,10 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     }
 
     @Override
-    public List<BriefGoodVO> getAllGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo) {
+    public List<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer status, Integer pageSize, Integer pageNo) {
         List<BriefGoodVO> briefGoodVOList = new ArrayList<>();
         BriefGoodVO briefGoodVO;
-        for (SecondHandGood secondHandGood : secondHandGoodMapper.getGoodsByPublisher(publisher, false, pageSize, (pageNo - 1) * pageSize)) {
-            briefGoodVO = modelMapper.map(secondHandGood, BriefGoodVO.class);
-            briefGoodVO.setGoodTypeVO(modelMapper.map(goodTypeMapper.getGoodTypeById(briefGoodVO.getId()), GoodTypeVO.class));
-            briefGoodVO.setMainPicPath(goodPictureMapper.getMainPicPathByGoodId(briefGoodVO.getId()));
-            briefGoodVOList.add(briefGoodVO);
-        }
-        return briefGoodVOList;
-    }
-
-    @Override
-    public List<BriefGoodVO> getUnsoldGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo) {
-        List<BriefGoodVO> briefGoodVOList = new ArrayList<>();
-        BriefGoodVO briefGoodVO;
-        for (SecondHandGood secondHandGood : secondHandGoodMapper.getGoodsByPublisher(publisher, true, pageSize, (pageNo - 1) * pageSize)) {
+        for (SecondHandGood secondHandGood : secondHandGoodMapper.getGoodsByPublisher(publisher, status, pageSize, (pageNo - 1) * pageSize)) {
             briefGoodVO = modelMapper.map(secondHandGood, BriefGoodVO.class);
             briefGoodVO.setGoodTypeVO(modelMapper.map(goodTypeMapper.getGoodTypeById(briefGoodVO.getId()), GoodTypeVO.class));
             briefGoodVO.setMainPicPath(goodPictureMapper.getMainPicPathByGoodId(briefGoodVO.getId()));

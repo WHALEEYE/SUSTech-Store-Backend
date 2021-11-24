@@ -11,9 +11,7 @@ public interface SecondHandGoodService {
 
     FullGoodVO getGoodById(Integer goodId);
 
-    List<BriefGoodVO> getAllGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo);
-
-    List<BriefGoodVO> getUnsoldGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo);
+    List<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer status, Integer pageSize, Integer pageNo);
 
     GoodTypeVO getGoodTypeById(Integer typeId);
 

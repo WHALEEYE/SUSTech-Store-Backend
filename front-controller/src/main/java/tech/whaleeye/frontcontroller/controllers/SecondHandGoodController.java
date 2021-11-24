@@ -35,7 +35,7 @@ public class SecondHandGoodController {
     SecondHandGoodService secondHandGoodService;
 
     @ApiOperation("get one good's full information")
-    @GetMapping("{goodId}")
+    @GetMapping("detail/{goodId}")
     AjaxResult getGoodById(@PathVariable("goodId") Integer goodId) {
         try {
             return AjaxResult.setSuccess(true).setData(secondHandGoodService.getGoodById(goodId));
@@ -44,48 +44,24 @@ public class SecondHandGoodController {
         }
     }
 
-    @ApiOperation("list all goods of the current user")
-    @GetMapping("current/all")
-    AjaxResult listAllGoodsOfCurrent(Integer pageSize, Integer pageNo) {
+    @ApiOperation("list goods of the current user")
+    @GetMapping("brief")
+    AjaxResult listGoodsOfCurrent(Integer status, Integer pageSize, Integer pageNo) {
         try {
-            List<BriefGoodVO> briefGoodVOList = secondHandGoodService.getAllGoodsByPublisher(MiscUtils.currentUserId(), pageSize, pageNo);
+            List<BriefGoodVO> goodList = secondHandGoodService.getGoodsByPublisher(MiscUtils.currentUserId(), status, pageSize, pageNo);
             int total = secondHandGoodService.countAllGoodsByPublisher(MiscUtils.currentUserId());
-            return AjaxResult.setSuccess(true).setData(new ListPage<>(briefGoodVOList, pageSize, pageNo, total));
+            return AjaxResult.setSuccess(true).setData(new ListPage<>(goodList, pageSize, pageNo, total));
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Failed to list user's good.");
         }
     }
 
-    @ApiOperation("list unsold goods of the current user")
-    @GetMapping("current/unsold")
-    AjaxResult listUnsoldGoodsOfCurrent(Integer pageSize, Integer pageNo) {
+    @ApiOperation("list goods of other user")
+    @GetMapping("brief/{userId}")
+    AjaxResult listGoodsOfOther(@PathVariable("userId") Integer userId, Integer status, Integer pageSize, Integer pageNo) {
         try {
-            List<BriefGoodVO> briefGoodVOList = secondHandGoodService.getUnsoldGoodsByPublisher(MiscUtils.currentUserId(), pageSize, pageNo);
-            int total = secondHandGoodService.countUnsoldGoodsByPublisher(MiscUtils.currentUserId());
-            return AjaxResult.setSuccess(true).setData(new ListPage<>(briefGoodVOList, pageSize, pageNo, total));
-        } catch (Exception e) {
-            return AjaxResult.setSuccess(false).setMsg("Failed to list user's good.");
-        }
-    }
-
-    @ApiOperation("list all goods of other user")
-    @GetMapping("other/all")
-    AjaxResult listAllGoodsOfOther(Integer userId, Integer pageSize, Integer pageNo) {
-        try {
-            List<BriefGoodVO> briefGoodVOList = secondHandGoodService.getAllGoodsByPublisher(userId, pageSize, pageNo);
+            List<BriefGoodVO> briefGoodVOList = secondHandGoodService.getGoodsByPublisher(userId, status, pageSize, pageNo);
             int total = secondHandGoodService.countAllGoodsByPublisher(MiscUtils.currentUserId());
-            return AjaxResult.setSuccess(true).setData(new ListPage<>(briefGoodVOList, pageSize, pageNo, total));
-        } catch (Exception e) {
-            return AjaxResult.setSuccess(false).setMsg("Failed to list user's good.");
-        }
-    }
-
-    @ApiOperation("list unsold goods of other user")
-    @GetMapping("other/unsold")
-    AjaxResult listUnsoldGoodsOfOther(Integer userId, Integer pageSize, Integer pageNo) {
-        try {
-            List<BriefGoodVO> briefGoodVOList = secondHandGoodService.getUnsoldGoodsByPublisher(userId, pageSize, pageNo);
-            int total = secondHandGoodService.countUnsoldGoodsByPublisher(MiscUtils.currentUserId());
             return AjaxResult.setSuccess(true).setData(new ListPage<>(briefGoodVOList, pageSize, pageNo, total));
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Failed to list user's good.");
