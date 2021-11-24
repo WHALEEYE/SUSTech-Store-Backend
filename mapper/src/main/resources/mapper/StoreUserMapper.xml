@@ -14,6 +14,7 @@
         <result property="avatarPath" column="avatar_path" jdbcType="VARCHAR"/>
         <result property="sex" column="sex" jdbcType="BOOLEAN"/>
         <result property="alipayAccount" column="alipay_account" jdbcType="VARCHAR"/>
+        <result property="accountBalance" column="account_balance" jdbcType="OTHER"/>
         <result property="creditScore" column="credit_score" jdbcType="OTHER"/>
         <result property="totalSoldValue" column="total_sold_value" jdbcType="OTHER"/>
         <result property="secondHandNotification" column="second_hand_notification" jdbcType="BOOLEAN"/>
@@ -35,6 +36,7 @@
         avatar_path,
         sex,
         alipay_account,
+        account_balance,
         credit_score,
         total_sold_value,
         second_hand_notification,

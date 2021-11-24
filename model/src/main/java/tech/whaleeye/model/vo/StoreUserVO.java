@@ -29,6 +29,8 @@ public class StoreUserVO implements Serializable {
 
     private String alipayAccount;
 
+    private BigDecimal accountBalance;
+
     private BigDecimal creditScore;
 
     private BigDecimal totalSoldValue;
