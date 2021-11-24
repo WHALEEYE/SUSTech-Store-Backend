@@ -14,8 +14,8 @@
         <result property="tradeLongitude" column="trade_longitude" jdbcType="VARCHAR"/>
         <result property="tradeTime" column="trade_time" jdbcType="TIMESTAMP"/>
         <result property="tradePassword" column="trade_password" jdbcType="VARCHAR"/>
-        <result property="dealCode" column="deal_code" jdbcType="INTEGER"/>
-        <result property="refundCode" column="refund_code" jdbcType="INTEGER"/>
+        <result property="dealCode" column="deal_code" jdbcType="VARCHAR"/>
+        <result property="refundCode" column="refund_code" jdbcType="VARCHAR"/>
         <result property="gradeBySeller" column="grade_by_seller" jdbcType="INTEGER"/>
         <result property="gradeByBuyer" column="grade_by_buyer" jdbcType="INTEGER"/>
         <result property="commentBySeller" column="comment_by_seller" jdbcType="VARCHAR"/>
@@ -24,5 +24,39 @@
         <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <select id="checkIdentity" resultType="Integer">
+        select case
+                   when (select count(*) from second_hand_order where buyer_id = #{userId} and id = #{orderId}) > 0
+                       then 1
+                   when (select count(*)
+                         from second_hand_order sho
+                                  join second_hand_good shg on sho.good_id = shg.id
+                         where shg.publisher = #{userId}
+                           and sho.id = #{orderId}) > 0 then 2
+                   else 0 end
+    </select>
+
+    <select id="getOrderById" resultMap="BaseResultMap">
+        select id,
+               good_id,
+               buyer_id,
+               order_status,
+               actual_price,
+               trade_location,
+               trade_latitude,
+               trade_longitude,
+               trade_time,
+               trade_password,
+               deal_code,
+               refund_code,
+               grade_by_seller,
+               grade_by_buyer,
+               comment_by_seller,
+               comment_by_buyer,
+               created_time,
+               updated_time
+        from second_hand_order
+        where id = #{orderId}
+    </select>
 
 </mapper>

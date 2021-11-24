@@ -1,4 +1,4 @@
-package tech.whaleeye.model.entity;
+package tech.whaleeye.model.vo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,7 @@ import java.util.Date;
 
 @Getter
 @Setter
-public class SecondHandOrder implements Serializable {
+public class OrderVO implements Serializable {
 
     private Integer id;
 
@@ -33,10 +33,6 @@ public class SecondHandOrder implements Serializable {
 
     private String tradePassword;
 
-    private String dealCode;
-
-    private String refundCode;
-
     private Integer gradeBySeller;
 
     private Integer gradeByBuyer;
@@ -48,5 +44,9 @@ public class SecondHandOrder implements Serializable {
     private Date createdTime;
 
     private Date updatedTime;
+    /**
+     * 1: Buyer; 2: Seller
+     */
+    private Integer userType;
 
 }
