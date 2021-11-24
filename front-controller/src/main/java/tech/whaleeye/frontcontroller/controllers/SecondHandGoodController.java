@@ -116,7 +116,7 @@ public class SecondHandGoodController {
 
     @ApiOperation("create a new good")
     @PostMapping("new")
-    AjaxResult createNewGood(SecondHandGoodDTO secondHandGood) {
+    AjaxResult createNewGood(@RequestBody SecondHandGoodDTO secondHandGood) {
         try {
             secondHandGood.setPublisher(MiscUtils.currentUserId());
             if (secondHandGoodService.insertSecondHandGood(secondHandGood) > 0) {
