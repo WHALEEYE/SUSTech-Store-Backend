@@ -59,4 +59,77 @@
         where id = #{orderId}
     </select>
 
+    <select id="getOrderByBuyer">
+        select id,
+               good_id,
+               buyer_id,
+               order_status,
+               actual_price,
+               trade_location,
+               trade_latitude,
+               trade_longitude,
+               trade_time,
+               trade_password,
+               deal_code,
+               refund_code,
+               grade_by_seller,
+               grade_by_buyer,
+               comment_by_seller,
+               comment_by_buyer,
+               created_time,
+               updated_time
+        from second_hand_order
+        where buyer_id = #{userId}
+          and order_status = #{status}
+    </select>
+
+
+    <select id="getOrderBySeller">
+        select sho.id,
+               sho.good_id,
+               sho.buyer_id,
+               sho.order_status,
+               sho.actual_price,
+               sho.trade_location,
+               sho.trade_latitude,
+               sho.trade_longitude,
+               sho.trade_time,
+               sho.trade_password,
+               sho.deal_code,
+               sho.refund_code,
+               sho.grade_by_seller,
+               sho.grade_by_buyer,
+               sho.comment_by_seller,
+               sho.comment_by_buyer,
+               sho.created_time,
+               sho.updated_time
+        from second_hand_order sho
+                 join second_hand_good shg on shg.id = sho.good_id
+        where shg.publisher = #{userId}
+          and sho.order_status = #{status}
+    </select>
+
+    <select id="getOrderByGood">
+        select id,
+               good_id,
+               buyer_id,
+               order_status,
+               actual_price,
+               trade_location,
+               trade_latitude,
+               trade_longitude,
+               trade_time,
+               trade_password,
+               deal_code,
+               refund_code,
+               grade_by_seller,
+               grade_by_buyer,
+               comment_by_seller,
+               comment_by_buyer,
+               created_time,
+               updated_time
+        from second_hand_order
+        where good_id = #{goodId}
+          and order_status = #{status}
+    </select>
 </mapper>

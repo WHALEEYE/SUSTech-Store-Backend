@@ -40,15 +40,17 @@ public class SecondHandOrderController {
         }
     }
 
-    @ApiOperation("list orders of the current user")
-    @GetMapping("brief")
-    AjaxResult listOrdersOfCurrent(Integer pageSize, Integer status, Integer pageNo) {
+    @ApiOperation("list buying orders of the current user")
+    @GetMapping("buying")
+    AjaxResult listBuyingOrdersOfCurrent(Integer status, Integer pageSize, Integer pageNo) {
+
         return null;
     }
 
-    @ApiOperation("list orders of other users")
-    @GetMapping("brief/{userId}")
-    AjaxResult listOrdersOfOthers(@PathVariable("userId") Integer userId, Integer status, Integer pageSize, Integer pageNo) {
+    @ApiOperation("list selling orders of the current user")
+    @GetMapping("selling")
+    AjaxResult listSellingOrdersOfCurrent(Integer status, Integer pageSize, Integer pageNo) {
+
         return null;
     }
 
