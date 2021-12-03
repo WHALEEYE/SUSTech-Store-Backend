@@ -90,8 +90,8 @@ public class VCodeRecordController {
 
     @ApiOperation("send verification code to email")
     @PostMapping("/email/{cardNumber}")
-    public AjaxResult sendEmailVCode(@PathVariable("cardNumber") String cardNumber) {
-        String receiveEmail = cardNumber.concat("@mail.sustech.edu.cn");
+    public AjaxResult sendEmailVCode(@PathVariable("cardNumber") String cardNumber, String postfix) {
+        String receiveEmail = cardNumber.concat(postfix);
         String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {
             if (vCodeRecordService.setEmailVCode(MiscUtils.currentUserId(), cardNumber, vCode) <= 0) {
