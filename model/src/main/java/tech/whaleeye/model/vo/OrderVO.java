@@ -45,8 +45,8 @@ public class OrderVO implements Serializable {
 
     private Date updatedTime;
     /**
-     * 1: Buyer; 2: Seller
+     * 0: Buyer; 1: Seller
      */
-    private Integer userType;
+    private Integer identity;
 
 }

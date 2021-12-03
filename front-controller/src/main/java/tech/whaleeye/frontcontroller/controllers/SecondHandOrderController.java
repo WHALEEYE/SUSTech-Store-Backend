@@ -6,6 +6,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
+import tech.whaleeye.misc.constants.UserType;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.dto.SecondHandOrderDTO;
@@ -29,9 +30,7 @@ public class SecondHandOrderController {
     @GetMapping("detail/{orderId}")
     AjaxResult getOrderById(@PathVariable("orderId") Integer orderId) {
         try {
-            Integer userType = secondHandOrderService.checkIdentity(MiscUtils.currentUserId(), orderId);
-            OrderVO order = modelMapper.map(secondHandOrderService.getOrderById(orderId), OrderVO.class);
-            order.setUserType(userType);
+            OrderVO order = modelMapper.map(secondHandOrderService.getOrderById(MiscUtils.currentUserId(), orderId), OrderVO.class);
             return AjaxResult.setSuccess(true).setData(order);
         } catch (BadIdentityException bie) {
             return AjaxResult.setSuccess(false).setMsg("Not allowed to check the order");
@@ -42,15 +41,20 @@ public class SecondHandOrderController {
 
     @ApiOperation("list buying orders of the current user")
     @GetMapping("buying")
-    AjaxResult listBuyingOrdersOfCurrent(Integer status, Integer pageSize, Integer pageNo) {
-
+    AjaxResult listBuyingOrdersOfCurrent(Integer orderStatus, Integer pageSize, Integer pageNo) {
         return null;
     }
 
     @ApiOperation("list selling orders of the current user")
     @GetMapping("selling")
-    AjaxResult listSellingOrdersOfCurrent(Integer status, Integer pageSize, Integer pageNo) {
+    AjaxResult listSellingOrdersOfCurrent(Integer orderStatus, Integer pageSize, Integer pageNo) {
 
+        return null;
+    }
+
+    @ApiOperation("list orders of one good")
+    @GetMapping("good/{goodId}")
+    AjaxResult listOrdersOfGood(@PathVariable("goodId") Integer goodId) {
         return null;
     }
 

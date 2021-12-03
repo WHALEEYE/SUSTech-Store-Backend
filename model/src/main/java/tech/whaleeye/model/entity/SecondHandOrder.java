@@ -17,7 +17,7 @@ public class SecondHandOrder implements Serializable {
 
     private Integer buyerId;
     /**
-     * 1: Waiting for acknowledge; 2: Waiting for payment; 3: Trading; 4: Trade Success; 5: Refund Success; 6: Closed
+     * 0: Waiting for acknowledge; 1: Waiting for payment; 2: Trading; 3: Trade Success; 4: Refund Success; 5: Closed
      */
     private Integer orderStatus;
 
