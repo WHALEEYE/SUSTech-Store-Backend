@@ -24,16 +24,16 @@
         <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <select id="getIdentity" resultType="Integer">
+    <select id="getUserType" resultType="Boolean">
         select case
                    when (select count(*) from second_hand_order where buyer_id = #{userId} and id = #{orderId}) > 0
-                       then 0
+                       then true
                    when (select count(*)
                          from second_hand_order sho
                                   join second_hand_good shg on sho.good_id = shg.id
                          where shg.publisher = #{userId}
-                           and sho.id = #{orderId}) > 0 then 1
-                   else -1 end
+                           and sho.id = #{orderId}) > 0 then false
+                   end
     </select>
 
     <select id="getOrderById" resultMap="BaseResultMap">
@@ -89,6 +89,18 @@
         limit #{pageSize} offset #{offset}
     </select>
 
+    <select id="countOrderByUserId" resultMap="Integer">
+        select count(*)
+        from second_hand_order sho
+        join second_hand_good shg on shg.id = sho.good_id
+        where
+        <choose>
+            <when test="userType==true">sho.buyer_id = #{userId}</when>
+            <otherwise>shg.publisher = #{userId}</otherwise>
+        </choose>
+        and sho.order_status = #{orderStatus}
+    </select>
+
     <select id="getOrderByGoodId" resultMap="BaseResultMap">
         select sho.id,
                sho.good_id,
@@ -114,4 +126,38 @@
           and shg.id = #{goodId}
         limit #{pageSize} offset #{offset}
     </select>
+
+    <select id="countOrderByGoodId" resultMap="Integer">
+        select count(*)
+        from second_hand_order sho
+                 join second_hand_good shg on shg.id = sho.good_id
+        where shg.publisher = #{publisher}
+          and shg.id = #{goodId}
+    </select>
+
+    <insert id="insertSecondHandOrder" parameterType="tech.whaleeye.model.entity.SecondHandOrder"
+            useGeneratedKeys="true" keyProperty="id">
+        insert into second_hand_order (id, good_id, buyer_id, order_status, actual_price, trade_location,
+                                       trade_latitude, trade_longitude, trade_time, trade_password, deal_code,
+                                       refund_code, grade_by_seller, grade_by_buyer, comment_by_seller,
+                                       comment_by_buyer, created_time, updated_time)
+        values (default, #{goodId}, #{buyerId}, default, #{actualPrice}, #{tradeLocation}, #{tradeLatitude},
+                #{tradeLongitude}, #{tradeTime}, null, null, null, null, null, null, null, now(), now())
+    </insert>
+
+    <update id="cancelOrder">
+        update second_hand_order
+        set order_status = 5
+        where id = #{orderId}
+    </update>
+
+    <update id="updateActualPrice">
+        update second_hand_order
+        set
+        <if test="actualPrice != null and actualPrice != ''">
+            actual_price = #{actualPrice},
+        </if>
+        order_status = 1
+        where id = #{orderId}
+    </update>
 </mapper>

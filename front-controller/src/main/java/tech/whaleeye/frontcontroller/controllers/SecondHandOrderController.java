@@ -2,14 +2,17 @@ package tech.whaleeye.frontcontroller.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
-import tech.whaleeye.misc.constants.UserType;
+import tech.whaleeye.misc.ajax.ListPage;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
+import tech.whaleeye.misc.exceptions.BadOrderStatusException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.dto.SecondHandOrderDTO;
+import tech.whaleeye.model.entity.SecondHandOrder;
 import tech.whaleeye.model.vo.OrderVO;
 import tech.whaleeye.service.SecondHandOrderService;
 
@@ -40,34 +43,59 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("list buying orders of the current user")
-    @GetMapping("buying")
-    AjaxResult listBuyingOrdersOfCurrent(Integer orderStatus, Integer pageSize, Integer pageNo) {
-        return null;
-    }
-
-    @ApiOperation("list selling orders of the current user")
-    @GetMapping("selling")
-    AjaxResult listSellingOrdersOfCurrent(Integer orderStatus, Integer pageSize, Integer pageNo) {
-
-        return null;
+    @GetMapping("brief")
+    AjaxResult listOrdersOfCurrent(@ApiParam("false: seller; true: buyer") Boolean userType,
+                                   Integer orderStatus, Integer pageSize, Integer pageNo) {
+        try {
+            ListPage<OrderVO> orderList = secondHandOrderService.getOrderByUserId(MiscUtils.currentUserId(), userType, orderStatus, pageSize, pageNo);
+            return AjaxResult.setSuccess(true).setData(orderList);
+        } catch (Exception e) {
+            return AjaxResult.setSuccess(false).setMsg("Failed to get the info of the orders");
+        }
     }
 
     @ApiOperation("list orders of one good")
     @GetMapping("good/{goodId}")
-    AjaxResult listOrdersOfGood(@PathVariable("goodId") Integer goodId) {
-        return null;
+    AjaxResult listOrdersOfGood(@PathVariable("goodId") Integer goodId, Integer pageSize, Integer pageNo) {
+        try {
+            ListPage<OrderVO> orderList = secondHandOrderService.getOrderByGoodId(MiscUtils.currentUserId(), goodId, pageSize, pageNo);
+            return AjaxResult.setSuccess(true).setData(orderList);
+        } catch (Exception e) {
+            return AjaxResult.setSuccess(false).setMsg("Failed to get the info of the orders");
+        }
     }
 
     @ApiOperation("create a new order")
     @PostMapping("new")
-    AjaxResult createOrder(@RequestBody SecondHandOrderDTO secondHandOrder) {
-        return null;
+    AjaxResult createOrder(@RequestBody SecondHandOrderDTO secondHandOrderDTO) {
+        try {
+            SecondHandOrder secondHandOrder = modelMapper.map(secondHandOrderDTO, SecondHandOrder.class);
+            secondHandOrder.setBuyerId(MiscUtils.currentUserId());
+            if (secondHandOrderService.insertSecondHandOrder(secondHandOrder) <= 0) {
+                return AjaxResult.setSuccess(false).setMsg("Failed to create the order");
+            }
+            return AjaxResult.setSuccess(true).setMsg("Order created successfully");
+        } catch (Exception e) {
+            return AjaxResult.setSuccess(false).setMsg("Failed to create the order");
+        }
     }
 
     @ApiOperation("seller's acknowledge")
     @PutMapping("status/seller/{orderId}")
-    AjaxResult sellerAcknowledge(@PathVariable("orderId") Integer orderId, Boolean ack, BigDecimal actualPrice) {
-        return null;
+    AjaxResult sellerAcknowledge(@PathVariable("orderId") Integer orderId, Boolean ack,
+                                 @RequestParam(required = false) BigDecimal actualPrice) {
+        try {
+            if (secondHandOrderService.sellerAcknowledge(MiscUtils.currentUserId(), orderId, ack, actualPrice) <= 0) {
+                return AjaxResult.setSuccess(false).setMsg("Operation failed");
+            }
+            return AjaxResult.setSuccess(true).setMsg("Operation succeeded");
+        } catch (BadIdentityException bie) {
+            return AjaxResult.setSuccess(false).setMsg("You are not allowed to this operation");
+        } catch (BadOrderStatusException bose) {
+            return AjaxResult.setSuccess(false).setMsg("Bad order status");
+        } catch (Exception e) {
+            return AjaxResult.setSuccess(false).setMsg("Operation failed");
+        }
     }
 
     @ApiOperation("buyer's acknowledge")

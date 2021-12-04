@@ -12,7 +12,7 @@ public class SecondHandOrderDTO implements Serializable {
 
     private Integer goodId;
 
-    private Integer buyerId;
+    private String tradeLocation;
 
     private String tradeLatitude;
 
