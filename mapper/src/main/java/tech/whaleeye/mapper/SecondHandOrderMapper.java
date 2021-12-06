@@ -38,4 +38,9 @@ public interface SecondHandOrderMapper {
 
     Integer updateActualPrice(@Param("orderId") Integer orderId, @Param("actualPrice") BigDecimal actualPrice);
 
+    Integer buyerAck(@Param("userId") Integer userId,
+                     @Param("orderId") Integer orderId,
+                     @Param("dealCode") String dealCode,
+                     @Param("refundCode") String refundCode,
+                     @Param("tradePassword") String tradePassword);
 }

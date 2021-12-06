@@ -5,10 +5,10 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.lang.Nullable;
 import tech.whaleeye.model.entity.StoreUser;
 
-import java.util.Date;
-
 @Mapper
 public interface StoreUserMapper {
+
+    StoreUser getUserById(@Param("userId") Integer userId);
 
     StoreUser getStoreUser(@Nullable @Param("phoneNumber") String phoneNumber,
                            @Nullable @Param("cardNumber") String cardNumber,

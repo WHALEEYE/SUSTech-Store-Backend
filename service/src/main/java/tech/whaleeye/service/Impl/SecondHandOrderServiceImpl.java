@@ -1,16 +1,19 @@
 package tech.whaleeye.service.Impl;
 
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.whaleeye.mapper.SecondHandGoodMapper;
 import tech.whaleeye.mapper.SecondHandOrderMapper;
+import tech.whaleeye.mapper.StoreUserMapper;
 import tech.whaleeye.misc.ajax.ListPage;
 import tech.whaleeye.misc.constants.OrderStatus;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.exceptions.BadOrderStatusException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
+import tech.whaleeye.misc.utils.TencentCloudUtils;
 import tech.whaleeye.model.entity.SecondHandGood;
 import tech.whaleeye.model.entity.SecondHandOrder;
 import tech.whaleeye.model.vo.OrderVO;
@@ -18,6 +21,7 @@ import tech.whaleeye.service.SecondHandOrderService;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class SecondHandOrderServiceImpl implements SecondHandOrderService {
@@ -30,6 +34,9 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
 
     @Autowired
     SecondHandGoodMapper secondHandGoodMapper;
+
+    @Autowired
+    StoreUserMapper storeUserMapper;
 
     @Override
     public OrderVO getOrderById(Integer userId, Integer orderId) {
@@ -73,7 +80,7 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
             throw new BadIdentityException();
         } else if (secondHandOrder.getOrderStatus() != OrderStatus.ACK_PENDING.ordinal()) {
             throw new BadOrderStatusException();
-        } else if (actualPrice != null && actualPrice.doubleValue() < 0){
+        } else if (actualPrice != null && actualPrice.doubleValue() < 0) {
             throw new InvalidValueException();
         }
         if (!ack) {
@@ -84,9 +91,26 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
     }
 
     @Override
-    public Integer buyerAcknowledge(Integer userId, Integer orderId, Boolean ack) {
-        // TODO: Generate two codes and password
-        return null;
+    public Integer buyerAcknowledge(Integer userId, Integer orderId, Boolean ack) throws TencentCloudSDKException {
+        SecondHandOrder secondHandOrder = secondHandOrderMapper.getOrderById(orderId);
+        SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
+        if (!userId.equals(secondHandOrder.getBuyerId())) {
+            throw new BadIdentityException();
+        } else if (secondHandOrder.getOrderStatus() != OrderStatus.PAY_PENDING.ordinal()) {
+            throw new BadOrderStatusException();
+        }
+        if (!ack) {
+            return secondHandOrderMapper.cancelOrder(orderId);
+        }
+        String buyerNumber = storeUserMapper.getUserById(userId).getPhoneNumber();
+        String sellerNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
+        String dealCode = String.format("%06d", new Random().nextInt(1000000));
+        String refundCode = String.format("%06d", new Random().nextInt(1000000));
+        String tradePassword = String.format("%04d", new Random().nextInt(10000));
+
+        // send inform sms
+        TencentCloudUtils.sendTradeEstablishedInform(sellerNumber, buyerNumber, secondHandGood.getTitle(), secondHandOrder.getId(), tradePassword, dealCode, refundCode);
+        return secondHandOrderMapper.buyerAck(userId, orderId, dealCode, refundCode, tradePassword);
     }
 
 }

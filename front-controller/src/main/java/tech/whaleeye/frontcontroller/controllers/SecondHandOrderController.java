@@ -1,5 +1,6 @@
 package tech.whaleeye.frontcontroller.controllers;
 
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -101,30 +102,62 @@ public class SecondHandOrderController {
     @ApiOperation("buyer's acknowledge")
     @PutMapping("status/buyer/{orderId}")
     AjaxResult buyerAcknowledge(@PathVariable("orderId") Integer orderId, Boolean ack) {
-        return null;
+        try {
+            int rst = secondHandOrderService.buyerAcknowledge(MiscUtils.currentUserId(), orderId, ack);
+            if (ack && rst == -1) {
+                return AjaxResult.setSuccess(false).setMsg("Insufficient balance!");
+            } else if (!ack && rst <= 0) {
+                return AjaxResult.setSuccess(false).setMsg("Operation failed.");
+            }
+            return AjaxResult.setSuccess(true).setMsg("Paid successfully. The trade has established.");
+        } catch (BadIdentityException bie) {
+            return AjaxResult.setSuccess(false).setMsg("You are not allowed to this operation");
+        } catch (BadOrderStatusException bose) {
+            return AjaxResult.setSuccess(false).setMsg("Bad order status");
+        } catch (TencentCloudSDKException tcse) {
+            return AjaxResult.setSuccess(false).setMsg("Failed to send SMS. Please contact with the administrator.");
+        } catch (Exception e) {
+            return AjaxResult.setSuccess(false).setMsg("Operation failed");
+        }
     }
 
     @ApiOperation("deal succeeded")
     @PutMapping("status/deal/{orderId}")
     AjaxResult confirmDeal(@PathVariable("orderId") Integer orderId, String dealCode) {
-        return null;
+        try {
+            return null;
+        } catch (Exception e) {
+            return AjaxResult.setSuccess(false).setMsg("Operation failed");
+        }
     }
 
     @ApiOperation("deal refunded")
     @PutMapping("status/refund/{orderId}")
     AjaxResult refundDeal(@PathVariable("orderId") Integer orderId, String refundCode) {
-        return null;
+        try {
+            return null;
+        } catch (Exception e) {
+            return AjaxResult.setSuccess(false).setMsg("Operation failed");
+        }
     }
 
     @ApiOperation("seller's comment and grade")
     @PutMapping("comment/seller/{orderId}")
     AjaxResult sellerComment(@PathVariable("orderId") Integer orderId, Integer grade, String comment) {
-        return null;
+        try {
+            return null;
+        } catch (Exception e) {
+            return AjaxResult.setSuccess(false).setMsg("Operation failed");
+        }
     }
 
     @ApiOperation("buyer's comment and grade")
     @PutMapping("comment/buyer/{orderId}")
     AjaxResult buyerComment(@PathVariable("orderId") Integer orderId, Integer grade, String comment) {
-        return null;
+        try {
+            return null;
+        } catch (Exception e) {
+            return AjaxResult.setSuccess(false).setMsg("Operation failed");
+        }
     }
 }

@@ -73,11 +73,4 @@
           and not sold
           and id = #{goodId}
     </update>
-
-    <update id="setGoodSold">
-        update second_hand_good
-        set sold         = true,
-            updated_time = now()
-        where id = #{goodId}
-    </update>
 </mapper>

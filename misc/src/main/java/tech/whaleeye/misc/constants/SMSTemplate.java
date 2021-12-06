@@ -7,7 +7,8 @@ public enum SMSTemplate {
     LOGIN_V_CODE("1148076"),
     CHANGE_PASSWORD_V_CODE("1148075"),
     CHANGE_ALIPAY_V_CODE("1148077"),
-    CANCEL_ACCOUNT_V_CODE("1148078");
+    CANCEL_ACCOUNT_V_CODE("1148078"),
+    TRADE_ESTABLISHED_INFORM("1227653");
 
     private final String templateId;
 

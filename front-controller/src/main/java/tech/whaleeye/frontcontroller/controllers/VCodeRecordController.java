@@ -54,10 +54,7 @@ public class VCodeRecordController {
                 log.error("Phone number [" + phoneNumber + "]: verification code failed to set.");
                 return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
             }
-            if (!TencentCloudUtils.sendVCodeSMS(phoneNumber, vCode, VCodeType.LOGIN)) {
-                log.error("Phone number [" + phoneNumber + "]: verification code failed to send.");
-                return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
-            }
+            TencentCloudUtils.sendVCodeSMS(phoneNumber, vCode, VCodeType.LOGIN);
         } catch (TencentCloudSDKException e) {
             log.error("Phone number [" + phoneNumber + "]: verification code failed to send (internal error).");
             return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
@@ -76,9 +73,7 @@ public class VCodeRecordController {
             if (vCodeRecordService.setAccountVCode(storeUser.getId(), vCode, VCodeType.values()[vCodeType]) <= 0) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
             }
-            if (!TencentCloudUtils.sendVCodeSMS(storeUser.getPhoneNumber(), vCode, VCodeType.values()[vCodeType])) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
-            }
+            TencentCloudUtils.sendVCodeSMS(storeUser.getPhoneNumber(), vCode, VCodeType.values()[vCodeType]);
         } catch (TencentCloudSDKException e) {
             log.error("User ID [" + MiscUtils.currentUserId() + "]: verification code failed to send.");
             return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");

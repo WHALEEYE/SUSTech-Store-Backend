@@ -284,3 +284,41 @@ create table if not exists collect_relation
     create_time  timestamp not null default now()
 );
 create index if not exists collector_id_index on collect_relation (collector_id);
+
+create or replace function buyer_ack(user_id int, order_id int, d_code char(6), r_code char(6),
+                                     pwd char(4))
+    returns int as
+$$
+declare
+    balance   numeric(12, 2);
+    price     numeric(12, 2);
+    v_good_id int;
+begin
+    select account_balance into balance from store_user where id = user_id for update;
+    select actual_price into price from second_hand_order where id = order_id;
+
+    if price > balance then
+        return -1;
+    end if;
+
+    update second_hand_order
+    set deal_code      = d_code,
+        refund_code    = r_code,
+        trade_password = pwd,
+        order_status   = 2,
+        updated_time   = now()
+    where id = order_id;
+
+    update store_user set account_balance = balance - price where id = user_id;
+
+    select good_id into v_good_id from second_hand_order where id = order_id;
+    update second_hand_good set sold = true, updated_time = now() where id = v_good_id;
+    update second_hand_order
+    set order_status = 5,
+        updated_time = now()
+    where good_id = v_good_id
+      and not id = order_id;
+
+    return 1;
+end
+$$ language plpgsql;

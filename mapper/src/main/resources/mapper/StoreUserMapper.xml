@@ -25,6 +25,30 @@
         <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <select id="getUserById" resultMap="BaseResultMap">
+        select id,
+               phone_number,
+               nickname,
+               card_number,
+               password,
+               salt,
+               introduction,
+               avatar_path,
+               sex,
+               alipay_account,
+               account_balance,
+               credit_score,
+               total_sold_value,
+               second_hand_notification,
+               agent_service_notification,
+               api_trade_notification,
+               banned,
+               created_time,
+               updated_time
+        from store_user
+        where id = #{userId};
+    </select>
+
     <select id="getStoreUser" resultMap="BaseResultMap">
         select id,
         phone_number,
@@ -133,6 +157,10 @@
         set avatar_path  = #{avatarPath},
             updated_time = now()
         where id = #{userId}
+    </update>
+
+    <update id="updateBalance">
+
     </update>
 
     <delete id="deleteStoreUser">

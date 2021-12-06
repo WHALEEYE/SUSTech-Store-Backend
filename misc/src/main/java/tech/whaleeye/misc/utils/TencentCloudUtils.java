@@ -23,11 +23,22 @@ public class TencentCloudUtils {
      * @return whether the verification code is successfully sent or not
      * @throws TencentCloudSDKException if there are server side errors when sending verification code, for example, wrong secret id or key
      **/
-    public static boolean sendVCodeSMS(String phoneNumber, String vCode, VCodeType vCodeType) throws TencentCloudSDKException {
+    public static void sendVCodeSMS(String phoneNumber, String vCode, VCodeType vCodeType) throws TencentCloudSDKException {
         String[] phoneNumberSet = {"+86" + phoneNumber};
         String[] templateParamSet = {vCode, Values.V_CODE_EXPIRE_TIME_MINUTES + ""};
-        SendStatus[] resultSet = sendSMS(vCodeType.getSmsTemplate(), phoneNumberSet, templateParamSet);
-        return resultSet[0].getCode().equals("Ok");
+        sendSMS(vCodeType.getSmsTemplate(), phoneNumberSet, templateParamSet);
+    }
+
+    public static void sendTradeEstablishedInform(String sellerNumber, String buyerNumber, String goodTitle, Integer orderId, String password, String dealCode, String refundCode) throws TencentCloudSDKException {
+        if (goodTitle.length() > 5) {
+            goodTitle = goodTitle.substring(0, 5).concat("...");
+        }
+        String[] sellerNumberSet = {"+86" + sellerNumber};
+        String[] sellerParamSet = {goodTitle, orderId.toString(), "买家", "退款码", password, "退款码", refundCode};
+        sendSMS(SMSTemplate.TRADE_ESTABLISHED_INFORM, sellerNumberSet, sellerParamSet);
+        String[] buyerNumberSet = {"+86" + buyerNumber};
+        String[] buyerParamSet = {goodTitle, orderId.toString(), "您", "交易码", password, "交易码", dealCode};
+        sendSMS(SMSTemplate.TRADE_ESTABLISHED_INFORM, buyerNumberSet, buyerParamSet);
     }
 
 //    public static void main(String[] args) {

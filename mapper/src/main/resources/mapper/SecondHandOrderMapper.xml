@@ -160,4 +160,9 @@
         order_status = 1
         where id = #{orderId}
     </update>
+
+    <update id="buyerAck">
+        select buyer_ack(#{userId}, #{orderId}, #{dealCode}, #{refundCode}, #{tradePassword})
+    </update>
+
 </mapper>

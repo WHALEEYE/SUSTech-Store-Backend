@@ -1,5 +1,6 @@
 package tech.whaleeye.service;
 
+import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import tech.whaleeye.misc.ajax.ListPage;
 import tech.whaleeye.model.entity.SecondHandOrder;
 import tech.whaleeye.model.vo.OrderVO;
@@ -18,6 +19,6 @@ public interface SecondHandOrderService {
 
     Integer sellerAcknowledge(Integer userId, Integer orderId, Boolean ack, BigDecimal actualPrice);
 
-    Integer buyerAcknowledge(Integer userId, Integer orderId, Boolean ack);
+    Integer buyerAcknowledge(Integer userId, Integer orderId, Boolean ack) throws TencentCloudSDKException;
 
 }
