@@ -89,7 +89,7 @@
         limit #{pageSize} offset #{offset}
     </select>
 
-    <select id="countOrderByUserId" resultMap="Integer">
+    <select id="countOrderByUserId" resultType="Integer">
         select count(*)
         from second_hand_order sho
         join second_hand_good shg on shg.id = sho.good_id
@@ -127,7 +127,7 @@
         limit #{pageSize} offset #{offset}
     </select>
 
-    <select id="countOrderByGoodId" resultMap="Integer">
+    <select id="countOrderByGoodId" resultType="Integer">
         select count(*)
         from second_hand_order sho
                  join second_hand_good shg on shg.id = sho.good_id
