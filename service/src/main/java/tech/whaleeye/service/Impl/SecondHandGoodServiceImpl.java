@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
 import tech.whaleeye.mapper.GoodPictureMapper;
 import tech.whaleeye.mapper.GoodTypeMapper;
 import tech.whaleeye.mapper.SecondHandGoodMapper;
-import tech.whaleeye.model.dto.SecondHandGoodDTO;
+import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.model.entity.GoodType;
 import tech.whaleeye.model.entity.SecondHandGood;
 import tech.whaleeye.model.vo.BriefGoodVO;
@@ -79,7 +79,10 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     }
 
     @Override
-    public Integer insertSecondHandGood(SecondHandGoodDTO secondHandGood) {
+    public Integer insertSecondHandGood(SecondHandGood secondHandGood) {
+        if (secondHandGood.getPrice().doubleValue() < 0f) {
+            throw new InvalidValueException();
+        }
         if (secondHandGoodMapper.insertSecondHandGood(secondHandGood) <= 0) {
             return -1;
         }
@@ -87,7 +90,10 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     }
 
     @Override
-    public Integer updateGoodInfo(SecondHandGoodDTO secondHandGood) {
+    public Integer updateGoodInfo(SecondHandGood secondHandGood) {
+        if (secondHandGood.getPrice().doubleValue() < 0f) {
+            throw new InvalidValueException();
+        }
         if (secondHandGoodMapper.updateGoodInfo(secondHandGood) <= 0) {
             return -1;
         }

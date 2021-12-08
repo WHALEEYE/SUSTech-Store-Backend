@@ -22,8 +22,6 @@ public class SecondHandGoodDTO implements Serializable {
 
     private BigDecimal price;
 
-    private Integer publisher;
-
-    private List<GoodPictureVO> pictureList;
+    private List<GoodPictureDTO> pictureList;
 
 }

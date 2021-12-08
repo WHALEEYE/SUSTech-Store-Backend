@@ -12,7 +12,7 @@ public class GoodPicture implements Serializable {
 
     private Integer goodId;
 
-    private String goodPath;
+    private String picturePath;
 
     private Integer sortNo;
 

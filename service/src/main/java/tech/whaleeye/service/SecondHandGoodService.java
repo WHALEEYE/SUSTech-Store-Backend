@@ -1,6 +1,7 @@
 package tech.whaleeye.service;
 
 import tech.whaleeye.model.dto.SecondHandGoodDTO;
+import tech.whaleeye.model.entity.SecondHandGood;
 import tech.whaleeye.model.vo.BriefGoodVO;
 import tech.whaleeye.model.vo.FullGoodVO;
 import tech.whaleeye.model.vo.GoodTypeVO;
@@ -21,8 +22,8 @@ public interface SecondHandGoodService {
 
     Integer countUnsoldGoodsByPublisher(Integer publisher);
 
-    Integer insertSecondHandGood(SecondHandGoodDTO secondHandGood);
+    Integer insertSecondHandGood(SecondHandGood secondHandGood);
 
-    Integer updateGoodInfo(SecondHandGoodDTO secondHandGood);
+    Integer updateGoodInfo(SecondHandGood secondHandGood);
 
 }

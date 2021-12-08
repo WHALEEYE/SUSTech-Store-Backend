@@ -62,7 +62,7 @@
         values (default, #{typeId}, #{title}, #{description}, #{price}, #{publisher}, false, now(), now())
     </insert>
 
-    <update id="updateGoodInfo" parameterType="tech.whaleeye.model.dto.SecondHandGoodDTO">
+    <update id="updateGoodInfo" parameterType="tech.whaleeye.model.entity.SecondHandGood">
         update second_hand_good
         set type_id      = #{typeId},
             title        = #{title},

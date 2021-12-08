@@ -3,6 +3,7 @@ package tech.whaleeye.frontcontroller.controllers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import tech.whaleeye.misc.constants.UploadFileType;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.dto.SecondHandGoodDTO;
+import tech.whaleeye.model.entity.GoodPicture;
+import tech.whaleeye.model.entity.SecondHandGood;
 import tech.whaleeye.model.vo.BriefGoodVO;
 import tech.whaleeye.model.vo.GoodTypeVO;
 import tech.whaleeye.service.SecondHandGoodService;
@@ -92,14 +95,18 @@ public class SecondHandGoodController {
 
     @ApiOperation("create a new good")
     @PostMapping("new")
-    AjaxResult createNewGood(@RequestBody SecondHandGoodDTO secondHandGood) {
+    AjaxResult createNewGood(@RequestBody SecondHandGoodDTO secondHandGoodDTO) {
         try {
+            SecondHandGood secondHandGood = modelMapper.map(secondHandGoodDTO, SecondHandGood.class);
             secondHandGood.setPublisher(MiscUtils.currentUserId());
-            if (secondHandGoodService.insertSecondHandGood(secondHandGood) > 0) {
-                return AjaxResult.setSuccess(true).setMsg("Good created successfully.");
-            } else {
+            secondHandGood.setPictureList(modelMapper.map(secondHandGoodDTO.getPictureList(), new TypeToken<List<GoodPicture>>() {
+            }.getType()));
+            if (secondHandGoodService.insertSecondHandGood(secondHandGood) <= 0) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to create new good.");
             }
+            return AjaxResult.setSuccess(true).setMsg("Good created successfully.");
+        } catch (InvalidValueException ive) {
+            return AjaxResult.setSuccess(false).setMsg("Invalid good price.");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Failed to create new good.");
         }
@@ -120,14 +127,19 @@ public class SecondHandGoodController {
 
     @ApiOperation("update good information")
     @PutMapping("info")
-    AjaxResult updateGoodInfo(@RequestBody SecondHandGoodDTO secondHandGood) {
+    AjaxResult updateGoodInfo(@RequestBody SecondHandGoodDTO secondHandGoodDTO) {
         try {
+            SecondHandGood secondHandGood = modelMapper.map(secondHandGoodDTO, SecondHandGood.class);
             secondHandGood.setPublisher(MiscUtils.currentUserId());
-            if (secondHandGoodService.updateGoodInfo(secondHandGood) > 0) {
-                return AjaxResult.setSuccess(true).setMsg("Good information updated successfully.");
-            } else {
+            secondHandGood.setPictureList(modelMapper.map(secondHandGoodDTO.getPictureList(), new TypeToken<List<GoodPicture>>() {
+            }.getType()));
+            secondHandGood.setPublisher(MiscUtils.currentUserId());
+            if (secondHandGoodService.updateGoodInfo(secondHandGood) <= 0) {
                 return AjaxResult.setSuccess(false).setMsg("Good information failed to update.");
             }
+            return AjaxResult.setSuccess(true).setMsg("Good information updated successfully.");
+        } catch (InvalidValueException ive) {
+            return AjaxResult.setSuccess(false).setMsg("Invalid good price.");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Good information failed to update.");
         }

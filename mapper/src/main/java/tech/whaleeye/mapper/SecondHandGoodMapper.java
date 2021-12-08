@@ -2,7 +2,6 @@ package tech.whaleeye.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import tech.whaleeye.model.dto.SecondHandGoodDTO;
 import tech.whaleeye.model.entity.SecondHandGood;
 
 import java.util.List;
@@ -19,9 +18,9 @@ public interface SecondHandGoodMapper {
 
     Integer countGoodsByPublisher(@Param("publisher") Integer publisher, @Param("notSold") Boolean notSold);
 
-    Integer insertSecondHandGood(SecondHandGoodDTO secondHandGood);
+    Integer insertSecondHandGood(SecondHandGood secondHandGood);
 
-    Integer updateGoodInfo(SecondHandGoodDTO secondHandGood);
+    Integer updateGoodInfo(SecondHandGood secondHandGood);
 
     Integer setGoodSold(@Param("goodId") Integer goodId);
 
