@@ -96,6 +96,7 @@ public class ShiroConfig {
         // This line should be removed in release version
         filterChainDefinitionMap.put("/test/**", "anon");
 
+        filterChainDefinitionMap.put("/upload/**", "anon");
         filterChainDefinitionMap.put("/login/**", "anon");
         filterChainDefinitionMap.put("/vCode/login/**", "anon");
         filterChainDefinitionMap.put("/**", "jwtFilter");

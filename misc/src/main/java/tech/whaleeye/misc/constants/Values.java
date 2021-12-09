@@ -12,7 +12,7 @@ public class Values {
     // HTTP header
     public static final String JWT_AUTH_HEADER = "Authorize";
     // expire time (5 minutes)
-    public static final long JWT_EXPIRE_TIME_SECOND = 5 * 60 * 1000;
+    public static final long JWT_EXPIRE_TIME_SECOND = 500 * 60 * 1000;
 
     // File Upload Values
     // path to store uploaded files

@@ -67,7 +67,7 @@ public class MiscUtils {
      *
      * @param picture  the picture that needs to be processed
      * @param fileType specifies the type of this picture, such as avatar, good description pictures etc.
-     * @return the filename of the processed picture
+     * @return the file path of the processed picture
      */
     public static String processPicture(MultipartFile picture, UploadFileType fileType) throws IOException {
         String name = UUID.randomUUID().toString().replaceAll("-", "");
@@ -96,7 +96,7 @@ public class MiscUtils {
 
         builder.toFile(new File(parentDir, name));
 
-        return name.concat(".").concat("png");
+        return name.concat(".png");
     }
 
 //    /**
