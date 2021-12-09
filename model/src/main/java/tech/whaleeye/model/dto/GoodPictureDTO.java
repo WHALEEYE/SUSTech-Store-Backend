@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class GoodPictureDTO {
 
-    private String goodPath;
+    private String picturePath;
 
     private Integer sortNo;
 
