@@ -9,7 +9,7 @@ import tech.whaleeye.mapper.SecondHandGoodMapper;
 import tech.whaleeye.mapper.SecondHandOrderMapper;
 import tech.whaleeye.mapper.StoreUserMapper;
 import tech.whaleeye.misc.ajax.ListPage;
-import tech.whaleeye.misc.constants.OrderStatus;
+import tech.whaleeye.misc.constants.OrderState;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.exceptions.BadOrderStatusException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
@@ -73,44 +73,134 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
     }
 
     @Override
-    public Integer sellerAcknowledge(Integer userId, Integer orderId, Boolean ack, BigDecimal actualPrice) {
+    public boolean sellerAcknowledge(Integer userId, Integer orderId, BigDecimal actualPrice) throws TencentCloudSDKException {
         SecondHandOrder secondHandOrder = secondHandOrderMapper.getOrderById(orderId);
         SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
         if (!userId.equals(secondHandGood.getPublisher())) {
             throw new BadIdentityException();
-        } else if (secondHandOrder.getOrderStatus() != OrderStatus.ACK_PENDING.ordinal()) {
+        } else if (secondHandOrder.getOrderStatus() != OrderState.ACK_PENDING.ordinal()) {
             throw new BadOrderStatusException();
-        } else if (actualPrice != null && actualPrice.doubleValue() < 0) {
+        } else if (actualPrice == null || actualPrice.doubleValue() < 0) {
             throw new InvalidValueException();
         }
-        if (!ack) {
-            return secondHandOrderMapper.cancelOrder(orderId);
-        } else {
-            return secondHandOrderMapper.updateActualPrice(orderId, actualPrice);
+        if (secondHandOrderMapper.updateActualPrice(orderId, actualPrice) <= 0) {
+            return false;
         }
+
+        String phoneNumber = storeUserMapper.getUserById(secondHandOrder.getBuyerId()).getPhoneNumber();
+        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.PAY_PENDING);
+        return true;
     }
 
     @Override
-    public Integer buyerAcknowledge(Integer userId, Integer orderId, Boolean ack) throws TencentCloudSDKException {
+    public boolean sellerCancel(Integer userId, Integer orderId) throws TencentCloudSDKException {
         SecondHandOrder secondHandOrder = secondHandOrderMapper.getOrderById(orderId);
         SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
-        if (!userId.equals(secondHandOrder.getBuyerId())) {
+        if (!userId.equals(secondHandGood.getPublisher())) {
             throw new BadIdentityException();
-        } else if (secondHandOrder.getOrderStatus() != OrderStatus.PAY_PENDING.ordinal()) {
+        } else if (secondHandOrder.getOrderStatus() != OrderState.ACK_PENDING.ordinal()) {
             throw new BadOrderStatusException();
         }
-        if (!ack) {
-            return secondHandOrderMapper.cancelOrder(orderId);
+        if (secondHandOrderMapper.cancelOrder(orderId) <= 0) {
+            return false;
         }
-        String buyerNumber = storeUserMapper.getUserById(userId).getPhoneNumber();
-        String sellerNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
+        String phoneNumber = storeUserMapper.getUserById(secondHandOrder.getBuyerId()).getPhoneNumber();
+        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.CANCELED);
+        return true;
+    }
+
+    @Override
+    public boolean buyerAcknowledge(Integer userId, Integer orderId) throws TencentCloudSDKException {
+        SecondHandOrder secondHandOrder = secondHandOrderMapper.getOrderById(orderId);
+        if (!userId.equals(secondHandOrder.getBuyerId())) {
+            throw new BadIdentityException();
+        } else if (secondHandOrder.getOrderStatus() != OrderState.PAY_PENDING.ordinal()) {
+            throw new BadOrderStatusException();
+        }
+
         String dealCode = String.format("%06d", new Random().nextInt(1000000));
         String refundCode = String.format("%06d", new Random().nextInt(1000000));
         String tradePassword = String.format("%04d", new Random().nextInt(10000));
+        if (!secondHandOrderMapper.buyerAck(orderId, dealCode, refundCode, tradePassword)) {
+            return false;
+        }
 
-        // send inform sms
-        TencentCloudUtils.sendTradeEstablishedInform(sellerNumber, buyerNumber, secondHandGood.getTitle(), secondHandOrder.getId(), tradePassword, dealCode, refundCode);
-        return secondHandOrderMapper.buyerAck(userId, orderId, dealCode, refundCode, tradePassword);
+        SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
+        String sellerNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
+        String buyerNumber = storeUserMapper.getUserById(userId).getPhoneNumber();
+        TencentCloudUtils.sendTradeEstablishedInfo(sellerNumber, buyerNumber, secondHandGood.getTitle(), orderId, tradePassword, dealCode, refundCode);
+        return true;
+    }
+
+    @Override
+    public boolean buyerCancel(Integer userId, Integer orderId) throws TencentCloudSDKException {
+        SecondHandOrder secondHandOrder = secondHandOrderMapper.getOrderById(orderId);
+        if (!userId.equals(secondHandOrder.getBuyerId())) {
+            throw new BadIdentityException();
+        } else if (secondHandOrder.getOrderStatus() != OrderState.PAY_PENDING.ordinal()) {
+            throw new BadOrderStatusException();
+        }
+        if (secondHandOrderMapper.cancelOrder(orderId) <= 0) {
+            return false;
+        }
+        SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
+        String phoneNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
+        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.CANCELED);
+        return true;
+    }
+
+    @Override
+    public boolean confirmDeal(Integer userId, Integer orderId, String dealCode) throws TencentCloudSDKException {
+        SecondHandOrder secondHandOrder = secondHandOrderMapper.getOrderById(orderId);
+        SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
+        if (!userId.equals(secondHandGood.getPublisher())) {
+            throw new BadIdentityException();
+        } else if (secondHandOrder.getOrderStatus() != OrderState.TRADING.ordinal()) {
+            throw new BadOrderStatusException();
+        } else if (dealCode.equals(secondHandOrder.getDealCode())) {
+            throw new InvalidValueException();
+        }
+        if (secondHandOrderMapper.orderConfirm(orderId) <= 0) {
+            return false;
+        }
+
+        String phoneNumber = storeUserMapper.getUserById(secondHandOrder.getBuyerId()).getPhoneNumber();
+        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.DEAL);
+        return true;
+    }
+
+    @Override
+    public boolean refundDeal(Integer userId, Integer orderId, String refundCode) throws TencentCloudSDKException {
+        SecondHandOrder secondHandOrder = secondHandOrderMapper.getOrderById(orderId);
+        if (!userId.equals(secondHandOrder.getBuyerId())) {
+            throw new BadIdentityException();
+        } else if (secondHandOrder.getOrderStatus() != OrderState.TRADING.ordinal()) {
+            throw new BadOrderStatusException();
+        } else if (refundCode.equals(secondHandOrder.getRefundCode())) {
+            throw new InvalidValueException();
+        }
+        if (secondHandOrderMapper.orderRefund(orderId) <= 0) {
+            return false;
+        }
+
+        SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
+        String phoneNumber = storeUserMapper.getUserById(secondHandOrder.getBuyerId()).getPhoneNumber();
+        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.REFUND);
+        return true;
+    }
+
+    @Override
+    public boolean leaveComment(Integer userId, Integer orderId, Integer grade, String comment) {
+        Boolean userType = secondHandOrderMapper.getUserType(userId, orderId);
+        SecondHandOrder secondHandOrder = secondHandOrderMapper.getOrderById(orderId);
+        if (userType == null) {
+            throw new BadIdentityException();
+        } else if (secondHandOrder.getOrderStatus() != OrderState.DEAL.ordinal()) {
+            throw new BadOrderStatusException();
+        } else if (comment.length() > 255 || grade < 1 || grade > 5) {
+            throw new InvalidValueException();
+        }
+        return secondHandOrderMapper.updateCommentAndGrade(orderId, comment, userType) > 0;
     }
 
 }

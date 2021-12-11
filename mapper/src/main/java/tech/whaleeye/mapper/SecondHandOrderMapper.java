@@ -32,15 +32,21 @@ public interface SecondHandOrderMapper {
     Integer countOrderByGoodId(@Param("publisher") Integer publisher,
                                @Param("goodId") Integer goodId);
 
+    Boolean buyerAck(@Param("orderId") Integer orderId,
+                     @Param("dealCode") String dealCode,
+                     @Param("refundCode") String refundCode,
+                     @Param("tradePassword") String tradePassword);
+
+    Integer orderConfirm(@Param("orderId") Integer orderId);
+
+    Integer orderRefund(@Param("orderId") Integer orderId);
+
     Integer insertSecondHandOrder(SecondHandOrder secondHandOrder);
 
     Integer cancelOrder(@Param("orderId") Integer orderId);
 
     Integer updateActualPrice(@Param("orderId") Integer orderId, @Param("actualPrice") BigDecimal actualPrice);
 
-    Integer buyerAck(@Param("userId") Integer userId,
-                     @Param("orderId") Integer orderId,
-                     @Param("dealCode") String dealCode,
-                     @Param("refundCode") String refundCode,
-                     @Param("tradePassword") String tradePassword);
+    Integer updateCommentAndGrade(@Param("orderId") Integer orderId, @Param("comment") String comment, @Param("userType") Boolean userType);
+
 }

@@ -285,20 +285,20 @@ create table if not exists collect_relation
 );
 create index if not exists collector_id_index on collect_relation (collector_id);
 
-create or replace function buyer_ack(user_id int, order_id int, d_code char(6), r_code char(6),
-                                     pwd char(4))
-    returns int as
+create or replace function buyer_ack(order_id int, d_code char(6), r_code char(6), pwd char(4))
+    returns bool as
 $$
 declare
-    balance   numeric(12, 2);
-    price     numeric(12, 2);
-    v_good_id int;
+    v_balance  numeric(12, 2);
+    v_price    numeric(12, 2);
+    v_buyer_id int;
+    v_good_id  int;
 begin
-    select account_balance into balance from store_user where id = user_id for update;
-    select actual_price into price from second_hand_order where id = order_id;
+    select actual_price, buyer_id into v_price, v_buyer_id from second_hand_order where id = order_id;
+    select account_balance into v_balance from store_user where id = v_buyer_id for update;
 
-    if price > balance then
-        return -1;
+    if v_price > v_balance then
+        return false;
     end if;
 
     update second_hand_order
@@ -309,7 +309,7 @@ begin
         updated_time   = now()
     where id = order_id;
 
-    update store_user set account_balance = balance - price where id = user_id;
+    update store_user set account_balance = v_balance - v_price where id = v_buyer_id;
 
     select good_id into v_good_id from second_hand_order where id = order_id;
     update second_hand_good set sold = true, updated_time = now() where id = v_good_id;
@@ -319,6 +319,52 @@ begin
     where good_id = v_good_id
       and not id = order_id;
 
+    return true;
+end
+$$ language plpgsql;
+
+create or replace function order_confirm(order_id int)
+    returns int as
+$$
+declare
+    v_balance   numeric(12, 2);
+    v_price     numeric(12, 2);
+    v_seller_id int;
+begin
+    select sho.actual_price, shg.publisher
+    into v_price, v_seller_id
+    from second_hand_order sho
+             join second_hand_good shg on shg.id = sho.good_id
+    where sho.id = order_id;
+    select account_balance into v_balance from store_user where id = v_seller_id for update;
+
+    update second_hand_order
+    set order_status = 3,
+        updated_time = now()
+    where id = order_id;
+
+    update store_user set account_balance = v_balance - v_price where id = v_seller_id;
+    return 1;
+end
+$$ language plpgsql;
+
+create or replace function order_refund(order_id int)
+    returns int as
+$$
+declare
+    v_balance  numeric(12, 2);
+    v_price    numeric(12, 2);
+    v_buyer_id int;
+begin
+    select actual_price, buyer_id into v_price from second_hand_order where id = order_id;
+    select account_balance into v_balance from store_user where id = v_buyer_id for update;
+
+    update second_hand_order
+    set order_status = 4,
+        updated_time = now()
+    where id = order_id;
+
+    update store_user set account_balance = v_balance - v_price where id = v_buyer_id;
     return 1;
 end
 $$ language plpgsql;

@@ -5,6 +5,8 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.lang.Nullable;
 import tech.whaleeye.model.entity.StoreUser;
 
+import java.math.BigDecimal;
+
 @Mapper
 public interface StoreUserMapper {
 
@@ -36,6 +38,8 @@ public interface StoreUserMapper {
                                 @Param("apiTradeNotification") Boolean apiTradeNotification);
 
     Integer updateAvatar(@Param("userId") Integer userId, @Param("avatarPath") String avatarPath);
+
+    Integer updateBalance(@Param("userId") Integer userId, @Param("amount") BigDecimal amount);
 
     void deleteStoreUser(@Param("userId") Integer userId, @Param("deleteUserId") Integer deleteUserId);
 

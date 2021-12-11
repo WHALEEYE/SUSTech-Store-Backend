@@ -2,10 +2,9 @@ package tech.whaleeye.frontcontroller.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,9 +26,8 @@ import java.util.List;
 @Api("Second Hand Good Controller")
 @RestController
 @RequestMapping("/secondHandGood")
+@Log4j2
 public class SecondHandGoodController {
-
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     ModelMapper modelMapper;

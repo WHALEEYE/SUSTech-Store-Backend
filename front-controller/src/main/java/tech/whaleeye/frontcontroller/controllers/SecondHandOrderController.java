@@ -86,10 +86,19 @@ public class SecondHandOrderController {
     AjaxResult sellerAcknowledge(@PathVariable("orderId") Integer orderId, Boolean ack,
                                  @RequestParam(required = false) BigDecimal actualPrice) {
         try {
-            if (secondHandOrderService.sellerAcknowledge(MiscUtils.currentUserId(), orderId, ack, actualPrice) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Operation failed");
+            if (ack) {
+                if (secondHandOrderService.sellerAcknowledge(MiscUtils.currentUserId(), orderId, actualPrice)) {
+                    return AjaxResult.setSuccess(true).setMsg("Order acknowledged");
+                } else {
+                    return AjaxResult.setSuccess(false).setMsg("Operation failed");
+                }
+            } else {
+                if (secondHandOrderService.sellerCancel(MiscUtils.currentUserId(), orderId)) {
+                    return AjaxResult.setSuccess(true).setMsg("Canceled successfully");
+                } else {
+                    return AjaxResult.setSuccess(false).setMsg("Operation failed");
+                }
             }
-            return AjaxResult.setSuccess(true).setMsg("Operation succeeded");
         } catch (BadIdentityException bie) {
             return AjaxResult.setSuccess(false).setMsg("You are not allowed to this operation");
         } catch (BadOrderStatusException bose) {
@@ -103,13 +112,19 @@ public class SecondHandOrderController {
     @PutMapping("status/buyer/{orderId}")
     AjaxResult buyerAcknowledge(@PathVariable("orderId") Integer orderId, Boolean ack) {
         try {
-            int rst = secondHandOrderService.buyerAcknowledge(MiscUtils.currentUserId(), orderId, ack);
-            if (ack && rst == -1) {
-                return AjaxResult.setSuccess(false).setMsg("Insufficient balance!");
-            } else if (!ack && rst <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Operation failed.");
+            if (ack) {
+                if (secondHandOrderService.buyerAcknowledge(MiscUtils.currentUserId(), orderId)) {
+                    return AjaxResult.setSuccess(true).setMsg("Paid successfully. The trade has established.");
+                } else {
+                    return AjaxResult.setSuccess(false).setMsg("Insufficient balance!");
+                }
+            } else {
+                if (secondHandOrderService.buyerCancel(MiscUtils.currentUserId(), orderId)) {
+                    return AjaxResult.setSuccess(false).setMsg("Canceled successfully");
+                } else {
+                    return AjaxResult.setSuccess(false).setMsg("Operation failed");
+                }
             }
-            return AjaxResult.setSuccess(true).setMsg("Paid successfully. The trade has established.");
         } catch (BadIdentityException bie) {
             return AjaxResult.setSuccess(false).setMsg("You are not allowed to this operation");
         } catch (BadOrderStatusException bose) {
@@ -125,9 +140,16 @@ public class SecondHandOrderController {
     @PutMapping("status/deal/{orderId}")
     AjaxResult confirmDeal(@PathVariable("orderId") Integer orderId, String dealCode) {
         try {
-            return null;
+            if (!secondHandOrderService.confirmDeal(MiscUtils.currentUserId(), orderId, dealCode)) {
+                return AjaxResult.setSuccess(false).setMsg("Deal confirmation failed");
+            }
+            return AjaxResult.setSuccess(false).setMsg("Deal confirmed");
+        } catch (BadIdentityException bie) {
+            return AjaxResult.setSuccess(false).setMsg("You are not allowed to this operation");
+        } catch (BadOrderStatusException bose) {
+            return AjaxResult.setSuccess(false).setMsg("Bad order status");
         } catch (Exception e) {
-            return AjaxResult.setSuccess(false).setMsg("Operation failed");
+            return AjaxResult.setSuccess(false).setMsg("Deal confirmation failed");
         }
     }
 
@@ -135,29 +157,34 @@ public class SecondHandOrderController {
     @PutMapping("status/refund/{orderId}")
     AjaxResult refundDeal(@PathVariable("orderId") Integer orderId, String refundCode) {
         try {
-            return null;
+            if (!secondHandOrderService.refundDeal(MiscUtils.currentUserId(), orderId, refundCode)) {
+                return AjaxResult.setSuccess(false).setMsg("Refund failed");
+            }
+            return AjaxResult.setSuccess(false).setMsg("Refund succeeded");
+        } catch (BadIdentityException bie) {
+            return AjaxResult.setSuccess(false).setMsg("You are not allowed to this operation");
+        } catch (BadOrderStatusException bose) {
+            return AjaxResult.setSuccess(false).setMsg("Bad order status");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Operation failed");
         }
     }
 
     @ApiOperation("seller's comment and grade")
-    @PutMapping("comment/seller/{orderId}")
-    AjaxResult sellerComment(@PathVariable("orderId") Integer orderId, Integer grade, String comment) {
+    @PutMapping("comment/{orderId}")
+    AjaxResult leaveComment(@PathVariable("orderId") Integer orderId, Integer grade, String comment) {
         try {
-            return null;
+            if (!secondHandOrderService.leaveComment(MiscUtils.currentUserId(), orderId, grade, comment)) {
+                return AjaxResult.setSuccess(false).setMsg("Comment failed");
+            }
+            return AjaxResult.setSuccess(true).setMsg("Comment succeeded");
+        } catch (BadIdentityException bie) {
+            return AjaxResult.setSuccess(false).setMsg("You are not allowed to this operation");
+        } catch (BadOrderStatusException bose) {
+            return AjaxResult.setSuccess(false).setMsg("Bad order status");
         } catch (Exception e) {
-            return AjaxResult.setSuccess(false).setMsg("Operation failed");
+            return AjaxResult.setSuccess(false).setMsg("Comment failed");
         }
     }
 
-    @ApiOperation("buyer's comment and grade")
-    @PutMapping("comment/buyer/{orderId}")
-    AjaxResult buyerComment(@PathVariable("orderId") Integer orderId, Integer grade, String comment) {
-        try {
-            return null;
-        } catch (Exception e) {
-            return AjaxResult.setSuccess(false).setMsg("Operation failed");
-        }
-    }
 }

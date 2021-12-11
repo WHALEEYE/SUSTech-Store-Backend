@@ -40,7 +40,7 @@ public class VCodeRecordController {
     @ApiOperation("send verification code for login")
     @PostMapping("/login/{phoneNumber}")
     public AjaxResult sendLoginVCode(@PathVariable("phoneNumber") String phoneNumber) {
-        if (phoneNumber.length() != 11) {
+        if (!phoneNumber.matches("[0-9]{11}")) {
             return AjaxResult.setSuccess(false).setMsg("Invalid phone number.");
         }
         if (storeUserService.getStoreUserByPhoneNumber(phoneNumber) == null) {

@@ -8,6 +8,7 @@ import com.tencentcloudapi.sms.v20210111.SmsClient;
 import com.tencentcloudapi.sms.v20210111.models.SendSmsRequest;
 import com.tencentcloudapi.sms.v20210111.models.SendSmsResponse;
 import com.tencentcloudapi.sms.v20210111.models.SendStatus;
+import tech.whaleeye.misc.constants.OrderState;
 import tech.whaleeye.misc.constants.SMSTemplate;
 import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.misc.constants.Values;
@@ -29,16 +30,25 @@ public class TencentCloudUtils {
         sendSMS(vCodeType.getSmsTemplate(), phoneNumberSet, templateParamSet);
     }
 
-    public static void sendTradeEstablishedInform(String sellerNumber, String buyerNumber, String goodTitle, Integer orderId, String password, String dealCode, String refundCode) throws TencentCloudSDKException {
+    public static void sendTradeEstablishedInfo(String sellerNumber, String buyerNumber, String goodTitle, Integer orderId, String password, String dealCode, String refundCode) throws TencentCloudSDKException {
         if (goodTitle.length() > 5) {
             goodTitle = goodTitle.substring(0, 5).concat("...");
         }
         String[] sellerNumberSet = {"+86" + sellerNumber};
-        String[] sellerParamSet = {goodTitle, orderId.toString(), "买家", "退款码", password, "退款码", refundCode};
-        sendSMS(SMSTemplate.TRADE_ESTABLISHED_INFORM, sellerNumberSet, sellerParamSet);
+        String[] sellerParamSet = {goodTitle, orderId.toString(), password, refundCode};
+        sendSMS(SMSTemplate.TRADE_SELLER, sellerNumberSet, sellerParamSet);
         String[] buyerNumberSet = {"+86" + buyerNumber};
-        String[] buyerParamSet = {goodTitle, orderId.toString(), "您", "交易码", password, "交易码", dealCode};
-        sendSMS(SMSTemplate.TRADE_ESTABLISHED_INFORM, buyerNumberSet, buyerParamSet);
+        String[] buyerParamSet = {goodTitle, orderId.toString(), password, dealCode};
+        sendSMS(SMSTemplate.TRADE_BUYER, buyerNumberSet, buyerParamSet);
+    }
+
+    public static void sendRenewInfo(String phoneNumber, String goodTitle, Integer orderId, OrderState renewedState) throws TencentCloudSDKException {
+        if (goodTitle.length() > 5) {
+            goodTitle = goodTitle.substring(0, 5).concat("...");
+        }
+        String[] phoneNumberSet = {"+86" + phoneNumber};
+        String[] templateParamSet = {goodTitle, orderId.toString()};
+        sendSMS(renewedState.getSmsTemplate(), phoneNumberSet, templateParamSet);
     }
 
 //    public static void main(String[] args) {

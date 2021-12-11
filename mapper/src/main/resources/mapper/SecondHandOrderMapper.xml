@@ -61,44 +61,36 @@
 
     <select id="getOrderByUserId" resultMap="BaseResultMap">
         select sho.id,
-        sho.good_id,
-        sho.buyer_id,
-        sho.order_status,
-        sho.actual_price,
-        sho.trade_location,
-        sho.trade_latitude,
-        sho.trade_longitude,
-        sho.trade_time,
-        sho.trade_password,
-        sho.deal_code,
-        sho.refund_code,
-        sho.grade_by_seller,
-        sho.grade_by_buyer,
-        sho.comment_by_seller,
-        sho.comment_by_buyer,
-        sho.created_time,
-        sho.updated_time
+               sho.good_id,
+               sho.buyer_id,
+               sho.order_status,
+               sho.actual_price,
+               sho.trade_location,
+               sho.trade_latitude,
+               sho.trade_longitude,
+               sho.trade_time,
+               sho.trade_password,
+               sho.deal_code,
+               sho.refund_code,
+               sho.grade_by_seller,
+               sho.grade_by_buyer,
+               sho.comment_by_seller,
+               sho.comment_by_buyer,
+               sho.created_time,
+               sho.updated_time
         from second_hand_order sho
-        join second_hand_good shg on shg.id = sho.good_id
-        where
-        <choose>
-            <when test="isBuyer==true">sho.buyer_id = #{userId}</when>
-            <otherwise>shg.publisher = #{userId}</otherwise>
-        </choose>
-        and sho.order_status = #{orderStatus}
+                 join second_hand_good shg on shg.id = sho.good_id
+        where case #{userType} when true then sho.buyer_id = #{userId} when false then shg.publisher = #{userId} end
+          and sho.order_status = #{orderStatus}
         limit #{pageSize} offset #{offset}
     </select>
 
     <select id="countOrderByUserId" resultType="Integer">
         select count(*)
         from second_hand_order sho
-        join second_hand_good shg on shg.id = sho.good_id
-        where
-        <choose>
-            <when test="userType==true">sho.buyer_id = #{userId}</when>
-            <otherwise>shg.publisher = #{userId}</otherwise>
-        </choose>
-        and sho.order_status = #{orderStatus}
+                 join second_hand_good shg on shg.id = sho.good_id
+        where case #{userType} when true then sho.buyer_id = #{userId} when false then shg.publisher = #{userId} end
+          and sho.order_status = #{orderStatus}
     </select>
 
     <select id="getOrderByGoodId" resultMap="BaseResultMap">
@@ -135,6 +127,18 @@
           and shg.id = #{goodId}
     </select>
 
+    <select id="buyerAck">
+        select buyer_ack(#{orderId}, #{dealCode}, #{refundCode}, #{tradePassword})
+    </select>
+
+    <select id="orderConfirm">
+        select order_confirm(#{orderId})
+    </select>
+
+    <select id="orderRefund">
+        select order_refund(#{orderId})
+    </select>
+
     <insert id="insertSecondHandOrder" parameterType="tech.whaleeye.model.entity.SecondHandOrder"
             useGeneratedKeys="true" keyProperty="id">
         insert into second_hand_order (id, good_id, buyer_id, order_status, actual_price, trade_location,
@@ -161,8 +165,13 @@
         where id = #{orderId}
     </update>
 
-    <update id="buyerAck">
-        select buyer_ack(#{userId}, #{orderId}, #{dealCode}, #{refundCode}, #{tradePassword})
+    <update id="updateCommentAndGrade">
+        update second_hand_order set
+        <choose>
+            <when test="userType == true">grade_by_buyer = #{grade}, comment_by_buyer = #{comment}</when>
+            <when test="userType == false">grade_by_seller = #{grade}, comment_by_seller = #{comment}</when>
+        </choose>
+        where id = #{orderId}
     </update>
 
 </mapper>

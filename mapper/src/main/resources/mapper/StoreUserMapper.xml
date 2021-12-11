@@ -83,6 +83,10 @@
         </where>
     </select>
 
+    <select id="updateBalance">
+        select update_balance(#{userId}, #{amount});
+    </select>
+
     <insert id="registerStoreUser" parameterType="String">
         insert into store_user (phone_number)
         values (#{phoneNumber})
@@ -157,10 +161,6 @@
         set avatar_path  = #{avatarPath},
             updated_time = now()
         where id = #{userId}
-    </update>
-
-    <update id="updateBalance">
-
     </update>
 
     <delete id="deleteStoreUser">

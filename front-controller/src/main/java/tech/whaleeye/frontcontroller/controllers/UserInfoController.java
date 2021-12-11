@@ -2,9 +2,8 @@ package tech.whaleeye.frontcontroller.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,9 +24,8 @@ import java.io.IOException;
 @Api("Check and Modify User Information")
 @RestController
 @RequestMapping("/userInfo")
+@Log4j2
 public class UserInfoController {
-
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Autowired
     StoreUserService storeUserService;

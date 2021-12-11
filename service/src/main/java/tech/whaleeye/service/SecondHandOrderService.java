@@ -17,8 +17,18 @@ public interface SecondHandOrderService {
 
     Integer insertSecondHandOrder(SecondHandOrder secondHandOrder);
 
-    Integer sellerAcknowledge(Integer userId, Integer orderId, Boolean ack, BigDecimal actualPrice);
+    boolean sellerAcknowledge(Integer userId, Integer orderId, BigDecimal actualPrice) throws TencentCloudSDKException;
 
-    Integer buyerAcknowledge(Integer userId, Integer orderId, Boolean ack) throws TencentCloudSDKException;
+    boolean sellerCancel(Integer userId, Integer orderId) throws TencentCloudSDKException;
+
+    boolean buyerAcknowledge(Integer userId, Integer orderId) throws TencentCloudSDKException;
+
+    boolean buyerCancel(Integer userId, Integer orderId) throws TencentCloudSDKException;
+
+    boolean confirmDeal(Integer userId, Integer orderId, String dealCode) throws TencentCloudSDKException;
+
+    boolean refundDeal(Integer userId, Integer orderId, String refundCode) throws TencentCloudSDKException;
+
+    boolean leaveComment(Integer userId, Integer orderId, Integer grade, String comment);
 
 }
