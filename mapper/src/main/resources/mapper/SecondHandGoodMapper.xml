@@ -40,9 +40,14 @@
         created_time,
         updated_time
         from second_hand_good
-        <if test="sold != null">
-            and sold = #{sold}
-        </if>
+        <where>
+            <if test="sold != null and sold != ''">
+                sold = #{sold}
+            </if>
+            <if test="typeId != null and typeId != '' or typeId == 0">
+                and type_id = #{typeId}
+            </if>
+        </where>
         order by sold, created_time desc
         limit #{pageSize} offset #{offset}
     </select>
@@ -50,9 +55,14 @@
     <select id="countAllGoods" resultType="Integer">
         select count(*)
         from second_hand_good
-        <if test="sold != null">
-            where sold = #{sold}
-        </if>
+        <where>
+            <if test="sold != null and sold != ''">
+                sold = #{sold}
+            </if>
+            <if test="typeId != null and typeId != '' or typeId == 0">
+                and type_id = #{typeId}
+            </if>
+        </where>
     </select>
 
     <select id="getGoodsByPublisher" resultMap="BaseResultMap">
@@ -67,8 +77,8 @@
         updated_time
         from second_hand_good
         where publisher = #{publisher}
-        <if test="sold != null">
-            and sold = #{sold}
+        <if test="sold != null and sold != ''">
+            sold = #{sold}
         </if>
         order by sold, created_time desc
         limit #{pageSize} offset #{offset}
@@ -78,8 +88,8 @@
         select count(*)
         from second_hand_good
         where publisher = #{publisher}
-        <if test="sold != null">
-            and sold = #{sold}
+        <if test="sold != null and sold != ''">
+            sold = #{sold}
         </if>
     </select>
 

@@ -47,10 +47,13 @@ public class SecondHandGoodController {
 
     @ApiOperation("list all goods")
     @GetMapping("brief")
-    AjaxResult listAllGoods(Integer pageSize, Integer pageNo, @RequestParam(required = false) Boolean sold) {
+    AjaxResult listAllGoods(Integer pageSize,
+                            Integer pageNo,
+                            @RequestParam(required = false) Boolean sold,
+                            @RequestParam(required = false) Integer typeId) {
         try {
-            List<BriefGoodVO> goodList = secondHandGoodService.getAllGoods(pageSize, pageNo, sold);
-            int total = secondHandGoodService.countAllGoods(sold);
+            List<BriefGoodVO> goodList = secondHandGoodService.getAllGoods(pageSize, pageNo, sold, typeId);
+            int total = secondHandGoodService.countAllGoods(sold, typeId);
             return AjaxResult.setSuccess(true).setData(new ListPage<>(goodList, pageSize, pageNo, total));
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Failed to list goods.");

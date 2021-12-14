@@ -44,10 +44,10 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     }
 
     @Override
-    public List<BriefGoodVO> getAllGoods(Integer pageSize, Integer pageNo, Boolean sold) {
+    public List<BriefGoodVO> getAllGoods(Integer pageSize, Integer pageNo, Boolean sold, Integer typeId) {
         List<BriefGoodVO> briefGoodVOList = new ArrayList<>();
         BriefGoodVO briefGoodVO;
-        for (SecondHandGood secondHandGood : secondHandGoodMapper.getAllGoods(pageSize, (pageNo - 1) * pageSize, sold)) {
+        for (SecondHandGood secondHandGood : secondHandGoodMapper.getAllGoods(pageSize, (pageNo - 1) * pageSize, sold, typeId)) {
             briefGoodVO = modelMapper.map(secondHandGood, BriefGoodVO.class);
             GoodType goodType = null;
             if (secondHandGood.getTypeId() != null)
@@ -95,8 +95,8 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     }
 
     @Override
-    public Integer countAllGoods(Boolean sold) {
-        return secondHandGoodMapper.countAllGoods(sold);
+    public Integer countAllGoods(Boolean sold, Integer typeId) {
+        return secondHandGoodMapper.countAllGoods(sold, typeId);
     }
 
     @Override
