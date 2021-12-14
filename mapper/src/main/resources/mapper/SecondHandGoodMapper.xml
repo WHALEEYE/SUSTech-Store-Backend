@@ -29,19 +29,47 @@
         where id = #{goodId}
     </select>
 
+    <select id="getAllGoods" resultMap="BaseResultMap">
+        select id,
+        type_id,
+        title,
+        description,
+        price,
+        publisher,
+        sold,
+        created_time,
+        updated_time
+        from second_hand_good
+        <if test="sold != null">
+            and sold = #{sold}
+        </if>
+        order by sold, created_time desc
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="countAllGoods" resultType="Integer">
+        select count(*)
+        from second_hand_good
+        <if test="sold != null">
+            where sold = #{sold}
+        </if>
+    </select>
+
     <select id="getGoodsByPublisher" resultMap="BaseResultMap">
         select id,
-               type_id,
-               title,
-               description,
-               price,
-               publisher,
-               sold,
-               created_time,
-               updated_time
+        type_id,
+        title,
+        description,
+        price,
+        publisher,
+        sold,
+        created_time,
+        updated_time
         from second_hand_good
         where publisher = #{publisher}
-          and case #{status} when 1 then not sold when 2 then sold end
+        <if test="sold != null">
+            and sold = #{sold}
+        </if>
         order by sold, created_time desc
         limit #{pageSize} offset #{offset}
     </select>
@@ -50,8 +78,8 @@
         select count(*)
         from second_hand_good
         where publisher = #{publisher}
-        <if test="notSold == true">
-            and not sold
+        <if test="sold != null">
+            and sold = #{sold}
         </if>
     </select>
 

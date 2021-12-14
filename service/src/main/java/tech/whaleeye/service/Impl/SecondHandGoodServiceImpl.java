@@ -44,10 +44,23 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     }
 
     @Override
-    public List<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer status, Integer pageSize, Integer pageNo) {
+    public List<BriefGoodVO> getAllGoods(Integer pageSize, Integer pageNo, Boolean sold) {
         List<BriefGoodVO> briefGoodVOList = new ArrayList<>();
         BriefGoodVO briefGoodVO;
-        for (SecondHandGood secondHandGood : secondHandGoodMapper.getGoodsByPublisher(publisher, status, pageSize, (pageNo - 1) * pageSize)) {
+        for (SecondHandGood secondHandGood : secondHandGoodMapper.getAllGoods(pageSize, (pageNo - 1) * pageSize, sold)) {
+            briefGoodVO = modelMapper.map(secondHandGood, BriefGoodVO.class);
+            briefGoodVO.setGoodTypeVO(modelMapper.map(goodTypeMapper.getGoodTypeById(briefGoodVO.getId()), GoodTypeVO.class));
+            briefGoodVO.setMainPicPath(goodPictureMapper.getMainPicPathByGoodId(briefGoodVO.getId()));
+            briefGoodVOList.add(briefGoodVO);
+        }
+        return briefGoodVOList;
+    }
+
+    @Override
+    public List<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo, Boolean sold) {
+        List<BriefGoodVO> briefGoodVOList = new ArrayList<>();
+        BriefGoodVO briefGoodVO;
+        for (SecondHandGood secondHandGood : secondHandGoodMapper.getGoodsByPublisher(publisher, pageSize, (pageNo - 1) * pageSize, sold)) {
             briefGoodVO = modelMapper.map(secondHandGood, BriefGoodVO.class);
             briefGoodVO.setGoodTypeVO(modelMapper.map(goodTypeMapper.getGoodTypeById(briefGoodVO.getId()), GoodTypeVO.class));
             briefGoodVO.setMainPicPath(goodPictureMapper.getMainPicPathByGoodId(briefGoodVO.getId()));
@@ -69,13 +82,13 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     }
 
     @Override
-    public Integer countAllGoodsByPublisher(Integer publisher) {
-        return secondHandGoodMapper.countGoodsByPublisher(publisher, false);
+    public Integer countGoodsByPublisher(Integer publisher, Boolean sold) {
+        return secondHandGoodMapper.countGoodsByPublisher(publisher, sold);
     }
 
     @Override
-    public Integer countUnsoldGoodsByPublisher(Integer publisher) {
-        return secondHandGoodMapper.countGoodsByPublisher(publisher, true);
+    public Integer countAllGoods(Boolean sold) {
+        return secondHandGoodMapper.countAllGoods(sold);
     }
 
     @Override
