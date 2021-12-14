@@ -49,7 +49,11 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
         BriefGoodVO briefGoodVO;
         for (SecondHandGood secondHandGood : secondHandGoodMapper.getAllGoods(pageSize, (pageNo - 1) * pageSize, sold)) {
             briefGoodVO = modelMapper.map(secondHandGood, BriefGoodVO.class);
-            briefGoodVO.setGoodTypeVO(modelMapper.map(goodTypeMapper.getGoodTypeById(briefGoodVO.getId()), GoodTypeVO.class));
+            GoodType goodType = null;
+            if (secondHandGood.getTypeId() != null)
+                goodType = goodTypeMapper.getGoodTypeById(secondHandGood.getTypeId());
+            if (goodType != null)
+                briefGoodVO.setGoodTypeVO(modelMapper.map(goodType, GoodTypeVO.class));
             briefGoodVO.setMainPicPath(goodPictureMapper.getMainPicPathByGoodId(briefGoodVO.getId()));
             briefGoodVOList.add(briefGoodVO);
         }
@@ -62,7 +66,11 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
         BriefGoodVO briefGoodVO;
         for (SecondHandGood secondHandGood : secondHandGoodMapper.getGoodsByPublisher(publisher, pageSize, (pageNo - 1) * pageSize, sold)) {
             briefGoodVO = modelMapper.map(secondHandGood, BriefGoodVO.class);
-            briefGoodVO.setGoodTypeVO(modelMapper.map(goodTypeMapper.getGoodTypeById(briefGoodVO.getId()), GoodTypeVO.class));
+            GoodType goodType = null;
+            if (secondHandGood.getTypeId() != null)
+                goodType = goodTypeMapper.getGoodTypeById(secondHandGood.getTypeId());
+            if (goodType != null)
+                briefGoodVO.setGoodTypeVO(modelMapper.map(goodType, GoodTypeVO.class));
             briefGoodVO.setMainPicPath(goodPictureMapper.getMainPicPathByGoodId(briefGoodVO.getId()));
             briefGoodVOList.add(briefGoodVO);
         }
@@ -93,7 +101,7 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
 
     @Override
     public Integer insertSecondHandGood(SecondHandGood secondHandGood) {
-        if (secondHandGood.getPrice().doubleValue() < 0f) {
+        if (secondHandGood.getPrice().doubleValue() < 0f || secondHandGood.getPictureList().isEmpty()) {
             throw new InvalidValueException();
         }
         if (secondHandGoodMapper.insertSecondHandGood(secondHandGood) <= 0) {
