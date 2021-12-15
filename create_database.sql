@@ -190,6 +190,7 @@ begin
                                           deleted_time, deleted_by)
     values (old.id, old.title, old.description, old.price, old.publisher, old.sold, old.created_time, old.updated_time,
             now(), -1);
+    return null;
 end;
 $$ language plpgsql;
 
@@ -258,6 +259,7 @@ begin
             old.trade_longitude, old.trade_time, old.trade_password, old.deal_code, old.refund_code,
             old.grade_by_seller, old.grade_by_buyer, old.comment_by_seller, old.comment_by_buyer, old.created_time,
             old.updated_time, now());
+    return null;
 end;
 $$
     language plpgsql;
