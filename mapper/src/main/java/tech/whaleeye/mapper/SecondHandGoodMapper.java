@@ -11,12 +11,19 @@ public interface SecondHandGoodMapper {
 
     SecondHandGood getGoodById(@Param("goodId") Integer goodId);
 
-    List<SecondHandGood> getGoodsByPublisher(@Param("publisher") Integer publisher,
-                                             @Param("status") Integer status,
-                                             @Param("pageSize") Integer pageSize,
-                                             @Param("offset") Integer offset);
+    List<SecondHandGood> getAllGoods(@Param("pageSize") Integer pageSize,
+                                     @Param("offset") Integer offset,
+                                     @Param("sold") Boolean sold,
+                                     @Param("typeId") Integer typeId);
 
-    Integer countGoodsByPublisher(@Param("publisher") Integer publisher, @Param("notSold") Boolean notSold);
+    Integer countAllGoods(@Param("sold") Boolean sold, @Param("typeId") Integer typeId);
+
+    List<SecondHandGood> getGoodsByPublisher(@Param("publisher") Integer publisher,
+                                             @Param("pageSize") Integer pageSize,
+                                             @Param("offset") Integer offset,
+                                             @Param("sold") Boolean sold);
+
+    Integer countGoodsByPublisher(@Param("publisher") Integer publisher, @Param("sold") Boolean sold);
 
     Integer insertSecondHandGood(SecondHandGood secondHandGood);
 
