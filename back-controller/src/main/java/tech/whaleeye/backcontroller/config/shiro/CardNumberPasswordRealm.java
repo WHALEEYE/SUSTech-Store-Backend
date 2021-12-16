@@ -23,7 +23,7 @@ public class CardNumberPasswordRealm extends AuthorizingRealm {
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
-        LoginToken loginToken = (LoginToken) authenticationToken;
+        UsernamePasswordToken loginToken = (UsernamePasswordToken) authenticationToken;
         StoreUser storeUser = storeUserService.getStoreUserByCardNumber(loginToken.getUsername());
         if (storeUser == null) {
             throw new UnknownAccountException();
@@ -33,13 +33,4 @@ public class CardNumberPasswordRealm extends AuthorizingRealm {
         return new SimpleAuthenticationInfo(storeUser.getId(), storeUser.getPassword(), MiscUtils.getSaltFromHex(storeUser.getSalt()), getName());
     }
 
-    @Override
-    public boolean supports(AuthenticationToken authenticationToken) {
-        if (authenticationToken instanceof UsernamePasswordToken) {
-            LoginToken loginToken = (LoginToken) authenticationToken;
-            return loginToken.getLoginType() == LoginType.CARD_PWD;
-        } else {
-            return false;
-        }
-    }
 }

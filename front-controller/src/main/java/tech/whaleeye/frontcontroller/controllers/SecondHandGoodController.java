@@ -3,6 +3,7 @@ package tech.whaleeye.frontcontroller.controllers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,6 +61,7 @@ public class SecondHandGoodController {
         }
     }
 
+    @RequiresRoles("user")
     @ApiOperation("list goods of the current user")
     @GetMapping("brief/current")
     AjaxResult listGoodsOfCurrent(Integer pageSize,

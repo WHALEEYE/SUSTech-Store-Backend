@@ -135,11 +135,6 @@ public class ShiroConfig {
     }
 
     @Bean
-    PhoneVCodeRealm phoneVCodeRealm() {
-        return new PhoneVCodeRealm();
-    }
-
-    @Bean
     CardNumberPasswordRealm cardNumberPasswordRealm() {
         CardNumberPasswordRealm cardNumberPasswordRealm = new CardNumberPasswordRealm();
         // Set Hash Algorithm Name
@@ -155,8 +150,7 @@ public class ShiroConfig {
      */
     @Bean
     public DefaultWebSecurityManager defaultWebSecurityManager(@Autowired JWTRealm jwtRealm,
-                                                               @Autowired CardNumberPasswordRealm cardNumberPasswordRealm,
-                                                               @Autowired PhoneVCodeRealm phoneVCodeRealm) {
+                                                               @Autowired CardNumberPasswordRealm cardNumberPasswordRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 
         // 1. Authenticator
@@ -166,7 +160,6 @@ public class ShiroConfig {
         List<Realm> realmList = new ArrayList<>();
         realmList.add(jwtRealm);
         realmList.add(cardNumberPasswordRealm);
-        realmList.add(phoneVCodeRealm);
         securityManager.setRealms(realmList);
 
         // 3. Turn off the session of Shiro
