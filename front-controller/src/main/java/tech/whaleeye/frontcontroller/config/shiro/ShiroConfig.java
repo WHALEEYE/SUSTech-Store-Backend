@@ -96,6 +96,12 @@ public class ShiroConfig {
         // This line should be removed in release version
         filterChainDefinitionMap.put("/test/**", "anon");
 
+        // APIs in second hand good controller
+        filterChainDefinitionMap.put("/secondHandGood/brief/current", "jwtFilter");
+        filterChainDefinitionMap.put("/secondHandGood/brief/**", "anon");
+        filterChainDefinitionMap.put("/secondHandGood/detail/**", "anon");
+        filterChainDefinitionMap.put("/secondHandGood/type/**", "anon");
+
         filterChainDefinitionMap.put("/upload/**", "anon");
         filterChainDefinitionMap.put("/login/**", "anon");
         filterChainDefinitionMap.put("/vCode/login/**", "anon");

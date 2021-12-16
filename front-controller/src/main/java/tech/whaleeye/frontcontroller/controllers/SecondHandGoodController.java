@@ -84,9 +84,10 @@ public class SecondHandGoodController {
                                 @RequestParam(required = false) String searchKeyword) {
         try {
             List<BriefGoodVO> briefGoodVOList = secondHandGoodService.getGoodsByPublisher(userId, pageSize, pageNo, sold, searchKeyword);
-            int total = secondHandGoodService.countGoodsByPublisher(MiscUtils.currentUserId(), sold, searchKeyword);
+            int total = secondHandGoodService.countGoodsByPublisher(userId, sold, searchKeyword);
             return AjaxResult.setSuccess(true).setData(new ListPage<>(briefGoodVOList, pageSize, pageNo, total));
         } catch (Exception e) {
+            e.printStackTrace();
             return AjaxResult.setSuccess(false).setMsg("Failed to list user's good.");
         }
     }

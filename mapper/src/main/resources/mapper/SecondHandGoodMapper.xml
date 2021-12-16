@@ -40,13 +40,13 @@
         created_time,
         updated_time
         from second_hand_good
-        where sold = false
+        where not sold
         <if test="typeId != null and typeId != '' or typeId == 0">
             and type_id = #{typeId}
         </if>
         <if test="searchKeyword != null and searchKeyword != ''">
-            and title like concat('%', #{searchKeyword}, '%')
-            or description like concat('%', #{searchKeyword}, '%')
+            and (title like concat('%', #{searchKeyword}, '%')
+            or description like concat('%', #{searchKeyword}, '%'))
         </if>
         order by sold, created_time desc
         limit #{pageSize} offset #{offset}
@@ -55,13 +55,13 @@
     <select id="countAllGoods" resultType="Integer">
         select count(*)
         from second_hand_good
-        where sold = false
+        where not sold
         <if test="typeId != null and typeId != '' or typeId == 0">
             and type_id = #{typeId}
         </if>
         <if test="searchKeyword != null and searchKeyword != ''">
-            and title like concat('%', #{searchKeyword}, '%')
-            or description like concat('%', #{searchKeyword}, '%')
+            and (title like concat('%', #{searchKeyword}, '%')
+            or description like concat('%', #{searchKeyword}, '%'))
         </if>
     </select>
 
@@ -77,12 +77,13 @@
         updated_time
         from second_hand_good
         where publisher = #{publisher}
-        <if test="sold != null and sold != ''">
-            and sold = #{sold}
-        </if>
+        <choose>
+            <when test="sold == true">and sold</when>
+            <when test="sold == false">and not sold</when>
+        </choose>
         <if test="searchKeyword != null and searchKeyword != ''">
-            and title like concat('%', #{searchKeyword}, '%')
-            or description like concat('%', #{searchKeyword}, '%')
+            and (title like concat('%', #{searchKeyword}, '%')
+            or description like concat('%', #{searchKeyword}, '%'))
         </if>
         order by sold, created_time desc
         limit #{pageSize} offset #{offset}
@@ -92,12 +93,13 @@
         select count(*)
         from second_hand_good
         where publisher = #{publisher}
-        <if test="sold != null and sold != ''">
-            and sold = #{sold}
-        </if>
+        <choose>
+            <when test="sold == true">and sold</when>
+            <when test="sold == false">and not sold</when>
+        </choose>
         <if test="searchKeyword != null and searchKeyword != ''">
-            and title like concat('%', #{searchKeyword}, '%')
-            or description like concat('%', #{searchKeyword}, '%')
+            and (title like concat('%', #{searchKeyword}, '%')
+            or description like concat('%', #{searchKeyword}, '%'))
         </if>
     </select>
 
