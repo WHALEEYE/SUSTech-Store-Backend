@@ -40,18 +40,14 @@
         created_time,
         updated_time
         from second_hand_good
-        <where>
-            <if test="sold != null and sold != ''">
-                sold = #{sold}
-            </if>
-            <if test="typeId != null and typeId != '' or typeId == 0">
-                and type_id = #{typeId}
-            </if>
-            <if test="searchKeyword != null and searchKeyword != ''">
-                and title like concat('%', #{searchKeyword}, '%')
-                or description like concat('%', #{searchKeyword}, '%')
-            </if>
-        </where>
+        where sold = false
+        <if test="typeId != null and typeId != '' or typeId == 0">
+            and type_id = #{typeId}
+        </if>
+        <if test="searchKeyword != null and searchKeyword != ''">
+            and title like concat('%', #{searchKeyword}, '%')
+            or description like concat('%', #{searchKeyword}, '%')
+        </if>
         order by sold, created_time desc
         limit #{pageSize} offset #{offset}
     </select>
@@ -59,18 +55,14 @@
     <select id="countAllGoods" resultType="Integer">
         select count(*)
         from second_hand_good
-        <where>
-            <if test="sold != null and sold != ''">
-                sold = #{sold}
-            </if>
-            <if test="typeId != null and typeId != '' or typeId == 0">
-                and type_id = #{typeId}
-            </if>
-            <if test="searchKeyword != null and searchKeyword != ''">
-                and title like concat('%', #{searchKeyword}, '%')
-                or description like concat('%', #{searchKeyword}, '%')
-            </if>
-        </where>
+        where sold = false
+        <if test="typeId != null and typeId != '' or typeId == 0">
+            and type_id = #{typeId}
+        </if>
+        <if test="searchKeyword != null and searchKeyword != ''">
+            and title like concat('%', #{searchKeyword}, '%')
+            or description like concat('%', #{searchKeyword}, '%')
+        </if>
     </select>
 
     <select id="getGoodsByPublisher" resultMap="BaseResultMap">

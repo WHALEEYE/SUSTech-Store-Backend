@@ -11,7 +11,7 @@ public interface SecondHandGoodService {
 
     FullGoodVO getGoodById(Integer goodId);
 
-    List<BriefGoodVO> getAllGoods(Integer pageSize, Integer pageNo, Boolean sold, Integer typeId, String searchKeyword);
+    List<BriefGoodVO> getAllGoods(Integer pageSize, Integer pageNo, Integer typeId, String searchKeyword);
 
     List<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo, Boolean sold, String searchKeyword);
 
@@ -19,7 +19,7 @@ public interface SecondHandGoodService {
 
     List<GoodTypeVO> getAllGoodTypes();
 
-    Integer countAllGoods(Boolean sold, Integer typeId, String searchKeyword);
+    Integer countAllGoods(Integer typeId, String searchKeyword);
 
     Integer countGoodsByPublisher(Integer publisher, Boolean sold, String searchKeyword);
     
