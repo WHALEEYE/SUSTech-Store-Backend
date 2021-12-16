@@ -47,6 +47,10 @@
             <if test="typeId != null and typeId != '' or typeId == 0">
                 and type_id = #{typeId}
             </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                and title like concat('%', #{searchKeyword}, '%')
+                or description like concat('%', #{searchKeyword}, '%')
+            </if>
         </where>
         order by sold, created_time desc
         limit #{pageSize} offset #{offset}
@@ -61,6 +65,10 @@
             </if>
             <if test="typeId != null and typeId != '' or typeId == 0">
                 and type_id = #{typeId}
+            </if>
+            <if test="searchKeyword != null and searchKeyword != ''">
+                and title like concat('%', #{searchKeyword}, '%')
+                or description like concat('%', #{searchKeyword}, '%')
             </if>
         </where>
     </select>
@@ -78,7 +86,11 @@
         from second_hand_good
         where publisher = #{publisher}
         <if test="sold != null and sold != ''">
-            sold = #{sold}
+            and sold = #{sold}
+        </if>
+        <if test="searchKeyword != null and searchKeyword != ''">
+            and title like concat('%', #{searchKeyword}, '%')
+            or description like concat('%', #{searchKeyword}, '%')
         </if>
         order by sold, created_time desc
         limit #{pageSize} offset #{offset}
@@ -89,7 +101,11 @@
         from second_hand_good
         where publisher = #{publisher}
         <if test="sold != null and sold != ''">
-            sold = #{sold}
+            and sold = #{sold}
+        </if>
+        <if test="searchKeyword != null and searchKeyword != ''">
+            and title like concat('%', #{searchKeyword}, '%')
+            or description like concat('%', #{searchKeyword}, '%')
         </if>
     </select>
 

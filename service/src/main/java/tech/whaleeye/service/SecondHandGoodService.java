@@ -1,6 +1,5 @@
 package tech.whaleeye.service;
 
-import tech.whaleeye.model.dto.SecondHandGoodDTO;
 import tech.whaleeye.model.entity.SecondHandGood;
 import tech.whaleeye.model.vo.BriefGoodVO;
 import tech.whaleeye.model.vo.FullGoodVO;
@@ -12,17 +11,17 @@ public interface SecondHandGoodService {
 
     FullGoodVO getGoodById(Integer goodId);
 
-    List<BriefGoodVO> getAllGoods(Integer pageSize, Integer pageNo, Boolean sold, Integer typeId);
+    List<BriefGoodVO> getAllGoods(Integer pageSize, Integer pageNo, Boolean sold, Integer typeId, String searchKeyword);
 
-    List<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo, Boolean sold);
+    List<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo, Boolean sold, String searchKeyword);
 
     GoodTypeVO getGoodTypeById(Integer typeId);
 
     List<GoodTypeVO> getAllGoodTypes();
 
-    Integer countAllGoods(Boolean sold, Integer typeId);
+    Integer countAllGoods(Boolean sold, Integer typeId, String searchKeyword);
 
-    Integer countGoodsByPublisher(Integer publisher, Boolean sold);
+    Integer countGoodsByPublisher(Integer publisher, Boolean sold, String searchKeyword);
     
     Integer insertSecondHandGood(SecondHandGood secondHandGood);
 
