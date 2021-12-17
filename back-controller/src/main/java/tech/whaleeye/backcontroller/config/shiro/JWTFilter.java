@@ -1,5 +1,6 @@
 package tech.whaleeye.backcontroller.config.shiro;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
@@ -21,9 +22,8 @@ import java.io.PrintWriter;
 /**
  * The filtered requests are supposed to carry a header with JWT token
  */
+@Log4j2
 public class JWTFilter extends BasicHttpAuthenticationFilter {
-
-    private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
     protected boolean preHandle(ServletRequest request, ServletResponse response) throws Exception {

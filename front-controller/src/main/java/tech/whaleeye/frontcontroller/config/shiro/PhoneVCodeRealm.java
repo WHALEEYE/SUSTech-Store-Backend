@@ -14,6 +14,7 @@ import tech.whaleeye.service.VCodeRecordService;
 import java.util.Date;
 
 public class PhoneVCodeRealm extends AuthorizingRealm {
+
     @Autowired
     StoreUserService storeUserService;
 

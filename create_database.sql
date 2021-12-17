@@ -371,15 +371,32 @@ begin
 end
 $$ language plpgsql;
 
+
+drop table if exists deleted_back_user;
+drop table if exists back_user;
+drop table if exists back_user_role;
+drop sequence if exists back_user_id;
+
 create sequence if not exists back_user_id start with 2 increment by 2;
+create table if not exists back_user_role
+(
+    id          serial primary key,
+    role_name   varchar(10) not null,
+    description varchar(255)
+);
+
+insert into back_user_role (id, role_name, description)
+values (default, 'Checker', 'Only have read privilege to the statistics.'),
+       (default, 'Admin', 'Have full access to the statistics.'),
+       (default, 'Super', 'Have full access and can control background users');
 
 create table if not exists back_user
 (
     id           int primary key      default nextval('back_user_id'),
-    nickname     varchar(20) not null default 'NO NAME',
-    password     char(32),
-    salt         char(16),
-    user_role    varchar(10),
+    username     varchar(20) not null unique,
+    password     char(32)    not null,
+    salt         char(16)    not null,
+    role_id      int         not null references back_user_role (id) on delete cascade,
     banned       bool        not null default false,
     created_time timestamp   not null default now(),
     updated_time timestamp   not null default now()
@@ -388,10 +405,10 @@ create table if not exists back_user
 create table if not exists deleted_back_user
 (
     id           int,
-    nickname     varchar(20),
+    username     varchar(20),
     password     char(32),
     salt         char(16),
-    user_role    varchar(10),
+    role_id      int,
     banned       bool,
     created_time timestamp,
     updated_time timestamp,
@@ -403,13 +420,13 @@ create or replace function delete_store_user(deleted_user_id int, delete_user_id
     returns void as
 $$
 begin
-    insert into deleted_back_user (id, nickname, password, salt, user_role, banned, created_time, updated_time,
+    insert into deleted_back_user (id, username, password, salt, role_id, banned, created_time, updated_time,
                                    deleted_time, deleted_by)
     select id,
-           nickname,
+           username,
            password,
            salt,
-           user_role,
+           role_id,
            banned,
            created_time,
            updated_time,

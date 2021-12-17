@@ -7,30 +7,37 @@ import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import tech.whaleeye.misc.utils.MiscUtils;
-import tech.whaleeye.model.entity.StoreUser;
-import tech.whaleeye.service.StoreUserService;
+import tech.whaleeye.model.entity.BackUser;
+import tech.whaleeye.service.BackUserRoleService;
+import tech.whaleeye.service.BackUserService;
 
-public class CardNumberPasswordRealm extends AuthorizingRealm {
+public class UsernamePasswordRealm extends AuthorizingRealm {
+
     @Autowired
-    StoreUserService storeUserService;
+    BackUserService backUserService;
+
+    @Autowired
+    BackUserRoleService backUserRoleService;
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        String username = (String) principalCollection.getPrimaryPrincipal();
+        String roleName = backUserRoleService.getRoleByUsername(username).getRoleName();
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        authorizationInfo.addRole("user");
+        authorizationInfo.addRole(roleName);
         return authorizationInfo;
     }
 
     @Override
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         UsernamePasswordToken loginToken = (UsernamePasswordToken) authenticationToken;
-        StoreUser storeUser = storeUserService.getStoreUserByCardNumber(loginToken.getUsername());
-        if (storeUser == null) {
+        BackUser backUser = backUserService.queryByUsername(loginToken.getUsername());
+        if (backUser == null) {
             throw new UnknownAccountException();
-        } else if (storeUser.getBanned()) {
+        } else if (backUser.getBanned()) {
             throw new LockedAccountException();
         }
-        return new SimpleAuthenticationInfo(storeUser.getId(), storeUser.getPassword(), MiscUtils.getSaltFromHex(storeUser.getSalt()), getName());
+        return new SimpleAuthenticationInfo(backUser.getId(), backUser.getPassword(), MiscUtils.getSaltFromHex(backUser.getSalt()), getName());
     }
 
 }

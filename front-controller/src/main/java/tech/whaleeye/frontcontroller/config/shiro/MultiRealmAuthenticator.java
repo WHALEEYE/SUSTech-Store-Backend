@@ -1,5 +1,6 @@
 package tech.whaleeye.frontcontroller.config.shiro;
 
+import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -14,9 +15,8 @@ import java.util.Collection;
 /**
  * 自定义认证器，解决 Shiro 异常无法返回的问题
  */
+@Log4j2
 public class MultiRealmAuthenticator extends ModularRealmAuthenticator {
-
-    private static final Logger log = LoggerFactory.getLogger(MultiRealmAuthenticator.class);
 
     @Override
     protected AuthenticationInfo doMultiRealmAuthentication(Collection<Realm> realms, AuthenticationToken token)

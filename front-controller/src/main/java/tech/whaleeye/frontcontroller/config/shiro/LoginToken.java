@@ -5,6 +5,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 
 @Getter
 public class LoginToken extends UsernamePasswordToken {
+
     private final LoginType loginType;
 
     public LoginToken(String account, String password, LoginType loginType) {

@@ -6,8 +6,9 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
-import tech.whaleeye.model.entity.StoreUser;
-import tech.whaleeye.service.StoreUserService;
+import tech.whaleeye.model.entity.BackUser;
+import tech.whaleeye.service.BackUserRoleService;
+import tech.whaleeye.service.BackUserService;
 
 /**
  * JwtRealm 只负责校验 JWTToken
@@ -15,7 +16,10 @@ import tech.whaleeye.service.StoreUserService;
 public class JWTRealm extends AuthorizingRealm {
 
     @Autowired
-    StoreUserService storeUserService;
+    BackUserService backUserService;
+
+    @Autowired
+    BackUserRoleService backUserRoleService;
 
     @Override
     public boolean supports(AuthenticationToken token) {
@@ -35,11 +39,11 @@ public class JWTRealm extends AuthorizingRealm {
 
         // get the current user from token
         Integer userId = Integer.parseInt((String) jwtToken.getPrincipal());
-        StoreUser storeUser = storeUserService.getStoreUserById(userId);
+        BackUser backUser = backUserService.queryById(userId);
 
-        if (storeUser == null) {
+        if (backUser == null) {
             throw new UnknownAccountException();
-        } else if (storeUser.getBanned()) {
+        } else if (backUser.getBanned()) {
             throw new LockedAccountException();
         }
 
@@ -48,8 +52,10 @@ public class JWTRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
+        Integer userId = Integer.parseInt((String) principalCollection.getPrimaryPrincipal());
+        String roleName = backUserRoleService.getRoleByUserId(userId).getRoleName();
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
-        authorizationInfo.addRole("user");
+        authorizationInfo.addRole(roleName);
         return authorizationInfo;
     }
 

@@ -96,9 +96,7 @@ public class ShiroConfig {
         // This line should be removed in release version
         filterChainDefinitionMap.put("/test/**", "anon");
 
-        filterChainDefinitionMap.put("/upload/**", "anon");
         filterChainDefinitionMap.put("/login/**", "anon");
-        filterChainDefinitionMap.put("/vCode/login/**", "anon");
         filterChainDefinitionMap.put("/**", "jwtFilter");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
@@ -135,14 +133,14 @@ public class ShiroConfig {
     }
 
     @Bean
-    CardNumberPasswordRealm cardNumberPasswordRealm() {
-        CardNumberPasswordRealm cardNumberPasswordRealm = new CardNumberPasswordRealm();
+    UsernamePasswordRealm cardNumberPasswordRealm() {
+        UsernamePasswordRealm usernamePasswordRealm = new UsernamePasswordRealm();
         // Set Hash Algorithm Name
         HashedCredentialsMatcher credentialsMatcher = new HashedCredentialsMatcher("MD5");
         // Set Iteration Times
         credentialsMatcher.setHashIterations(1024);
-        cardNumberPasswordRealm.setCredentialsMatcher(credentialsMatcher);
-        return cardNumberPasswordRealm;
+        usernamePasswordRealm.setCredentialsMatcher(credentialsMatcher);
+        return usernamePasswordRealm;
     }
 
     /**
@@ -150,7 +148,7 @@ public class ShiroConfig {
      */
     @Bean
     public DefaultWebSecurityManager defaultWebSecurityManager(@Autowired JWTRealm jwtRealm,
-                                                               @Autowired CardNumberPasswordRealm cardNumberPasswordRealm) {
+                                                               @Autowired UsernamePasswordRealm usernamePasswordRealm) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
 
         // 1. Authenticator
@@ -159,7 +157,7 @@ public class ShiroConfig {
         // 2. Realm
         List<Realm> realmList = new ArrayList<>();
         realmList.add(jwtRealm);
-        realmList.add(cardNumberPasswordRealm);
+        realmList.add(usernamePasswordRealm);
         securityManager.setRealms(realmList);
 
         // 3. Turn off the session of Shiro

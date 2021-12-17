@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tech.whaleeye.mapper.BackUserMapper">
+
+    <resultMap id="BaseResultMap" type="tech.whaleeye.model.entity.BackUser">
+        <!--@Table back_user-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="username" column="username" jdbcType="VARCHAR"/>
+        <result property="password" column="password" jdbcType="VARCHAR"/>
+        <result property="salt" column="salt" jdbcType="VARCHAR"/>
+        <result property="roleId" column="role_id" jdbcType="INTEGER"/>
+        <result property="banned" column="banned" jdbcType="BOOLEAN"/>
+        <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
+        <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        select id,
+               username,
+               password,
+               salt,
+               role_id,
+               banned,
+               created_time,
+               updated_time
+        from back_user
+        where id = #{userId}
+    </select>
+
+    <select id="queryByUsername">
+        select id,
+               username,
+               password,
+               salt,
+               role_id,
+               banned,
+               created_time,
+               updated_time
+        from back_user
+        where username = #{username}
+    </select>
+
+    <select id="listAllBackUsers" resultMap="BaseResultMap">
+        select id,
+        username,
+        password,
+        salt,
+        role_id,
+        banned,
+        created_time,
+        updated_time
+        from back_user
+        <if test="roleId != null and roleId != '' or roleId == 0">
+            where role_id = #{roleId}
+        </if>
+        order by role_id desc, created_time desc
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <update id="updatePassword">
+        update back_user
+        set password = #{password} and salt = #{salt}
+        where id = #{userId}
+    </update>
+
+</mapper>

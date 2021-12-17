@@ -11,6 +11,7 @@ import tech.whaleeye.model.entity.StoreUser;
 import tech.whaleeye.service.StoreUserService;
 
 public class CardNumberPasswordRealm extends AuthorizingRealm {
+
     @Autowired
     StoreUserService storeUserService;
 

@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import lombok.extern.log4j.Log4j2;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.credential.CredentialsMatcher;
@@ -11,9 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import tech.whaleeye.misc.constants.Values;
 
+@Log4j2
 public class JWTCredentialsMatcher implements CredentialsMatcher {
-
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     /**
      * In doCredentialMatch(), we only need token itself to verify, no need of authentication info.
@@ -29,7 +29,7 @@ public class JWTCredentialsMatcher implements CredentialsMatcher {
             verifier.verify(token);
             return true;
         } catch (JWTVerificationException e) {
-            logger.error(e.getMessage());
+            log.error(e.getMessage());
         }
         return false;
     }
