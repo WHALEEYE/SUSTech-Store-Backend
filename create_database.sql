@@ -370,3 +370,54 @@ begin
     return 1;
 end
 $$ language plpgsql;
+
+create sequence if not exists back_user_id start with 2 increment by 2;
+
+create table if not exists back_user
+(
+    id           int primary key      default nextval('back_user_id'),
+    nickname     varchar(20) not null default 'NO NAME',
+    password     char(32),
+    salt         char(16),
+    user_role    varchar(10),
+    banned       bool        not null default false,
+    created_time timestamp   not null default now(),
+    updated_time timestamp   not null default now()
+);
+
+create table if not exists deleted_back_user
+(
+    id           int,
+    nickname     varchar(20),
+    password     char(32),
+    salt         char(16),
+    user_role    varchar(10),
+    banned       bool,
+    created_time timestamp,
+    updated_time timestamp,
+    deleted_time timestamp,
+    deleted_by   int
+);
+
+create or replace function delete_store_user(deleted_user_id int, delete_user_id int)
+    returns void as
+$$
+begin
+    insert into deleted_back_user (id, nickname, password, salt, user_role, banned, created_time, updated_time,
+                                   deleted_time, deleted_by)
+    select id,
+           nickname,
+           password,
+           salt,
+           user_role,
+           banned,
+           created_time,
+           updated_time,
+           now(),
+           delete_user_id
+    from back_user
+    where id = deleted_user_id;
+    delete from back_user where id = deleted_user_id;
+end;
+$$
+    language plpgsql;

@@ -15,7 +15,7 @@
         <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <select id="getGoodById">
+    <select id="getGoodById" resultMap="BaseResultMap">
         select id,
                type_id,
                title,
