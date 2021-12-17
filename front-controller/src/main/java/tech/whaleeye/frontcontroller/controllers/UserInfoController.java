@@ -28,13 +28,13 @@ import java.io.IOException;
 public class UserInfoController {
 
     @Autowired
-    StoreUserService storeUserService;
+    private ModelMapper modelMapper;
 
     @Autowired
-    VCodeRecordService vCodeRecordService;
+    private StoreUserService storeUserService;
 
     @Autowired
-    ModelMapper modelMapper;
+    private VCodeRecordService vCodeRecordService;
 
     @ApiOperation("get other user's information")
     @GetMapping("/info/{userId}")

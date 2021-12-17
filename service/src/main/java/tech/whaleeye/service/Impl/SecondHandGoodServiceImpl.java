@@ -23,16 +23,16 @@ import java.util.List;
 public class SecondHandGoodServiceImpl implements SecondHandGoodService {
 
     @Autowired
-    ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @Autowired
-    SecondHandGoodMapper secondHandGoodMapper;
+    private SecondHandGoodMapper secondHandGoodMapper;
 
     @Autowired
-    GoodPictureMapper goodPictureMapper;
+    private GoodPictureMapper goodPictureMapper;
 
     @Autowired
-    GoodTypeMapper goodTypeMapper;
+    private GoodTypeMapper goodTypeMapper;
 
     @Override
     public FullGoodVO getGoodById(Integer goodId) {

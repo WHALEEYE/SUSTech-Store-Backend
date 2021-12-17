@@ -19,10 +19,10 @@ import tech.whaleeye.service.StoreUserService;
 public class TestController {
 
     @Autowired
-    ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @Autowired
-    StoreUserService storeUserService;
+    private StoreUserService storeUserService;
 
     @ApiOperation("get user by id")
     @GetMapping("/getById/{id}")

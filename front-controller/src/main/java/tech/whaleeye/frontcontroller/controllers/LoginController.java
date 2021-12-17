@@ -9,7 +9,6 @@ import org.apache.shiro.authc.LockedAccountException;
 import org.apache.shiro.authc.UnknownAccountException;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.WebUtils;
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,7 +19,6 @@ import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.constants.Values;
 import tech.whaleeye.misc.utils.JWTUtils;
 import tech.whaleeye.model.entity.VCodeRecord;
-import tech.whaleeye.service.StoreUserService;
 import tech.whaleeye.service.VCodeRecordService;
 
 import javax.servlet.ServletResponse;
@@ -32,13 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 public class LoginController {
 
     @Autowired
-    StoreUserService storeUserService;
-
-    @Autowired
-    VCodeRecordService vCodeRecordService;
-
-    @Autowired
-    ModelMapper modelMapper;
+    private VCodeRecordService vCodeRecordService;
 
     @ApiOperation("login by phone number")
     @PostMapping("/phone")
@@ -66,7 +58,7 @@ public class LoginController {
         vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
 
         // Give the token to the user
-        String jwtToken = JWTUtils.sign(subject.getPrincipal().toString(), Values.JWT_SECRET);
+        String jwtToken = JWTUtils.sign(subject.getPrincipal().toString(), Values.JWT_FRONT_SECRET);
         httpResponse.setHeader(Values.JWT_AUTH_HEADER, jwtToken);
 
         return AjaxResult.setSuccess(true).setMsg("Login success.");
@@ -90,7 +82,7 @@ public class LoginController {
             return AjaxResult.setSuccess(false).setMsg("Unknown problem.");
         }
         // If login success, give the token to user
-        String jwtToken = JWTUtils.sign(subject.getPrincipal().toString(), Values.JWT_SECRET);
+        String jwtToken = JWTUtils.sign(subject.getPrincipal().toString(), Values.JWT_FRONT_SECRET);
         httpResponse.setHeader(Values.JWT_AUTH_HEADER, jwtToken);
         return AjaxResult.setSuccess(true).setMsg("Logged in successfully.");
     }

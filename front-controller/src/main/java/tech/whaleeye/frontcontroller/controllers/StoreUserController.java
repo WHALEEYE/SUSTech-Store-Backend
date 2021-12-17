@@ -19,13 +19,10 @@ import tech.whaleeye.service.VCodeRecordService;
 public class StoreUserController {
 
     @Autowired
-    StoreUserService storeUserService;
+    private StoreUserService storeUserService;
 
     @Autowired
-    VCodeRecordService vCodeRecordService;
-
-    @Autowired
-    ModelMapper modelMapper;
+    private VCodeRecordService vCodeRecordService;
 
     @ApiOperation("Follow One User")
     @PostMapping("/follow/{followedId}")

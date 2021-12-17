@@ -27,16 +27,16 @@ import java.util.Random;
 public class SecondHandOrderServiceImpl implements SecondHandOrderService {
 
     @Autowired
-    ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @Autowired
-    SecondHandOrderMapper secondHandOrderMapper;
+    private SecondHandOrderMapper secondHandOrderMapper;
 
     @Autowired
-    SecondHandGoodMapper secondHandGoodMapper;
+    private SecondHandGoodMapper secondHandGoodMapper;
 
     @Autowired
-    StoreUserMapper storeUserMapper;
+    private StoreUserMapper storeUserMapper;
 
     @Override
     public OrderVO getOrderById(Integer userId, Integer orderId) {

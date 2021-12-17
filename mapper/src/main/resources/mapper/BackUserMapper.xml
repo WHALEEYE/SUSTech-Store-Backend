@@ -27,7 +27,7 @@
         where id = #{userId}
     </select>
 
-    <select id="queryByUsername">
+    <select id="queryByUsername" resultMap="BaseResultMap">
         select id,
                username,
                password,
@@ -42,25 +42,42 @@
 
     <select id="listAllBackUsers" resultMap="BaseResultMap">
         select id,
-        username,
-        password,
-        salt,
-        role_id,
-        banned,
-        created_time,
-        updated_time
+               username,
+               password,
+               salt,
+               role_id,
+               banned,
+               created_time,
+               updated_time
         from back_user
-        <if test="roleId != null and roleId != '' or roleId == 0">
-            where role_id = #{roleId}
-        </if>
+        where not role_id = 3
         order by role_id desc, created_time desc
         limit #{pageSize} offset #{offset}
     </select>
 
+    <select id="countBackUsers" resultType="Integer">
+        select count(*)
+        from back_user
+        where not role_id = 3
+    </select>
+
+    <insert id="addNewBackUser">
+        insert into back_user (id, username, password, salt, role_id, banned, created_time, updated_time)
+        values (default, #{username}, #{password}, #{salt}, #{roleId}, default, default, default)
+    </insert>
+
     <update id="updatePassword">
         update back_user
-        set password = #{password} and salt = #{salt}
+        set password = #{password},
+            salt     = #{salt}
         where id = #{userId}
+    </update>
+
+    <update id="banUser">
+        update back_user
+        set banned = true
+        where id = #{userId}
+          and not role_id = 3
     </update>
 
 </mapper>

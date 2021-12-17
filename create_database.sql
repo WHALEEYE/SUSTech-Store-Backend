@@ -402,6 +402,9 @@ create table if not exists back_user
     updated_time timestamp   not null default now()
 );
 
+insert into back_user (id, username, password, salt, role_id, banned, created_time, updated_time)
+values (default, 'admin', 'a3b1059374faee992ed4a1999cec59f5', '6bb1b3e788ec0212', 3, default, default, default);
+
 create table if not exists deleted_back_user
 (
     id           int,

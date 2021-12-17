@@ -1,6 +1,11 @@
 package tech.whaleeye.service;
 
+import org.springframework.lang.Nullable;
+import tech.whaleeye.misc.ajax.ListPage;
 import tech.whaleeye.model.entity.StoreUser;
+import tech.whaleeye.model.vo.StoreUserVO;
+
+import java.util.List;
 
 public interface StoreUserService {
 
@@ -35,4 +40,8 @@ public interface StoreUserService {
     Integer updateAvatar(Integer userId, String avatarPath);
 
     void deleteStoreUser(Integer userId, Integer deleteUserId);
+
+    // Used in background system
+    ListPage<StoreUserVO> listAll(Integer pageSize, Integer pageNo, @Nullable String searchNickname, @Nullable String searchPhoneNumber);
+
 }

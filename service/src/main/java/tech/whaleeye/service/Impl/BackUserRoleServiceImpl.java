@@ -11,10 +11,10 @@ import tech.whaleeye.service.BackUserRoleService;
 public class BackUserRoleServiceImpl implements BackUserRoleService {
 
     @Autowired
-    BackUserMapper backUserMapper;
+    private BackUserMapper backUserMapper;
 
     @Autowired
-    BackUserRoleMapper backUserRoleMapper;
+    private BackUserRoleMapper backUserRoleMapper;
 
     @Override
     public BackUserRole getRoleByUserId(Integer userId) {

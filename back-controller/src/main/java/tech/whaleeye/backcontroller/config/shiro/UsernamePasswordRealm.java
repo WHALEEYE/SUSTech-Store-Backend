@@ -21,8 +21,8 @@ public class UsernamePasswordRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        String username = (String) principalCollection.getPrimaryPrincipal();
-        String roleName = backUserRoleService.getRoleByUsername(username).getRoleName();
+        Integer userId = (Integer) principalCollection.getPrimaryPrincipal();
+        String roleName = backUserRoleService.getRoleByUserId(userId).getRoleName();
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         authorizationInfo.addRole(roleName);
         return authorizationInfo;

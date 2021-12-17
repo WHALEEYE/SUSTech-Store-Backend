@@ -1,16 +1,26 @@
 package tech.whaleeye.service.Impl;
 
 import org.apache.shiro.crypto.hash.Md5Hash;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import tech.whaleeye.mapper.StoreUserMapper;
+import tech.whaleeye.misc.ajax.ListPage;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.StoreUser;
+import tech.whaleeye.model.vo.StoreUserVO;
 import tech.whaleeye.service.StoreUserService;
+
+import java.util.List;
 
 @Service
 public class StoreUserServiceImpl implements StoreUserService {
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     @Autowired
     private StoreUserMapper storeUserMapper;
@@ -109,5 +119,14 @@ public class StoreUserServiceImpl implements StoreUserService {
     @Override
     public void deleteStoreUser(Integer userId, Integer deleteUserId) {
         storeUserMapper.deleteStoreUser(userId, deleteUserId);
+    }
+
+    @Override
+    public ListPage<StoreUserVO> listAll(Integer pageSize, Integer pageNo, @Nullable String searchNickname, @Nullable String searchPhoneNumber) {
+        List<StoreUser> storeUserList = storeUserMapper.listAll(pageSize, (pageNo - 1) * pageSize, searchNickname, searchPhoneNumber);
+        List<StoreUserVO> storeUserVOList = modelMapper.map(storeUserList, new TypeToken<List<StoreUserVO>>() {
+        }.getType());
+        int total = storeUserMapper.countAll(searchNickname, searchPhoneNumber);
+        return new ListPage<>(storeUserVOList, pageSize, pageNo, total);
     }
 }

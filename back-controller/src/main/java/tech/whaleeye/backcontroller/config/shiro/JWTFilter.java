@@ -6,8 +6,6 @@ import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.BasicHttpAuthenticationFilter;
 import org.apache.shiro.web.util.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 import tech.whaleeye.misc.constants.Values;
@@ -127,7 +125,7 @@ public class JWTFilter extends BasicHttpAuthenticationFilter {
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         String newToken = null;
         if (token instanceof JWTToken) {
-            newToken = JWTUtils.refreshTokenExpired(token.getCredentials().toString(), Values.JWT_SECRET);
+            newToken = JWTUtils.refreshTokenExpired(token.getCredentials().toString(), Values.JWT_BACK_SECRET);
         }
         if (newToken != null)
             httpResponse.setHeader(Values.JWT_AUTH_HEADER, newToken);

@@ -25,10 +25,10 @@ import java.math.BigDecimal;
 public class SecondHandOrderController {
 
     @Autowired
-    ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @Autowired
-    SecondHandOrderService secondHandOrderService;
+    private SecondHandOrderService secondHandOrderService;
 
     @ApiOperation("get order by order id")
     @GetMapping("detail/{orderId}")

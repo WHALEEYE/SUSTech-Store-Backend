@@ -6,6 +6,7 @@ import org.springframework.lang.Nullable;
 import tech.whaleeye.model.entity.StoreUser;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Mapper
 public interface StoreUserMapper {
@@ -43,4 +44,12 @@ public interface StoreUserMapper {
 
     void deleteStoreUser(@Param("userId") Integer userId, @Param("deleteUserId") Integer deleteUserId);
 
+    // Used in background system
+    List<StoreUser> listAll(@Param("pageSize") Integer pageSize,
+                            @Param("offset") Integer offset,
+                            @Nullable @Param("searchNickname") String searchNickname,
+                            @Nullable @Param("searchPhoneNumber") String searchPhoneNumber);
+
+    Integer countAll(@Nullable @Param("searchNickname") String searchNickname,
+                     @Nullable @Param("searchPhoneNumber") String searchPhoneNumber);
 }

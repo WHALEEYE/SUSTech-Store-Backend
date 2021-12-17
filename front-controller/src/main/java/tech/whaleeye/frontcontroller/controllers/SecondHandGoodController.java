@@ -31,10 +31,10 @@ import java.util.List;
 public class SecondHandGoodController {
 
     @Autowired
-    ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @Autowired
-    SecondHandGoodService secondHandGoodService;
+    private SecondHandGoodService secondHandGoodService;
 
     @ApiOperation("get one good's full information")
     @GetMapping("detail/{goodId}")

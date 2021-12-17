@@ -52,26 +52,11 @@ public class JWTRealm extends AuthorizingRealm {
 
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
-        Integer userId = Integer.parseInt((String) principalCollection.getPrimaryPrincipal());
+        Integer userId = (Integer) principalCollection.getPrimaryPrincipal();
         String roleName = backUserRoleService.getRoleByUserId(userId).getRoleName();
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         authorizationInfo.addRole(roleName);
         return authorizationInfo;
     }
-
-//    @Override
-//    protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principals) {
-//        // 获取当前用户
-//        StoreUser currentUser = (StoreUser) MiscUtils.getSubject().getPrincipal();
-//        // UserEntity currentUser = (UserEntity) principals.getPrimaryPrincipal();
-//        // 查询数据库，获取用户的角色信息
-//        Set<String> roles = ShiroRealm.roleMap.get(currentUser.getName());
-//        // 查询数据库，获取用户的权限信息
-//        Set<String> perms = ShiroRealm.permMap.get(currentUser.getName());
-//        SimpleAuthorizationInfo info = new SimpleAuthorizationInfo();
-//        info.setRoles(roles);
-//        info.setStringPermissions(perms);
-//        return info;
-//    }
 
 }
