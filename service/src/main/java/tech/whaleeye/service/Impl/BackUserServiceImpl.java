@@ -6,11 +6,11 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.whaleeye.mapper.BackUserMapper;
-import tech.whaleeye.misc.ajax.ListPage;
+import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.BackUser;
-import tech.whaleeye.model.vo.BackUserVO;
+import tech.whaleeye.model.vo.StoreUser.BackUserVO;
 import tech.whaleeye.service.BackUserService;
 
 import java.util.List;
@@ -35,12 +35,12 @@ public class BackUserServiceImpl implements BackUserService {
     }
 
     @Override
-    public ListPage<BackUserVO> listAllBackUsers(Integer pageSize, Integer pageNo) {
+    public PageList<BackUserVO> listAllBackUsers(Integer pageSize, Integer pageNo) {
         List<BackUser> userList = backUserMapper.listAllBackUsers(pageSize, (pageNo - 1) * pageSize);
         List<BackUserVO> userVOList = modelMapper.map(userList, new TypeToken<List<BackUserVO>>() {
         }.getType());
         int total = backUserMapper.countBackUsers();
-        return new ListPage<>(userVOList, pageSize, pageNo, total);
+        return new PageList<>(userVOList, pageSize, pageNo, total);
     }
 
     @Override

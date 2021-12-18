@@ -14,8 +14,8 @@ import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.StoreUser;
 import tech.whaleeye.model.entity.VCodeRecord;
-import tech.whaleeye.model.vo.OtherUserVO;
-import tech.whaleeye.model.vo.StoreUserVO;
+import tech.whaleeye.model.vo.StoreUser.OtherUserVO;
+import tech.whaleeye.model.vo.StoreUser.StoreUserVO;
 import tech.whaleeye.service.StoreUserService;
 import tech.whaleeye.service.VCodeRecordService;
 

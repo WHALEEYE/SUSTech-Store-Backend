@@ -1,8 +1,8 @@
 package tech.whaleeye.service;
 
-import tech.whaleeye.misc.ajax.ListPage;
+import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.model.entity.BackUser;
-import tech.whaleeye.model.vo.BackUserVO;
+import tech.whaleeye.model.vo.StoreUser.BackUserVO;
 
 public interface BackUserService {
 
@@ -10,7 +10,7 @@ public interface BackUserService {
 
     BackUser queryByUsername(String userName);
 
-    ListPage<BackUserVO> listAllBackUsers(Integer pageSize, Integer pageNo);
+    PageList<BackUserVO> listAllBackUsers(Integer pageSize, Integer pageNo);
 
     Integer addNewBackUser(String username, String password, Integer roleId);
 

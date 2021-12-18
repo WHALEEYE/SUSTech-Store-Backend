@@ -109,18 +109,68 @@ create table if not exists good_type
 (
     id           serial primary key,
     type_name    varchar(30) unique not null,
-    sort_no      int unique         not null,
+    sort_no      serial unique      not null,
     created_time timestamp          not null default now()
 );
 
-insert into good_type (id, type_name, sort_no)
-values (default, 'Digital Products', 1),
-       (default, 'Groceries', 2),
-       (default, 'Clothes', 3),
-       (default, 'Makeups', 4),
-       (default, 'Electrical Goods', 5),
-       (default, 'Books', 6),
-       (default, 'Entertainment', 7);
+create or replace function move_up_type(type_id int)
+    returns bool as
+$$
+declare
+    sort_no1 int;
+    sort_no2 int;
+    temp_id  int;
+begin
+    select sort_no into sort_no1 from good_type where id = type_id for update;
+    if not exists(select null from good_type where sort_no < sort_no1) then
+        return false;
+    end if;
+    select id, sort_no
+    into temp_id, sort_no2
+    from good_type
+    where sort_no < sort_no1
+    order by sort_no desc
+    limit 1 for update;
+
+    update good_type set sort_no = sort_no2 where id = type_id;
+    update good_type set sort_no = sort_no1 where id = temp_id;
+    return true;
+end;
+$$ language plpgsql;
+
+create or replace function move_down_type(type_id int)
+    returns bool as
+$$
+declare
+    sort_no1 int;
+    sort_no2 int;
+    temp_id  int;
+begin
+    select sort_no into sort_no1 from good_type where id = type_id for update;
+    if not exists(select null from good_type where sort_no > sort_no1) then
+        return false;
+    end if;
+    select id, sort_no
+    into temp_id, sort_no2
+    from good_type
+    where sort_no > sort_no1
+    order by sort_no desc
+    limit 1 for update;
+
+    update good_type set sort_no = sort_no2 where id = type_id;
+    update good_type set sort_no = sort_no1 where id = temp_id;
+    return true;
+end;
+$$ language plpgsql;
+
+insert into good_type (id, type_name, sort_no, created_time)
+values (default, 'Digital Products', default, default),
+       (default, 'Groceries', default, default),
+       (default, 'Clothes', default, default),
+       (default, 'Makeups', default, default),
+       (default, 'Electrical Goods', default, default),
+       (default, 'Books', default, default),
+       (default, 'Entertainment', default, default);
 
 create table if not exists follow_relation
 (
@@ -262,9 +312,9 @@ execute procedure on_delete_second_hand_order();
 
 create table if not exists good_picture
 (
+    id           serial primary key,
     good_id      int          not null references second_hand_good (id) on delete cascade,
     picture_path varchar(255) not null,
-    sort_no      int          not null,
     created_time timestamp    not null default now()
 );
 create index if not exists good_id_of_picture on good_picture (good_id);

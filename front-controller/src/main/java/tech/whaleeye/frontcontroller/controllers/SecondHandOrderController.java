@@ -8,13 +8,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
-import tech.whaleeye.misc.ajax.ListPage;
+import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.exceptions.BadOrderStatusException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.dto.SecondHandOrderDTO;
 import tech.whaleeye.model.entity.SecondHandOrder;
-import tech.whaleeye.model.vo.OrderVO;
+import tech.whaleeye.model.vo.SecondHandOrder.OrderVO;
 import tech.whaleeye.service.SecondHandOrderService;
 
 import java.math.BigDecimal;
@@ -48,7 +48,7 @@ public class SecondHandOrderController {
     AjaxResult listOrdersOfCurrent(@ApiParam("false: seller; true: buyer") Boolean userType,
                                    Integer orderStatus, Integer pageSize, Integer pageNo) {
         try {
-            ListPage<OrderVO> orderList = secondHandOrderService.getOrderByUserId(MiscUtils.currentUserId(), userType, orderStatus, pageSize, pageNo);
+            PageList<OrderVO> orderList = secondHandOrderService.getOrderByUserId(MiscUtils.currentUserId(), userType, orderStatus, pageSize, pageNo);
             return AjaxResult.setSuccess(true).setData(orderList);
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Failed to get the info of the orders");
@@ -59,7 +59,7 @@ public class SecondHandOrderController {
     @GetMapping("good/{goodId}")
     AjaxResult listOrdersOfGood(@PathVariable("goodId") Integer goodId, Integer pageSize, Integer pageNo) {
         try {
-            ListPage<OrderVO> orderList = secondHandOrderService.getOrderByGoodId(MiscUtils.currentUserId(), goodId, pageSize, pageNo);
+            PageList<OrderVO> orderList = secondHandOrderService.getOrderByGoodId(MiscUtils.currentUserId(), goodId, pageSize, pageNo);
             return AjaxResult.setSuccess(true).setData(orderList);
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Failed to get the info of the orders");

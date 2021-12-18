@@ -8,7 +8,7 @@ import tech.whaleeye.mapper.GoodPictureMapper;
 import tech.whaleeye.mapper.GoodTypeMapper;
 import tech.whaleeye.mapper.SecondHandGoodMapper;
 import tech.whaleeye.mapper.StoreUserMapper;
-import tech.whaleeye.misc.ajax.ListPage;
+import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
@@ -16,7 +16,10 @@ import tech.whaleeye.model.dto.SecondHandGoodDTO;
 import tech.whaleeye.model.entity.GoodType;
 import tech.whaleeye.model.entity.SecondHandGood;
 import tech.whaleeye.model.entity.StoreUser;
-import tech.whaleeye.model.vo.*;
+import tech.whaleeye.model.vo.GoodType.GoodTypeVO;
+import tech.whaleeye.model.vo.SecondHandGood.BackGoodVO;
+import tech.whaleeye.model.vo.SecondHandGood.BriefGoodVO;
+import tech.whaleeye.model.vo.SecondHandGood.FullGoodVO;
 import tech.whaleeye.service.SecondHandGoodService;
 
 import java.util.ArrayList;
@@ -44,13 +47,12 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     public FullGoodVO getGoodById(Integer goodId) {
         FullGoodVO fullGoodVO = modelMapper.map(secondHandGoodMapper.getGoodById(goodId), FullGoodVO.class);
         fullGoodVO.setGoodTypeVO(modelMapper.map(goodTypeMapper.getGoodTypeById(fullGoodVO.getId()), GoodTypeVO.class));
-        fullGoodVO.setPictureList(modelMapper.map(goodPictureMapper.getPicturesByGoodId(fullGoodVO.getId()), new TypeToken<List<GoodPictureVO>>() {
-        }.getType()));
+        fullGoodVO.setPicturePathList(goodPictureMapper.getPicturesByGoodId(fullGoodVO.getId()));
         return fullGoodVO;
     }
 
     @Override
-    public ListPage<BriefGoodVO> listAllGoods(Integer pageSize, Integer pageNo, Integer typeId, String searchKeyword) {
+    public PageList<BriefGoodVO> listAllGoods(Integer pageSize, Integer pageNo, Integer typeId, String searchKeyword) {
         List<BriefGoodVO> briefGoodVOList = new ArrayList<>();
         List<SecondHandGood> secondHandGoodList = secondHandGoodMapper.listAllGoods(pageSize, (pageNo - 1) * pageSize, typeId, searchKeyword);
         BriefGoodVO briefGoodVO;
@@ -65,11 +67,11 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
             briefGoodVOList.add(briefGoodVO);
         }
         int total = secondHandGoodMapper.countAllGoods(typeId, searchKeyword);
-        return new ListPage<>(briefGoodVOList, pageSize, pageNo, total);
+        return new PageList<>(briefGoodVOList, pageSize, pageNo, total);
     }
 
     @Override
-    public ListPage<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo, Boolean sold, String searchKeyword) {
+    public PageList<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo, Boolean sold, String searchKeyword) {
         List<BriefGoodVO> briefGoodVOList = new ArrayList<>();
         List<SecondHandGood> secondHandGoodList = secondHandGoodMapper.getGoodsByPublisher(publisher, pageSize, (pageNo - 1) * pageSize, sold, searchKeyword);
         BriefGoodVO briefGoodVO;
@@ -85,7 +87,7 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
             briefGoodVOList.add(briefGoodVO);
         }
         int total = secondHandGoodMapper.countGoodsByPublisher(publisher, sold, searchKeyword);
-        return new ListPage<>(briefGoodVOList, pageSize, pageNo, total);
+        return new PageList<>(briefGoodVOList, pageSize, pageNo, total);
     }
 
     @Override
@@ -102,13 +104,13 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
 
     @Override
     public Boolean insertSecondHandGood(SecondHandGoodDTO secondHandGoodDTO) {
-        if (secondHandGoodDTO.getPrice().doubleValue() < 0f || secondHandGoodDTO.getPictureList().isEmpty()) {
+        if (secondHandGoodDTO.getPrice().doubleValue() < 0f || secondHandGoodDTO.getPicturePathList().isEmpty()) {
             throw new InvalidValueException();
         }
         if (secondHandGoodMapper.insertSecondHandGood(MiscUtils.currentUserId(), secondHandGoodDTO) <= 0) {
             return false;
         }
-        return goodPictureMapper.insertGoodPictures(secondHandGoodDTO.getId(), secondHandGoodDTO.getPictureList()) > 0;
+        return goodPictureMapper.insertGoodPictures(secondHandGoodDTO.getId(), secondHandGoodDTO.getPicturePathList()) > 0;
     }
 
     @Override
@@ -123,7 +125,7 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
             return false;
         }
         goodPictureMapper.deletePicturesByGoodId(secondHandGoodDTO.getId());
-        return goodPictureMapper.insertGoodPictures(secondHandGoodDTO.getId(), secondHandGoodDTO.getPictureList()) > 0;
+        return goodPictureMapper.insertGoodPictures(secondHandGoodDTO.getId(), secondHandGoodDTO.getPicturePathList()) > 0;
     }
 
     public Boolean deleteGood(Integer goodId, Integer userId) {
@@ -135,7 +137,7 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     }
 
     @Override
-    public ListPage<BackGoodVO> listAllGoodsForBack(Integer pageSize, Integer pageNo, String searchNickname, String searchPhoneNumber, String searchKeyword) {
+    public PageList<BackGoodVO> listAllGoodsForBack(Integer pageSize, Integer pageNo, String searchNickname, String searchPhoneNumber, String searchKeyword) {
         List<BackGoodVO> backGoodVOList = new ArrayList<>();
         List<SecondHandGood> secondHandGoodList = secondHandGoodMapper.listAllGoodsForBack(pageSize, (pageNo - 1) * pageSize, searchNickname, searchPhoneNumber, searchKeyword);
         BackGoodVO backGoodVO;
@@ -152,7 +154,7 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
             backGoodVO.setGoodType(goodType == null ? "No Type" : goodType.getTypeName());
         }
         int total = secondHandGoodMapper.countAllGoodsForBack(searchNickname, searchPhoneNumber, searchKeyword);
-        return new ListPage<>(backGoodVOList, pageSize, pageNo, total);
+        return new PageList<>(backGoodVOList, pageSize, pageNo, total);
     }
 
     @Override

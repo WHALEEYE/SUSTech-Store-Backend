@@ -13,7 +13,7 @@ import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.dto.SecondHandGoodDTO;
-import tech.whaleeye.model.vo.GoodTypeVO;
+import tech.whaleeye.model.vo.GoodType.GoodTypeVO;
 import tech.whaleeye.service.SecondHandGoodService;
 
 import java.io.IOException;

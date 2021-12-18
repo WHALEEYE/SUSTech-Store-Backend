@@ -4,9 +4,9 @@
 
     <resultMap id="BaseResultMap" type="tech.whaleeye.model.entity.GoodPicture">
         <!--@Table good_picture-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
         <result property="goodId" column="good_id" jdbcType="INTEGER"/>
         <result property="picturePath" column="picture_path" jdbcType="VARCHAR"/>
-        <result property="sortNo" column="sort_no" jdbcType="INTEGER"/>
         <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
@@ -14,22 +14,22 @@
         select picture_path
         from good_picture
         where good_id = #{goodId}
-        order by sort_no
+        order by id
         limit 1
     </select>
 
-    <select id="getPicturesByGoodId" resultMap="BaseResultMap">
-        select good_id, picture_path, sort_no, created_time
+    <select id="getPicturesByGoodId" resultMap="String">
+        select picture_path
         from good_picture
         where good_id = #{goodId}
-        order by sort_no
+        order by id
     </select>
 
     <insert id="insertGoodPictures">
-        insert into good_picture (good_id, picture_path, sort_no, created_time)
+        insert into good_picture (id, good_id, picture_path, created_time)
         values
-        <foreach collection="goodPictureList" separator="," item="picture">
-            (#{goodId}, #{picture.picturePath, jdbcType=VARCHAR}, #{picture.sortNo, jdbcType=INTEGER}, now())
+        <foreach collection="picturePathList" separator="," item="picturePath">
+            (default, #{goodId}, #{picturePath, jdbcType=VARCHAR}, now())
         </foreach>
     </insert>
 

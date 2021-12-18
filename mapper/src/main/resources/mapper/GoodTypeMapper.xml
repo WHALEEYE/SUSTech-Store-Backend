@@ -22,4 +22,43 @@
         order by sort_no
     </select>
 
+    <!--used in background system-->
+
+    <select id="listAllGoodTypesForBack" resultMap="BaseResultMap">
+        select id, type_name, sort_no, created_time
+        from good_type
+        order by sort_no
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="countAllGoodTypesForBack" resultType="Integer">
+        select count(*)
+        from good_type
+    </select>
+
+    <select id="moveUp">
+        select move_up_type(#{typeId})
+    </select>
+
+    <select id="moveDown">
+        select move_down_type(#{typeId})
+    </select>
+
+    <insert id="createNewType">
+        insert into good_type (id, type_name, sort_no, created_time)
+        values (default, #{typeName}, default, now())
+    </insert>
+
+    <update id="updateTypeName">
+        update good_type
+        set type_name = #{typeName}
+        where id = #{typeId}
+    </update>
+
+    <delete id="deleteType">
+        delete
+        from good_type
+        where id = #{typeId}
+    </delete>
+
 </mapper>

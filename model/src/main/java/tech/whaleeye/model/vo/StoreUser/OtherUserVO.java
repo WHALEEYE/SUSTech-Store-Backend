@@ -1,4 +1,4 @@
-package tech.whaleeye.model.vo;
+package tech.whaleeye.model.vo.StoreUser;
 
 import lombok.Getter;
 import lombok.Setter;

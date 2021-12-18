@@ -1,4 +1,4 @@
-package tech.whaleeye.model.vo;
+package tech.whaleeye.model.vo.GoodType;
 
 import lombok.Getter;
 import lombok.Setter;

@@ -1,7 +1,8 @@
-package tech.whaleeye.model.vo;
+package tech.whaleeye.model.vo.SecondHandGood;
 
 import lombok.Getter;
 import lombok.Setter;
+import tech.whaleeye.model.vo.GoodType.GoodTypeVO;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -26,7 +27,7 @@ public class FullGoodVO implements Serializable {
 
     private Boolean sold;
 
-    private List<GoodPictureVO> pictureList;
+    private List<String> picturePathList;
 
     private Date createdTime;
 

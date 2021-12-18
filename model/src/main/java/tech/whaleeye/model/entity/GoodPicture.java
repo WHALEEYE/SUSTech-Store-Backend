@@ -10,11 +10,11 @@ import java.util.Date;
 @Setter
 public class GoodPicture implements Serializable {
 
+    private Integer id;
+
     private Integer goodId;
 
     private String picturePath;
-
-    private Integer sortNo;
 
     private Date createdTime;
 

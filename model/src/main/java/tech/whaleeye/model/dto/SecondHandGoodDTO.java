@@ -2,7 +2,6 @@ package tech.whaleeye.model.dto;
 
 import lombok.Getter;
 import lombok.Setter;
-import tech.whaleeye.model.vo.GoodPictureVO;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -22,6 +21,6 @@ public class SecondHandGoodDTO implements Serializable {
 
     private BigDecimal price;
 
-    private List<GoodPictureDTO> pictureList;
+    private List<String> picturePathList;
 
 }

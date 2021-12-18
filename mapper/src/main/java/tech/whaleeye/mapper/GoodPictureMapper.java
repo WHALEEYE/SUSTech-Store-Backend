@@ -12,9 +12,9 @@ public interface GoodPictureMapper {
 
     String getMainPicPathByGoodId(@Param("goodId") Integer goodId);
 
-    List<GoodPicture> getPicturesByGoodId(@Param("goodId") Integer goodId);
+    List<String> getPicturesByGoodId(@Param("goodId") Integer goodId);
 
-    Integer insertGoodPictures(@Param("goodId") Integer goodId, @Param("goodPictureList") List<GoodPictureDTO> goodPictureList);
+    Integer insertGoodPictures(@Param("goodId") Integer goodId, @Param("picturePathList") List<String> picturePathList);
 
     void deletePicturesByGoodId(@Param("goodId") Integer goodId);
 

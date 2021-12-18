@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import tech.whaleeye.mapper.SecondHandGoodMapper;
 import tech.whaleeye.mapper.SecondHandOrderMapper;
 import tech.whaleeye.mapper.StoreUserMapper;
-import tech.whaleeye.misc.ajax.ListPage;
+import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.misc.constants.OrderState;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.exceptions.BadOrderStatusException;
@@ -16,7 +16,7 @@ import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.TencentCloudUtils;
 import tech.whaleeye.model.entity.SecondHandGood;
 import tech.whaleeye.model.entity.SecondHandOrder;
-import tech.whaleeye.model.vo.OrderVO;
+import tech.whaleeye.model.vo.SecondHandOrder.OrderVO;
 import tech.whaleeye.service.SecondHandOrderService;
 
 import java.math.BigDecimal;
@@ -50,19 +50,19 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
     }
 
     @Override
-    public ListPage<OrderVO> getOrderByUserId(Integer userId, Boolean userType, Integer orderStatus, Integer pageSize, Integer pageNo) {
+    public PageList<OrderVO> getOrderByUserId(Integer userId, Boolean userType, Integer orderStatus, Integer pageSize, Integer pageNo) {
         List<OrderVO> orderList = modelMapper.map(secondHandOrderMapper.getOrderByUserId(userId, userType, orderStatus, pageSize, pageSize * (pageNo - 1)), new TypeToken<List<OrderVO>>() {
         }.getType());
         Integer total = secondHandOrderMapper.countOrderByUserId(userId, userType, orderStatus);
-        return new ListPage<>(orderList, pageSize, pageNo, total);
+        return new PageList<>(orderList, pageSize, pageNo, total);
     }
 
     @Override
-    public ListPage<OrderVO> getOrderByGoodId(Integer publisher, Integer goodId, Integer pageSize, Integer pageNo) {
+    public PageList<OrderVO> getOrderByGoodId(Integer publisher, Integer goodId, Integer pageSize, Integer pageNo) {
         List<OrderVO> orderList = modelMapper.map(secondHandOrderMapper.getOrderByGoodId(publisher, goodId, pageSize, pageSize * (pageNo - 1)), new TypeToken<List<OrderVO>>() {
         }.getType());
         Integer total = secondHandOrderMapper.countOrderByGoodId(publisher, goodId);
-        return new ListPage<>(orderList, pageSize, pageNo, total);
+        return new PageList<>(orderList, pageSize, pageNo, total);
     }
 
     @Override

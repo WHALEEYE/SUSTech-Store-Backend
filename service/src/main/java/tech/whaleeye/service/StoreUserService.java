@@ -1,9 +1,9 @@
 package tech.whaleeye.service;
 
 import org.springframework.lang.Nullable;
-import tech.whaleeye.misc.ajax.ListPage;
+import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.model.entity.StoreUser;
-import tech.whaleeye.model.vo.StoreUserVO;
+import tech.whaleeye.model.vo.StoreUser.StoreUserVO;
 
 public interface StoreUserService {
 
@@ -40,7 +40,7 @@ public interface StoreUserService {
     Boolean deleteStoreUser(Integer userId);
 
     // Used in background system
-    ListPage<StoreUserVO> listAll(Integer pageSize, Integer pageNo, @Nullable String searchNickname, @Nullable String searchPhoneNumber);
+    PageList<StoreUserVO> listAll(Integer pageSize, Integer pageNo, @Nullable String searchNickname, @Nullable String searchPhoneNumber);
 
     Boolean banUser(Integer userId);
 
