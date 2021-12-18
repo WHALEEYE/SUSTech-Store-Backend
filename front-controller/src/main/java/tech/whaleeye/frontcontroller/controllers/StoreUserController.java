@@ -2,7 +2,7 @@ package tech.whaleeye.frontcontroller.controllers;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.modelmapper.ModelMapper;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
@@ -16,6 +16,7 @@ import tech.whaleeye.service.VCodeRecordService;
 @Api("Controls Store User Accounts and Relationships")
 @RestController
 @RequestMapping("/storeUser")
+@Log4j2
 public class StoreUserController {
 
     @Autowired
@@ -40,12 +41,19 @@ public class StoreUserController {
     @ApiOperation("cancel user account")
     @DeleteMapping("/cancel")
     public AjaxResult cancelAccount(String vCode) {
-        VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CANCEL_ACCOUNT);
-        if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
-            return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
+        try {
+            VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CANCEL_ACCOUNT);
+            if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
+                return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired");
+            }
+            vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
+            if (storeUserService.deleteStoreUser(MiscUtils.currentUserId())) {
+                return AjaxResult.setSuccess(true).setMsg("Account has cancelled successfully");
+            }
+            return AjaxResult.setSuccess(false).setMsg("Failed to cancel account");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to cancel account");
         }
-        vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
-        storeUserService.deleteStoreUser(MiscUtils.currentUserId(), MiscUtils.currentUserId());
-        return AjaxResult.setSuccess(true).setMsg("Account has cancelled successfully.");
     }
 }

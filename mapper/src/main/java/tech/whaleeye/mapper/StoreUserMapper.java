@@ -5,7 +5,6 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.lang.Nullable;
 import tech.whaleeye.model.entity.StoreUser;
 
-import java.math.BigDecimal;
 import java.util.List;
 
 @Mapper
@@ -13,9 +12,7 @@ public interface StoreUserMapper {
 
     StoreUser getUserById(@Param("userId") Integer userId);
 
-    StoreUser getStoreUser(@Nullable @Param("phoneNumber") String phoneNumber,
-                           @Nullable @Param("cardNumber") String cardNumber,
-                           @Nullable @Param("userId") Integer userId);
+    StoreUser getStoreUser(@Nullable @Param("phoneNumber") String phoneNumber, @Nullable @Param("cardNumber") String cardNumber, @Nullable @Param("userId") Integer userId);
 
     Integer registerStoreUser(String phoneNumber);
 
@@ -33,23 +30,19 @@ public interface StoreUserMapper {
 
     Integer updateSex(@Param("userId") Integer userId, @Param("sex") Boolean sex);
 
-    Integer updateNotifications(@Param("userId") Integer userId,
-                                @Param("secondHandNotification") Boolean secondHandNotification,
-                                @Param("agentServiceNotification") Boolean agentServiceNotification,
-                                @Param("apiTradeNotification") Boolean apiTradeNotification);
+    Integer updateNotifications(@Param("userId") Integer userId, @Param("secondHandNotification") Boolean secondHandNotification, @Param("agentServiceNotification") Boolean agentServiceNotification, @Param("apiTradeNotification") Boolean apiTradeNotification);
 
     Integer updateAvatar(@Param("userId") Integer userId, @Param("avatarPath") String avatarPath);
 
-    Integer updateBalance(@Param("userId") Integer userId, @Param("amount") BigDecimal amount);
-
-    void deleteStoreUser(@Param("userId") Integer userId, @Param("deleteUserId") Integer deleteUserId);
+    Integer deleteStoreUser(@Param("userId") Integer userId);
 
     // Used in background system
-    List<StoreUser> listAll(@Param("pageSize") Integer pageSize,
-                            @Param("offset") Integer offset,
-                            @Nullable @Param("searchNickname") String searchNickname,
-                            @Nullable @Param("searchPhoneNumber") String searchPhoneNumber);
+    List<StoreUser> listAll(@Param("pageSize") Integer pageSize, @Param("offset") Integer offset, @Nullable @Param("searchNickname") String searchNickname, @Nullable @Param("searchPhoneNumber") String searchPhoneNumber);
 
-    Integer countAll(@Nullable @Param("searchNickname") String searchNickname,
-                     @Nullable @Param("searchPhoneNumber") String searchPhoneNumber);
+    Integer countAll(@Nullable @Param("searchNickname") String searchNickname, @Nullable @Param("searchPhoneNumber") String searchPhoneNumber);
+
+    Integer banUser(@Param("userId") Integer userId);
+
+    Integer unbanUser(@Param("userId") Integer userId);
+
 }

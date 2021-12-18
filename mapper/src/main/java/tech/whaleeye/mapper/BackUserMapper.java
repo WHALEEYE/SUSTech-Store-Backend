@@ -17,13 +17,12 @@ public interface BackUserMapper {
 
     Integer countBackUsers();
 
-    Integer addNewBackUser(@Param("username") String username,
-                           @Param("password") String password,
-                           @Param("salt") String salt,
-                           @Param("roleId") Integer roleId);
+    Integer addNewBackUser(@Param("username") String username, @Param("password") String password, @Param("salt") String salt, @Param("roleId") Integer roleId);
 
     Integer updatePassword(@Param("userId") Integer userId, @Param("password") String password, @Param("salt") String salt);
 
     Integer banUser(@Param("userId") Integer userId);
+
+    Integer unbanUser(@Param("userId") Integer userId);
 
 }

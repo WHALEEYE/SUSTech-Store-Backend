@@ -3,7 +3,6 @@ package tech.whaleeye.backcontroller.controllers;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
-import org.apache.shiro.authz.annotation.Logical;
 import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -51,10 +50,10 @@ public class BackUserController {
     @PutMapping("/password/current")
     public AjaxResult updateCurrentPassword(String password) {
         try {
-            if (backUserService.updatePassword(MiscUtils.currentUserId(), password) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
+            if (backUserService.updatePassword(MiscUtils.currentUserId(), password)) {
+                return AjaxResult.setSuccess(true).setMsg("Success.");
             }
-            return AjaxResult.setSuccess(true).setMsg("Success.");
+            return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
@@ -66,10 +65,10 @@ public class BackUserController {
     @RequiresRoles("Super")
     public AjaxResult updateOtherPassword(@PathVariable("userId") Integer userId, String password) {
         try {
-            if (backUserService.updatePassword(userId, password) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
+            if (backUserService.updatePassword(userId, password)) {
+                return AjaxResult.setSuccess(true).setMsg("Success.");
             }
-            return AjaxResult.setSuccess(true).setMsg("Success.");
+            return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
@@ -77,17 +76,32 @@ public class BackUserController {
     }
 
     @ApiOperation("ban background user")
-    @PutMapping("ban/{userId}")
+    @PutMapping("/ban/{userId}")
     @RequiresRoles("Super")
     public AjaxResult banUser(@PathVariable("userId") Integer userId) {
         try {
-            if (backUserService.banUser(userId) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to ban user.");
+            if (backUserService.banUser(userId)) {
+                return AjaxResult.setSuccess(true).setMsg("Success.");
             }
-            return AjaxResult.setSuccess(true).setMsg("Success.");
+            return AjaxResult.setSuccess(false).setMsg("Failed to ban user.");
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to ban user.");
+        }
+    }
+
+    @ApiOperation("unban background user")
+    @PutMapping("/unban/{userId}")
+    @RequiresRoles("Super")
+    public AjaxResult unbanUser(@PathVariable("userId") Integer userId) {
+        try {
+            if (backUserService.unbanUser(userId)) {
+                return AjaxResult.setSuccess(true).setMsg("Success.");
+            }
+            return AjaxResult.setSuccess(false).setMsg("Failed to unban user.");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to unban user.");
         }
     }
 

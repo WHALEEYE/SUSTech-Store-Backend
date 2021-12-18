@@ -1,4 +1,4 @@
-package tech.whaleeye.model.entity;
+package tech.whaleeye.model.vo;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,15 +6,14 @@ import lombok.Setter;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
 
 @Getter
 @Setter
-public class SecondHandGood implements Serializable {
+public class BackGoodVO implements Serializable {
 
     private Integer id;
 
-    private Integer typeId;
+    private String goodType;
 
     private String title;
 
@@ -22,7 +21,9 @@ public class SecondHandGood implements Serializable {
 
     private BigDecimal price;
 
-    private Integer publisher;
+    private String publisherName;
+
+    private String publisherPhone;
 
     private Boolean sold;
 

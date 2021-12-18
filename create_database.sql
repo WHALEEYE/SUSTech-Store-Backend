@@ -66,44 +66,30 @@ create table if not exists deleted_store_user
     banned                     bool,
     created_time               timestamp,
     updated_time               timestamp,
-    deleted_time               timestamp,
-    deleted_by                 int
+    deleted_time               timestamp
 );
 
-create or replace function delete_store_user(deleted_user_id int, delete_user_id int)
-    returns void as
+create or replace function on_delete_store_user()
+    returns trigger as
 $$
 begin
     insert into deleted_store_user (id, phone_number, nickname, card_number, password, salt, introduction, avatar_path,
                                     sex, alipay_account, credit_score, total_sold_value, second_hand_notification,
                                     agent_service_notification, api_trade_notification, banned, created_time,
-                                    updated_time, deleted_time, deleted_by)
-    select id,
-           phone_number,
-           nickname,
-           card_number,
-           password,
-           salt,
-           introduction,
-           avatar_path,
-           sex,
-           alipay_account,
-           credit_score,
-           total_sold_value,
-           second_hand_notification,
-           agent_service_notification,
-           api_trade_notification,
-           banned,
-           created_time,
-           updated_time,
-           now(),
-           delete_user_id
-    from store_user
-    where id = deleted_user_id;
-    delete from store_user where id = deleted_user_id;
+                                    updated_time, deleted_time)
+    values (old.id, old.phone_number, old.nickname, old.card_number, old.password, old.salt, old.introduction,
+            old.avatar_path, old.sex, old.alipay_account, old.credit_score, old.total_sold_value,
+            old.second_hand_notification, old.agent_service_notification, old.api_trade_notification, old.banned,
+            old.created_time, old.updated_time, now());
+    return null;
 end;
-$$
-    language plpgsql;
+$$ language plpgsql;
+
+create trigger on_delete_store_user
+    after delete
+    on store_user
+    for each row
+execute procedure on_delete_store_user();
 
 create table if not exists v_code_record
 (
@@ -173,11 +159,15 @@ create table if not exists deleted_second_hand_good
 );
 
 create or replace function delete_second_hand_good(deleted_good_id int, delete_user_id int)
-    returns void as
+    returns bool as
 $$
 begin
+    if not exists(select null from second_hand_good where id = deleted_good_id and not sold) then
+        return false;
+    end if;
     delete from second_hand_good where id = deleted_good_id;
     update deleted_second_hand_good set deleted_by = delete_user_id where id = deleted_good_id;
+    return true;
 end;
 $$
     language plpgsql;

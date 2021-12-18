@@ -1,6 +1,8 @@
 package tech.whaleeye.service;
 
-import tech.whaleeye.model.entity.SecondHandGood;
+import tech.whaleeye.misc.ajax.ListPage;
+import tech.whaleeye.model.dto.SecondHandGoodDTO;
+import tech.whaleeye.model.vo.BackGoodVO;
 import tech.whaleeye.model.vo.BriefGoodVO;
 import tech.whaleeye.model.vo.FullGoodVO;
 import tech.whaleeye.model.vo.GoodTypeVO;
@@ -11,20 +13,23 @@ public interface SecondHandGoodService {
 
     FullGoodVO getGoodById(Integer goodId);
 
-    List<BriefGoodVO> getAllGoods(Integer pageSize, Integer pageNo, Integer typeId, String searchKeyword);
+    ListPage<BriefGoodVO> listAllGoods(Integer pageSize, Integer pageNo, Integer typeId, String searchKeyword);
 
-    List<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo, Boolean sold, String searchKeyword);
+    ListPage<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo, Boolean sold, String searchKeyword);
 
     GoodTypeVO getGoodTypeById(Integer typeId);
 
     List<GoodTypeVO> getAllGoodTypes();
 
-    Integer countAllGoods(Integer typeId, String searchKeyword);
+    Boolean insertSecondHandGood(SecondHandGoodDTO secondHandGoodDTO);
 
-    Integer countGoodsByPublisher(Integer publisher, Boolean sold, String searchKeyword);
-    
-    Integer insertSecondHandGood(SecondHandGood secondHandGood);
+    Boolean updateGoodInfo(SecondHandGoodDTO secondHandGoodDTO);
 
-    Integer updateGoodInfo(SecondHandGood secondHandGood);
+    Boolean deleteGood(Integer goodId, Integer userId);
 
+    /* used in background system */
+
+    ListPage<BackGoodVO> listAllGoodsForBack(Integer pageSize, Integer pageNo, String searchNickname, String searchPhoneNumber, String searchKeyword);
+
+    Boolean deleteGoodForBack(Integer goodId, Integer userId);
 }

@@ -164,7 +164,9 @@
     </update>
 
     <delete id="deleteStoreUser">
-        select delete_store_user(#{userId}, #{deleteUserId})
+        delete
+        from store_user
+        where id = #{userId}
     </delete>
 
     <!-- Used in background system -->
@@ -212,5 +214,19 @@
             </if>
         </where>
     </select>
+
+    <update id="banUser">
+        update store_user
+        set banned = true
+        where id = #{userId}
+          and not banned
+    </update>
+
+    <update id="unbanUser">
+        update store_user
+        set banned = false
+        where id = #{userId}
+          and banned
+    </update>
 
 </mapper>

@@ -78,6 +78,15 @@
         set banned = true
         where id = #{userId}
           and not role_id = 3
+          and not banned
+    </update>
+
+    <update id="unbanUser">
+        update back_user
+        set banned = false
+        where id = #{userId}
+          and not role_id = 3
+          and banned
     </update>
 
 </mapper>

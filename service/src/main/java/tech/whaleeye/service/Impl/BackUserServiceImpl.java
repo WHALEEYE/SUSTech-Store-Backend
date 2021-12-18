@@ -54,14 +54,19 @@ public class BackUserServiceImpl implements BackUserService {
     }
 
     @Override
-    public Integer updatePassword(Integer userId, String password) {
+    public Boolean updatePassword(Integer userId, String password) {
         String hexSalt = MiscUtils.generateSalt(8);
         password = new Md5Hash(password, MiscUtils.getSaltFromHex(hexSalt), 1024).toHex();
-        return backUserMapper.updatePassword(userId, password, hexSalt);
+        return backUserMapper.updatePassword(userId, password, hexSalt) > 0;
     }
 
     @Override
-    public Integer banUser(Integer userId) {
-        return backUserMapper.banUser(userId);
+    public Boolean banUser(Integer userId) {
+        return backUserMapper.banUser(userId) > 0;
+    }
+
+    @Override
+    public Boolean unbanUser(Integer userId) {
+        return backUserMapper.unbanUser(userId) > 0;
     }
 }

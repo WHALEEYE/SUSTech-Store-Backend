@@ -117,8 +117,8 @@ public class StoreUserServiceImpl implements StoreUserService {
     }
 
     @Override
-    public void deleteStoreUser(Integer userId, Integer deleteUserId) {
-        storeUserMapper.deleteStoreUser(userId, deleteUserId);
+    public Boolean deleteStoreUser(Integer userId) {
+        return storeUserMapper.deleteStoreUser(userId) > 0;
     }
 
     @Override
@@ -129,4 +129,15 @@ public class StoreUserServiceImpl implements StoreUserService {
         int total = storeUserMapper.countAll(searchNickname, searchPhoneNumber);
         return new ListPage<>(storeUserVOList, pageSize, pageNo, total);
     }
+
+    @Override
+    public Boolean banUser(Integer userId) {
+        return storeUserMapper.banUser(userId) > 0;
+    }
+
+    @Override
+    public Boolean unbanUser(Integer userId) {
+        return storeUserMapper.unbanUser(userId) > 0;
+    }
+
 }

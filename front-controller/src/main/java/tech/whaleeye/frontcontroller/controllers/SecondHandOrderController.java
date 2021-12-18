@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 
 @Api("Second Hand Order Controller")
 @RestController
-@RequestMapping("/secondHandOrder")
+@RequestMapping("/order")
 public class SecondHandOrderController {
 
     @Autowired

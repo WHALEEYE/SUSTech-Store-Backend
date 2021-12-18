@@ -44,4 +44,7 @@ public class StoreUserVO implements Serializable {
     private Boolean banned;
 
     private Date createdTime;
+
+    private Date updatedTime;
+
 }

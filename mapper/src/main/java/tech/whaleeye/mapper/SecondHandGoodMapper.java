@@ -2,6 +2,7 @@ package tech.whaleeye.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import tech.whaleeye.model.dto.SecondHandGoodDTO;
 import tech.whaleeye.model.entity.SecondHandGood;
 
 import java.util.List;
@@ -11,28 +12,30 @@ public interface SecondHandGoodMapper {
 
     SecondHandGood getGoodById(@Param("goodId") Integer goodId);
 
-    List<SecondHandGood> getAllGoods(@Param("pageSize") Integer pageSize,
-                                     @Param("offset") Integer offset,
-                                     @Param("typeId") Integer typeId,
-                                     @Param("searchKeyword") String searchKeyword);
+    List<SecondHandGood> listAllGoods(@Param("pageSize") Integer pageSize, @Param("offset") Integer offset, @Param("typeId") Integer typeId, @Param("searchKeyword") String searchKeyword);
 
-    Integer countAllGoods(@Param("typeId") Integer typeId,
-                          @Param("searchKeyword") String searchKeyword);
+    Integer countAllGoods(@Param("typeId") Integer typeId, @Param("searchKeyword") String searchKeyword);
 
-    List<SecondHandGood> getGoodsByPublisher(@Param("publisher") Integer publisher,
-                                             @Param("pageSize") Integer pageSize,
+    List<SecondHandGood> getGoodsByPublisher(@Param("publisher") Integer publisher, @Param("pageSize") Integer pageSize, @Param("offset") Integer offset, @Param("sold") Boolean sold, @Param("searchKeyword") String searchKeyword);
+
+    Integer countGoodsByPublisher(@Param("publisher") Integer publisher, @Param("sold") Boolean sold, @Param("searchKeyword") String searchKeyword);
+
+    Boolean deleteSecondHandGood(@Param("goodId") Integer goodId, @Param("userId") Integer userId);
+
+    Integer insertSecondHandGood(@Param("userId") Integer userId, @Param("good") SecondHandGoodDTO secondHandGoodDTO);
+
+    Integer updateGoodInfo(SecondHandGoodDTO secondHandGoodDTO);
+
+    /* used in background system */
+
+    List<SecondHandGood> listAllGoodsForBack(@Param("pageSize") Integer pageSize,
                                              @Param("offset") Integer offset,
-                                             @Param("sold") Boolean sold,
+                                             @Param("searchNickname") String searchNickname,
+                                             @Param("searchPhoneNumber") String searchPhoneNumber,
                                              @Param("searchKeyword") String searchKeyword);
 
-    Integer countGoodsByPublisher(@Param("publisher") Integer publisher,
-                                  @Param("sold") Boolean sold,
-                                  @Param("searchKeyword") String searchKeyword);
-
-    Integer insertSecondHandGood(SecondHandGood secondHandGood);
-
-    Integer updateGoodInfo(SecondHandGood secondHandGood);
-
-    Integer setGoodSold(@Param("goodId") Integer goodId);
+    Integer countAllGoodsForBack(@Param("searchNickname") String searchNickname,
+                                 @Param("searchPhoneNumber") String searchPhoneNumber,
+                                 @Param("searchKeyword") String searchKeyword);
 
 }

@@ -4,8 +4,6 @@ import tech.whaleeye.misc.ajax.ListPage;
 import tech.whaleeye.model.entity.BackUser;
 import tech.whaleeye.model.vo.BackUserVO;
 
-import java.util.List;
-
 public interface BackUserService {
 
     BackUser queryById(Integer userId);
@@ -16,8 +14,10 @@ public interface BackUserService {
 
     Integer addNewBackUser(String username, String password, Integer roleId);
 
-    Integer updatePassword(Integer userId, String password);
+    Boolean updatePassword(Integer userId, String password);
 
-    Integer banUser(Integer userId);
+    Boolean banUser(Integer userId);
+
+    Boolean unbanUser(Integer userId);
 
 }
