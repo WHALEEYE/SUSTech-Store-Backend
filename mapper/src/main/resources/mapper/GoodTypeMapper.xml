@@ -36,11 +36,11 @@
         from good_type
     </select>
 
-    <select id="moveUp">
+    <select id="moveUp" resultType="Boolean">
         select move_up_type(#{typeId})
     </select>
 
-    <select id="moveDown">
+    <select id="moveDown" resultType="Boolean">
         select move_down_type(#{typeId})
     </select>
 

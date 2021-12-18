@@ -60,7 +60,7 @@ public class GoodTypeController {
         }
     }
 
-    @ApiOperation("move down one position")
+    @ApiOperation("move up one position")
     @PutMapping("/pos/up/{typeId}")
     @RequiresRoles(value = {"Admin", "Super"}, logical = Logical.OR)
     public AjaxResult moveUp(@PathVariable("typeId") Integer typeId) {

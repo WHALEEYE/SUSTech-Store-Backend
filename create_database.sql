@@ -109,7 +109,7 @@ create table if not exists good_type
 (
     id           serial primary key,
     type_name    varchar(30) unique not null,
-    sort_no      serial unique      not null,
+    sort_no      serial             not null,
     created_time timestamp          not null default now()
 );
 
