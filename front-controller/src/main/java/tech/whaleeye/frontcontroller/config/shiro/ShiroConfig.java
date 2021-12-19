@@ -93,6 +93,8 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/v2/api-docs-ext", "anon");
         filterChainDefinitionMap.put("/webjars/**", "anon");
 
+        filterChainDefinitionMap.put("/imserver/{username}/**", "anon");
+
         // APIs in second hand good controller
         filterChainDefinitionMap.put("/secondHandGood/brief/current", "jwtFilter");
         filterChainDefinitionMap.put("/secondHandGood/brief/**", "anon");
