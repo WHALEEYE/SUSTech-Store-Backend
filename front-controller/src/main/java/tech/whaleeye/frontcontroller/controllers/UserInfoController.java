@@ -67,7 +67,7 @@ public class UserInfoController {
 
     @ApiOperation("set user password")
     @PutMapping("/password")
-    public AjaxResult setPassword(String password) {
+    public AjaxResult setPassword(@RequestParam String password) {
         try {
             if (storeUserService.setPassword(MiscUtils.currentUserId(), password)) {
                 return AjaxResult.setSuccess(true).setMsg("Success.");
@@ -83,7 +83,7 @@ public class UserInfoController {
 
     @ApiOperation("set alipay account")
     @PutMapping("/alipay")
-    public AjaxResult setAlipayAccount(String alipayAccount) {
+    public AjaxResult setAlipayAccount(@RequestParam String alipayAccount) {
         if (storeUserService.setAlipayAccount(MiscUtils.currentUserId(), alipayAccount) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to set alipay account.");
         }
@@ -92,7 +92,8 @@ public class UserInfoController {
 
     @ApiOperation("set card number")
     @PutMapping("/cardNumber")
-    public AjaxResult setCardNumber(String cardNumber, String vCode) {
+    public AjaxResult setCardNumber(@RequestParam String cardNumber,
+                                    @RequestParam String vCode) {
         try {
             VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailEmailVCode(MiscUtils.currentUserId(), cardNumber);
             if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
@@ -111,7 +112,8 @@ public class UserInfoController {
 
     @ApiOperation("update password")
     @PatchMapping("/password")
-    public AjaxResult updatePassword(String vCode, String newPassword) {
+    public AjaxResult updatePassword(@RequestParam String vCode,
+                                     @RequestParam String newPassword) {
         try {
             VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CHANGE_PASSWORD);
             if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
@@ -132,7 +134,8 @@ public class UserInfoController {
 
     @ApiOperation("update alipay account")
     @PatchMapping("/alipay")
-    public AjaxResult updateAlipayAccount(String vCode, String alipayAccount) {
+    public AjaxResult updateAlipayAccount(@RequestParam String vCode,
+                                          @RequestParam String alipayAccount) {
         VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CHANGE_ALIPAY);
         if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
             return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
@@ -146,7 +149,7 @@ public class UserInfoController {
 
     @ApiOperation("update self introduction")
     @PatchMapping("/intro")
-    public AjaxResult updateIntroduction(String introduction) {
+    public AjaxResult updateIntroduction(@RequestParam String introduction) {
         try {
             if (storeUserService.updateIntroduction(MiscUtils.currentUserId(), introduction) <= 0) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to update introduction.");
@@ -159,7 +162,7 @@ public class UserInfoController {
 
     @ApiOperation("update nickname")
     @PatchMapping("/nickname")
-    public AjaxResult updateNickname(String nickname) {
+    public AjaxResult updateNickname(@RequestParam String nickname) {
         try {
             if (storeUserService.updateNickname(MiscUtils.currentUserId(), nickname) <= 0) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to update nickname.");
@@ -172,7 +175,7 @@ public class UserInfoController {
 
     @ApiOperation("update sex")
     @PatchMapping("/sex")
-    public AjaxResult updateNickname(Boolean sex) {
+    public AjaxResult updateNickname(@RequestParam Boolean sex) {
         if (storeUserService.updateSex(MiscUtils.currentUserId(), sex) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to update sex information.");
         }
@@ -181,7 +184,9 @@ public class UserInfoController {
 
     @ApiOperation("update notifications")
     @PatchMapping("/notifications")
-    public AjaxResult updateNotifications(Boolean secondHandNotification, Boolean agentServiceNotification, Boolean apiTradeNotification) {
+    public AjaxResult updateNotifications(@RequestParam Boolean secondHandNotification,
+                                          @RequestParam Boolean agentServiceNotification,
+                                          @RequestParam Boolean apiTradeNotification) {
         if (storeUserService.updateNotifications(MiscUtils.currentUserId(), secondHandNotification, agentServiceNotification, apiTradeNotification) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to update notification settings.");
         }

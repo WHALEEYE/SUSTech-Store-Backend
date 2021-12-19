@@ -21,7 +21,8 @@ public class GoodTypeController {
 
     @ApiOperation("list all good types")
     @GetMapping("/all")
-    public AjaxResult listAllGoodTypes(Integer pageSize, Integer pageNo) {
+    public AjaxResult listAllGoodTypes(@RequestParam Integer pageSize,
+                                       @RequestParam Integer pageNo) {
         try {
             return AjaxResult.setSuccess(true).setData(goodTypeService.listAllGoodTypes(pageSize, pageNo));
         } catch (Exception e) {
@@ -33,7 +34,7 @@ public class GoodTypeController {
     @ApiOperation("create a new good type")
     @PostMapping("/")
     @RequiresRoles(value = {"Admin", "Super"}, logical = Logical.OR)
-    public AjaxResult createNewType(String typeName) {
+    public AjaxResult createNewType(@RequestParam String typeName) {
         try {
             if (goodTypeService.createNewType(typeName)) {
                 return AjaxResult.setSuccess(true).setMsg("New good type created successfully");
@@ -48,7 +49,8 @@ public class GoodTypeController {
     @ApiOperation("update type name")
     @PutMapping("/name/{typeId}")
     @RequiresRoles(value = {"Admin", "Super"}, logical = Logical.OR)
-    public AjaxResult updateTypeName(@PathVariable("typeId") Integer typeId, String typeName) {
+    public AjaxResult updateTypeName(@PathVariable("typeId") Integer typeId,
+                                     @RequestParam String typeName) {
         try {
             if (goodTypeService.updateTypeName(typeId, typeName)) {
                 return AjaxResult.setSuccess(true).setMsg("Changed the name successfully");

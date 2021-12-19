@@ -22,8 +22,8 @@ public class SecondHandGoodController {
 
     @ApiOperation("list all the goods")
     @GetMapping("/all")
-    public AjaxResult listAllGoodForBack(Integer pageSize,
-                                         Integer pageNo,
+    public AjaxResult listAllGoodForBack(@RequestParam Integer pageSize,
+                                         @RequestParam Integer pageNo,
                                          @RequestParam(required = false) String searchNickname,
                                          @RequestParam(required = false) String searchPhoneNumber,
                                          @RequestParam(required = false) String searchKeyword) {

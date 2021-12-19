@@ -12,6 +12,7 @@ import org.apache.shiro.web.util.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tech.whaleeye.frontcontroller.config.shiro.LoginToken;
 import tech.whaleeye.frontcontroller.config.shiro.LoginType;
@@ -34,7 +35,9 @@ public class LoginController {
 
     @ApiOperation("login by phone number")
     @PostMapping("/phone")
-    public AjaxResult phoneLogin(ServletResponse response, String phoneNumber, String VCode) {
+    public AjaxResult phoneLogin(ServletResponse response,
+                                 @RequestParam String phoneNumber,
+                                 @RequestParam String VCode) {
         if (phoneNumber.length() != 11) {
             return AjaxResult.setSuccess(false).setMsg("Invalid phone number.");
         }
@@ -66,7 +69,9 @@ public class LoginController {
 
     @ApiOperation("login by card number")
     @PostMapping("/card")
-    public AjaxResult cardLogin(ServletResponse response, String cardNumber, String password) {
+    public AjaxResult cardLogin(ServletResponse response,
+                                @RequestParam String cardNumber,
+                                @RequestParam String password) {
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         Subject subject = SecurityUtils.getSubject();
         LoginToken token = new LoginToken(cardNumber, password, LoginType.CARD_PWD);

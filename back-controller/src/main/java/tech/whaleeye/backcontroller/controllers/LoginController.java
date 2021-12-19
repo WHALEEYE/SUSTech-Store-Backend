@@ -6,15 +6,13 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.util.WebUtils;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.constants.Values;
 import tech.whaleeye.misc.utils.JWTUtils;
-import tech.whaleeye.service.BackUserService;
 
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
@@ -26,7 +24,9 @@ public class LoginController {
 
     @ApiOperation("login by username and password")
     @PostMapping("/")
-    public AjaxResult userLogin(ServletResponse response, String username, String password) {
+    public AjaxResult userLogin(ServletResponse response,
+                                @RequestParam String username,
+                                @RequestParam String password) {
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);

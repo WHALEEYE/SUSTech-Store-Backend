@@ -24,7 +24,8 @@ public class BackUserController {
     @ApiOperation("list all background users")
     @GetMapping("/all")
     @RequiresRoles("Super")
-    public AjaxResult listAllBackUsers(@RequestParam Integer pageSize, @RequestParam Integer pageNo) {
+    public AjaxResult listAllBackUsers(@RequestParam Integer pageSize,
+                                       @RequestParam Integer pageNo) {
         try {
             return AjaxResult.setSuccess(true).setData(backUserService.listAllBackUsers(pageSize, pageNo));
         } catch (Exception e) {
@@ -36,7 +37,9 @@ public class BackUserController {
     @ApiOperation("create new background user")
     @PostMapping("/")
     @RequiresRoles("Super")
-    public AjaxResult createNewBackUser(@RequestParam String username, @RequestParam String password, @RequestParam Integer roleId) {
+    public AjaxResult createNewBackUser(@RequestParam String username,
+                                        @RequestParam String password,
+                                        @RequestParam Integer roleId) {
         try {
             return AjaxResult.setSuccess(true).setData(backUserService.addNewBackUser(username, password, roleId));
         } catch (IllegalPasswordException ipe) {

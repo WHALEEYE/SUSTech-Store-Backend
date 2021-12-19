@@ -21,7 +21,10 @@ public class FrontUserController {
 
     @ApiOperation("list all the front users")
     @GetMapping("/all")
-    public AjaxResult listAllFrontUsers(Integer pageSize, Integer pageNo, @RequestParam(required = false) String searchNickname, @RequestParam(required = false) String searchPhoneNumber) {
+    public AjaxResult listAllFrontUsers(@RequestParam Integer pageSize,
+                                        @RequestParam Integer pageNo,
+                                        @RequestParam(required = false) String searchNickname,
+                                        @RequestParam(required = false) String searchPhoneNumber) {
         try {
             return AjaxResult.setSuccess(true).setData(storeUserService.listAll(pageSize, pageNo, searchNickname, searchPhoneNumber));
         } catch (Exception e) {

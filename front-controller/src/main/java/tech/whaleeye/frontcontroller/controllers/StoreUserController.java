@@ -40,7 +40,7 @@ public class StoreUserController {
 
     @ApiOperation("cancel user account")
     @DeleteMapping("/cancel")
-    public AjaxResult cancelAccount(String vCode) {
+    public AjaxResult cancelAccount(@RequestParam String vCode) {
         try {
             VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CANCEL_ACCOUNT);
             if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {

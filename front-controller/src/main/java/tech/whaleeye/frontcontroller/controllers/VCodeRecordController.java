@@ -5,10 +5,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.constants.VCodeType;
 import tech.whaleeye.misc.exceptions.VCodeLimitException;
@@ -83,7 +80,8 @@ public class VCodeRecordController {
 
     @ApiOperation("send verification code to email")
     @PostMapping("/email/{cardNumber}")
-    public AjaxResult sendEmailVCode(@PathVariable("cardNumber") String cardNumber, String postfix) {
+    public AjaxResult sendEmailVCode(@PathVariable("cardNumber") String cardNumber,
+                                     @RequestParam String postfix) {
         String receiveEmail = cardNumber.concat(postfix);
         String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {

@@ -43,10 +43,12 @@ public class SecondHandOrderController {
         }
     }
 
-    @ApiOperation("list buying orders of the current user")
+    @ApiOperation("list orders of the current user")
     @GetMapping("brief")
-    AjaxResult listOrdersOfCurrent(@ApiParam("false: seller; true: buyer") Boolean userType,
-                                   Integer orderStatus, Integer pageSize, Integer pageNo) {
+    AjaxResult listOrdersOfCurrent(@RequestParam @ApiParam("false: seller; true: buyer") Boolean userType,
+                                   @RequestParam Integer orderStatus,
+                                   @RequestParam Integer pageSize,
+                                   @RequestParam Integer pageNo) {
         try {
             PageList<OrderVO> orderList = secondHandOrderService.getOrderByUserId(MiscUtils.currentUserId(), userType, orderStatus, pageSize, pageNo);
             return AjaxResult.setSuccess(true).setData(orderList);
@@ -57,7 +59,9 @@ public class SecondHandOrderController {
 
     @ApiOperation("list orders of one good")
     @GetMapping("good/{goodId}")
-    AjaxResult listOrdersOfGood(@PathVariable("goodId") Integer goodId, Integer pageSize, Integer pageNo) {
+    AjaxResult listOrdersOfGood(@PathVariable("goodId") Integer goodId,
+                                @RequestParam Integer pageSize,
+                                @RequestParam Integer pageNo) {
         try {
             PageList<OrderVO> orderList = secondHandOrderService.getOrderByGoodId(MiscUtils.currentUserId(), goodId, pageSize, pageNo);
             return AjaxResult.setSuccess(true).setData(orderList);
@@ -83,7 +87,8 @@ public class SecondHandOrderController {
 
     @ApiOperation("seller's acknowledge")
     @PutMapping("status/seller/{orderId}")
-    AjaxResult sellerAcknowledge(@PathVariable("orderId") Integer orderId, Boolean ack,
+    AjaxResult sellerAcknowledge(@PathVariable("orderId") Integer orderId,
+                                 @RequestParam Boolean ack,
                                  @RequestParam(required = false) BigDecimal actualPrice) {
         try {
             if (ack) {
@@ -110,7 +115,8 @@ public class SecondHandOrderController {
 
     @ApiOperation("buyer's acknowledge")
     @PutMapping("status/buyer/{orderId}")
-    AjaxResult buyerAcknowledge(@PathVariable("orderId") Integer orderId, Boolean ack) {
+    AjaxResult buyerAcknowledge(@PathVariable("orderId") Integer orderId,
+                                @RequestParam Boolean ack) {
         try {
             if (ack) {
                 if (secondHandOrderService.buyerAcknowledge(MiscUtils.currentUserId(), orderId)) {
@@ -138,7 +144,8 @@ public class SecondHandOrderController {
 
     @ApiOperation("deal succeeded")
     @PutMapping("status/deal/{orderId}")
-    AjaxResult confirmDeal(@PathVariable("orderId") Integer orderId, String dealCode) {
+    AjaxResult confirmDeal(@PathVariable("orderId") Integer orderId,
+                           @RequestParam String dealCode) {
         try {
             if (!secondHandOrderService.confirmDeal(MiscUtils.currentUserId(), orderId, dealCode)) {
                 return AjaxResult.setSuccess(false).setMsg("Deal confirmation failed");
@@ -155,7 +162,8 @@ public class SecondHandOrderController {
 
     @ApiOperation("deal refunded")
     @PutMapping("status/refund/{orderId}")
-    AjaxResult refundDeal(@PathVariable("orderId") Integer orderId, String refundCode) {
+    AjaxResult refundDeal(@PathVariable("orderId") Integer orderId,
+                          @RequestParam String refundCode) {
         try {
             if (!secondHandOrderService.refundDeal(MiscUtils.currentUserId(), orderId, refundCode)) {
                 return AjaxResult.setSuccess(false).setMsg("Refund failed");
@@ -172,7 +180,9 @@ public class SecondHandOrderController {
 
     @ApiOperation("seller's comment and grade")
     @PutMapping("comment/{orderId}")
-    AjaxResult leaveComment(@PathVariable("orderId") Integer orderId, Integer grade, String comment) {
+    AjaxResult leaveComment(@PathVariable("orderId") Integer orderId,
+                            @RequestParam Integer grade,
+                            @RequestParam String comment) {
         try {
             if (!secondHandOrderService.leaveComment(MiscUtils.currentUserId(), orderId, grade, comment)) {
                 return AjaxResult.setSuccess(false).setMsg("Comment failed");

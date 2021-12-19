@@ -40,8 +40,8 @@ public class SecondHandGoodController {
 
     @ApiOperation("list all goods")
     @GetMapping("/brief")
-    AjaxResult listAllGoods(Integer pageSize,
-                            Integer pageNo,
+    AjaxResult listAllGoods(@RequestParam Integer pageSize,
+                            @RequestParam Integer pageNo,
                             @RequestParam(required = false) Integer typeId,
                             @RequestParam(required = false) String searchKeyword) {
         try {
@@ -54,8 +54,8 @@ public class SecondHandGoodController {
     @RequiresRoles("user")
     @ApiOperation("list goods of the current user")
     @GetMapping("/brief/current")
-    AjaxResult listGoodsOfCurrent(Integer pageSize,
-                                  Integer pageNo,
+    AjaxResult listGoodsOfCurrent(@RequestParam Integer pageSize,
+                                  @RequestParam Integer pageNo,
                                   @RequestParam(required = false) Boolean sold,
                                   @RequestParam(required = false) String searchKeyword) {
         try {
@@ -68,8 +68,8 @@ public class SecondHandGoodController {
     @ApiOperation("list goods of other user")
     @GetMapping("/brief/{userId}")
     AjaxResult listGoodsOfOther(@PathVariable("userId") Integer userId,
-                                Integer pageSize,
-                                Integer pageNo,
+                                @RequestParam Integer pageSize,
+                                @RequestParam Integer pageNo,
                                 @RequestParam(required = false) Boolean sold,
                                 @RequestParam(required = false) String searchKeyword) {
         try {
