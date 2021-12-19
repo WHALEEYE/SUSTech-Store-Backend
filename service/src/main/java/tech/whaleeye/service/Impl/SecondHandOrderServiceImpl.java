@@ -16,10 +16,13 @@ import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.TencentCloudUtils;
 import tech.whaleeye.model.entity.SecondHandGood;
 import tech.whaleeye.model.entity.SecondHandOrder;
+import tech.whaleeye.model.entity.StoreUser;
+import tech.whaleeye.model.vo.SecondHandOrder.BackOrderVO;
 import tech.whaleeye.model.vo.SecondHandOrder.OrderVO;
 import tech.whaleeye.service.SecondHandOrderService;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -201,6 +204,28 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
             throw new InvalidValueException();
         }
         return secondHandOrderMapper.updateCommentAndGrade(orderId, comment, userType) > 0;
+    }
+
+    @Override
+    public PageList<BackOrderVO> listAllOrders(Integer pageSize, Integer pageNo, Integer orderId) {
+        List<SecondHandOrder> secondHandOrderList = secondHandOrderMapper.listAllOrders(pageSize, (pageNo - 1) * pageSize, orderId);
+        StoreUser buyer, seller;
+        BackOrderVO backOrderVO;
+        SecondHandGood secondHandGood;
+        List<BackOrderVO> backOrderVOList = new ArrayList<>();
+        for (SecondHandOrder secondHandOrder : secondHandOrderList) {
+            secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
+            buyer = storeUserMapper.getUserById(secondHandOrder.getBuyerId());
+            seller = storeUserMapper.getUserById(secondHandGood.getPublisher());
+            backOrderVO = modelMapper.map(secondHandOrder, BackOrderVO.class);
+            backOrderVO.setSellerNickname(seller.getNickname());
+            backOrderVO.setSellerPhoneNumber(seller.getPhoneNumber());
+            backOrderVO.setBuyerNickname(buyer.getNickname());
+            backOrderVO.setBuyerPhoneNumber(buyer.getPhoneNumber());
+            backOrderVO.setGoodTitle(secondHandGood.getTitle());
+        }
+        int total = secondHandOrderMapper.countAllOrders(orderId);
+        return new PageList<>(backOrderVOList, pageSize, pageNo, total);
     }
 
 }

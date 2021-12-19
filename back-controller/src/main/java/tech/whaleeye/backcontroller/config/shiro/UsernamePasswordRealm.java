@@ -8,7 +8,6 @@ import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.beans.factory.annotation.Autowired;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.BackUser;
-import tech.whaleeye.service.BackUserRoleService;
 import tech.whaleeye.service.BackUserService;
 
 public class UsernamePasswordRealm extends AuthorizingRealm {
@@ -16,13 +15,10 @@ public class UsernamePasswordRealm extends AuthorizingRealm {
     @Autowired
     BackUserService backUserService;
 
-    @Autowired
-    BackUserRoleService backUserRoleService;
-
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         Integer userId = (Integer) principalCollection.getPrimaryPrincipal();
-        String roleName = backUserRoleService.getRoleByUserId(userId).getRoleName();
+        String roleName = backUserService.getRoleByUserId(userId).getRoleName();
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
         authorizationInfo.addRole(roleName);
         return authorizationInfo;

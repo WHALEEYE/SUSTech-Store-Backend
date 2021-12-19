@@ -15,6 +15,8 @@ public class BackUserVO implements Serializable {
 
     private String username;
 
+    private Integer roleId;
+
     private String roleName;
 
     private Boolean banned;

@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.constants.UploadFileType;
 import tech.whaleeye.misc.constants.VCodeType;
+import tech.whaleeye.misc.exceptions.IllegalPasswordException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.StoreUser;
@@ -67,10 +68,17 @@ public class UserInfoController {
     @ApiOperation("set user password")
     @PutMapping("/password")
     public AjaxResult setPassword(String password) {
-        if (storeUserService.setPassword(MiscUtils.currentUserId(), password) <= 0) {
+        try {
+            if (storeUserService.setPassword(MiscUtils.currentUserId(), password)) {
+                return AjaxResult.setSuccess(true).setMsg("Success.");
+            }
+            return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
+        } catch (IllegalPasswordException ipe) {
+            return AjaxResult.setSuccess(false).setMsg("This password is illegal");
+        } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
         }
-        return AjaxResult.setSuccess(true).setMsg("Success.");
     }
 
     @ApiOperation("set alipay account")
@@ -85,29 +93,41 @@ public class UserInfoController {
     @ApiOperation("set card number")
     @PutMapping("/cardNumber")
     public AjaxResult setCardNumber(String cardNumber, String vCode) {
-        VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailEmailVCode(MiscUtils.currentUserId(), cardNumber);
-        if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
-            return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
-        }
-        if (storeUserService.setCardNumber(MiscUtils.currentUserId(), cardNumber) <= 0) {
+        try {
+            VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailEmailVCode(MiscUtils.currentUserId(), cardNumber);
+            if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
+                return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
+            }
+            if (!storeUserService.setCardNumber(MiscUtils.currentUserId(), cardNumber)) {
+                return AjaxResult.setSuccess(false).setMsg("Failed to set card number");
+            }
+            vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
+            return AjaxResult.setSuccess(true).setMsg("Card number set successfully.");
+        } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to set card number");
         }
-        vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
-        return AjaxResult.setSuccess(true).setMsg("Card number set successfully.");
     }
 
     @ApiOperation("update password")
     @PatchMapping("/password")
     public AjaxResult updatePassword(String vCode, String newPassword) {
-        VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CHANGE_PASSWORD);
-        if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
-            return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
-        }
-        if (storeUserService.updatePassword(MiscUtils.currentUserId(), newPassword) <= 0) {
+        try {
+            VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CHANGE_PASSWORD);
+            if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
+                return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
+            }
+            if (!storeUserService.updatePassword(MiscUtils.currentUserId(), newPassword)) {
+                return AjaxResult.setSuccess(false).setMsg("Failed to update password.");
+            }
+            vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
+            return AjaxResult.setSuccess(true).setMsg("Password has updated successfully.");
+        } catch (IllegalPasswordException ipe) {
+            return AjaxResult.setSuccess(false).setMsg("This password is illegal");
+        } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to update password.");
         }
-        vCodeRecordService.setVCodeUsed(vCodeRecord.getId());
-        return AjaxResult.setSuccess(true).setMsg("Password has updated successfully.");
     }
 
     @ApiOperation("update alipay account")

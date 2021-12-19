@@ -459,10 +459,14 @@ create table if not exists deleted_back_user
     deleted_by   int
 );
 
-create or replace function delete_store_user(deleted_user_id int, delete_user_id int)
-    returns void as
+create or replace function delete_back_user(deleted_user_id int, delete_user_id int)
+    returns bool as
 $$
 begin
+    if exists(select null from back_user where id = deleted_user_id and role_id = 3) then
+        return false;
+    end if;
+
     insert into deleted_back_user (id, username, password, salt, role_id, banned, created_time, updated_time,
                                    deleted_time, deleted_by)
     select id,
@@ -478,6 +482,8 @@ begin
     from back_user
     where id = deleted_user_id;
     delete from back_user where id = deleted_user_id;
+
+    return true;
 end;
 $$
     language plpgsql;

@@ -17,11 +17,11 @@ public interface StoreUserService {
 
     Integer followUser(Integer userId, Integer followedId);
 
-    Integer setPassword(Integer userId, String password);
+    Boolean setPassword(Integer userId, String password);
 
-    Integer updatePassword(Integer userId, String password);
+    Boolean updatePassword(Integer userId, String password);
 
-    Integer setCardNumber(Integer userId, String cardNumber);
+    Boolean setCardNumber(Integer userId, String cardNumber);
 
     Integer updateIntroduction(Integer userId, String introduction);
 

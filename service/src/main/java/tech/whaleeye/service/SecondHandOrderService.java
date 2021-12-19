@@ -1,8 +1,10 @@
 package tech.whaleeye.service;
 
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
+import org.springframework.lang.Nullable;
 import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.model.entity.SecondHandOrder;
+import tech.whaleeye.model.vo.SecondHandOrder.BackOrderVO;
 import tech.whaleeye.model.vo.SecondHandOrder.OrderVO;
 
 import java.math.BigDecimal;
@@ -30,5 +32,9 @@ public interface SecondHandOrderService {
     boolean refundDeal(Integer userId, Integer orderId, String refundCode) throws TencentCloudSDKException;
 
     boolean leaveComment(Integer userId, Integer orderId, Integer grade, String comment);
+
+    /* used in background system */
+
+    PageList<BackOrderVO> listAllOrders(Integer pageSize, Integer pageNo, @Nullable Integer orderId);
 
 }

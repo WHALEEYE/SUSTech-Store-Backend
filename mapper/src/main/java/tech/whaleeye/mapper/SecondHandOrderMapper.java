@@ -2,6 +2,7 @@ package tech.whaleeye.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.lang.Nullable;
 import tech.whaleeye.model.entity.SecondHandOrder;
 
 import java.math.BigDecimal;
@@ -48,5 +49,13 @@ public interface SecondHandOrderMapper {
     Integer updateActualPrice(@Param("orderId") Integer orderId, @Param("actualPrice") BigDecimal actualPrice);
 
     Integer updateCommentAndGrade(@Param("orderId") Integer orderId, @Param("comment") String comment, @Param("userType") Boolean userType);
+
+    /* used in background system */
+
+    List<SecondHandOrder> listAllOrders(@Param("pageSize") Integer pageSize,
+                                        @Param("offset") Integer offset,
+                                        @Nullable @Param("orderId") Integer orderId);
+
+    Integer countAllOrders(@Nullable @Param("orderId") Integer orderId);
 
 }

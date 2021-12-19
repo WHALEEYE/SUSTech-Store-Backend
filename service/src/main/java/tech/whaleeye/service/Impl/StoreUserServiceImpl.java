@@ -8,6 +8,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
 import tech.whaleeye.mapper.StoreUserMapper;
 import tech.whaleeye.misc.ajax.PageList;
+import tech.whaleeye.misc.exceptions.IllegalPasswordException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.StoreUser;
@@ -51,17 +52,23 @@ public class StoreUserServiceImpl implements StoreUserService {
     }
 
     @Override
-    public Integer setPassword(Integer userId, String password) {
+    public Boolean setPassword(Integer userId, String password) {
+        if (!password.matches("[a-zA-Z0-9!@#$%^&*()_+\\-=,.<>?/\\\\|\\[\\]{}:;\"'`~]{6,20}")) {
+            throw new IllegalPasswordException();
+        }
         String hexSalt = MiscUtils.generateSalt(8);
         password = new Md5Hash(password, MiscUtils.getSaltFromHex(hexSalt), 1024).toHex();
-        return storeUserMapper.updatePassword(userId, password, hexSalt, true);
+        return storeUserMapper.updatePassword(userId, password, hexSalt, true) > 0;
     }
 
     @Override
-    public Integer updatePassword(Integer userId, String password) {
+    public Boolean updatePassword(Integer userId, String password) {
+        if (!password.matches("[a-zA-Z0-9!@#$%^&*()_+\\-=,.<>?/\\\\|\\[\\]{}:;\"'`~]{6,20}")) {
+            throw new IllegalPasswordException();
+        }
         String hexSalt = MiscUtils.generateSalt(8);
         password = new Md5Hash(password, MiscUtils.getSaltFromHex(hexSalt), 1024).toHex();
-        return storeUserMapper.updatePassword(userId, password, hexSalt, false);
+        return storeUserMapper.updatePassword(userId, password, hexSalt, false) > 0;
     }
 
     @Override
@@ -81,8 +88,8 @@ public class StoreUserServiceImpl implements StoreUserService {
     }
 
     @Override
-    public Integer setCardNumber(Integer userId, String cardNumber) {
-        return storeUserMapper.setCardNumber(userId, cardNumber);
+    public Boolean setCardNumber(Integer userId, String cardNumber) {
+        return storeUserMapper.setCardNumber(userId, cardNumber) > 0;
     }
 
     @Override

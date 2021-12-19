@@ -7,6 +7,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
+import tech.whaleeye.misc.exceptions.IllegalPasswordException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.service.BackUserService;
@@ -23,7 +24,7 @@ public class BackUserController {
     @ApiOperation("list all background users")
     @GetMapping("/all")
     @RequiresRoles("Super")
-    public AjaxResult listAllBackUsers(Integer pageSize, Integer pageNo) {
+    public AjaxResult listAllBackUsers(@RequestParam Integer pageSize, @RequestParam Integer pageNo) {
         try {
             return AjaxResult.setSuccess(true).setData(backUserService.listAllBackUsers(pageSize, pageNo));
         } catch (Exception e) {
@@ -33,11 +34,13 @@ public class BackUserController {
     }
 
     @ApiOperation("create new background user")
-    @PostMapping("/new")
+    @PostMapping("/")
     @RequiresRoles("Super")
-    public AjaxResult createNewBackUser(String username, String password, Integer roleId) {
+    public AjaxResult createNewBackUser(@RequestParam String username, @RequestParam String password, @RequestParam Integer roleId) {
         try {
             return AjaxResult.setSuccess(true).setData(backUserService.addNewBackUser(username, password, roleId));
+        } catch (IllegalPasswordException ipe) {
+            return AjaxResult.setSuccess(false).setMsg("This password is illegal");
         } catch (InvalidValueException ive) {
             return AjaxResult.setSuccess(false).setMsg("Bad username or role");
         } catch (Exception e) {
@@ -46,29 +49,16 @@ public class BackUserController {
         }
     }
 
-    @ApiOperation("set user password")
-    @PutMapping("/password/current")
-    public AjaxResult updateCurrentPassword(String password) {
+    @ApiOperation("update user password")
+    @PutMapping("/password")
+    public AjaxResult updateCurrentPassword(@RequestParam String password) {
         try {
             if (backUserService.updatePassword(MiscUtils.currentUserId(), password)) {
                 return AjaxResult.setSuccess(true).setMsg("Success.");
             }
             return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
-        }
-    }
-
-    @ApiOperation("update other users' passwords")
-    @PutMapping("/password/{userId}")
-    @RequiresRoles("Super")
-    public AjaxResult updateOtherPassword(@PathVariable("userId") Integer userId, String password) {
-        try {
-            if (backUserService.updatePassword(userId, password)) {
-                return AjaxResult.setSuccess(true).setMsg("Success.");
-            }
-            return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
+        } catch (IllegalPasswordException ipe) {
+            return AjaxResult.setSuccess(false).setMsg("This password is illegal");
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
@@ -102,6 +92,21 @@ public class BackUserController {
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to unban user.");
+        }
+    }
+
+    @ApiOperation("delete background user")
+    @DeleteMapping("/{userId}")
+    @RequiresRoles("Super")
+    public AjaxResult deleteBackUser(@PathVariable("userId") Integer userId) {
+        try {
+            if (backUserService.deleteBackUser(userId, MiscUtils.currentUserId())) {
+                return AjaxResult.setSuccess(true).setMsg("Success.");
+            }
+            return AjaxResult.setSuccess(false).setMsg("Failed to delete user.");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to delete user.");
         }
     }
 

@@ -174,4 +174,41 @@
         where id = #{orderId}
     </update>
 
+    <!--used in background system-->
+
+    <select id="listAllOrders" resultMap="BaseResultMap">
+        select id,
+        good_id,
+        buyer_id,
+        order_status,
+        actual_price,
+        trade_location,
+        trade_latitude,
+        trade_longitude,
+        trade_time,
+        trade_password,
+        deal_code,
+        refund_code,
+        grade_by_seller,
+        grade_by_buyer,
+        comment_by_seller,
+        comment_by_buyer,
+        created_time,
+        updated_time
+        from second_hand_order
+        <if test="orderId != null and orderId != '' or orderId == 0">
+            where id = #{orderId}
+        </if>
+        order by order_status, updated_time desc
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="countAllOrders" resultType="Integer">
+        select count(*)
+        from second_hand_order
+        <if test="orderId != null and orderId != '' or orderId == 0">
+            where id = #{orderId}
+        </if>
+    </select>
+
 </mapper>

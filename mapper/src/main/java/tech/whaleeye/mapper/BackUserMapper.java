@@ -1,5 +1,6 @@
 package tech.whaleeye.mapper;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import tech.whaleeye.model.entity.BackUser;
@@ -24,5 +25,7 @@ public interface BackUserMapper {
     Integer banUser(@Param("userId") Integer userId);
 
     Integer unbanUser(@Param("userId") Integer userId);
+
+    Boolean deleteBackUser(@Param("userId") Integer userId, @Param("deleteUserId") Integer deleteUserId);
 
 }
