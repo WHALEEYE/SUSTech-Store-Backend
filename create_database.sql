@@ -487,3 +487,12 @@ begin
 end;
 $$
     language plpgsql;
+
+drop table if exists chat_history;
+create table if not exists chat_history
+(
+    sender          int          not null references store_user (id) on delete cascade,
+    receiver        int          not null references store_user (id) on delete cascade,
+    message_content varchar(255) not null,
+    send_time       timestamp    not null default now()
+);
