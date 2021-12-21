@@ -3,6 +3,7 @@ package tech.whaleeye.service;
 import org.springframework.lang.Nullable;
 import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.model.entity.StoreUser;
+import tech.whaleeye.model.vo.StoreUser.BriefUserVO;
 import tech.whaleeye.model.vo.StoreUser.StoreUserVO;
 
 public interface StoreUserService {
@@ -13,9 +14,19 @@ public interface StoreUserService {
 
     StoreUser getStoreUserById(Integer userId);
 
-    Integer registerStoreUser(String phoneNumber);
+    PageList<BriefUserVO> listFollowers(Integer userId, Integer pageSize, Integer pageNo);
 
-    Integer followUser(Integer userId, Integer followedId);
+    Integer countFollowers(Integer userId);
+
+    PageList<BriefUserVO> listFollowings(Integer userId, Integer pageSize, Integer pageNo);
+
+    Integer countFollowings(Integer userId);
+
+    Boolean registerStoreUser(String phoneNumber);
+
+    Boolean followUser(Integer userId, Integer followedId);
+
+    Boolean unfollowUser(Integer userId, Integer followedId);
 
     Boolean setPassword(Integer userId, String password);
 

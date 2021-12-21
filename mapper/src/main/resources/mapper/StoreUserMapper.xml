@@ -25,6 +25,13 @@
         <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap id="BriefUserMap" type="tech.whaleeye.model.vo.StoreUser.BriefUserVO">
+        <!--@Table store_user-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+        <result property="avatarPath" column="avatar_path" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <select id="getUserById" resultMap="BaseResultMap">
         select id,
                phone_number,
@@ -83,8 +90,38 @@
         </where>
     </select>
 
-    <select id="updateBalance">
-        select update_balance(#{userId}, #{amount});
+    <select id="listFollowers" resultMap="BriefUserMap">
+        select su.id,
+               su.nickname,
+               su.avatar_path
+        from follow_relation fr
+                 join store_user su on su.id = fr.followed_id
+        where fr.followed_id = #{userId}
+        order by su.id
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="countFollowers" resultType="Integer">
+        select count(*)
+        from follow_relation
+        where followed_id = #{userId}
+    </select>
+
+    <select id="listFollowings" resultMap="BriefUserMap">
+        select su.id,
+               su.nickname,
+               su.avatar_path
+        from follow_relation fr
+                 join store_user su on su.id = fr.followed_id
+        where fr.follower_id = #{userId}
+        order by su.id
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="countFollowings" resultType="Integer">
+        select count(*)
+        from follow_relation
+        where follower_id = #{userId}
     </select>
 
     <insert id="registerStoreUser" parameterType="String">
@@ -96,6 +133,13 @@
         insert into follow_relation (followed_id, follower_id, created_time)
         values (#{followedId}, #{followerId}, now())
     </insert>
+
+    <delete id="unfollowUser">
+        delete
+        from follow_relation
+        where follower_id = #{followerId}
+          and followed_id = #{followedId}
+    </delete>
 
     <update id="updatePassword">
         update store_user
@@ -170,6 +214,7 @@
     </delete>
 
     <!-- Used in background system -->
+
     <select id="listAll" resultMap="BaseResultMap">
         select id,
         phone_number,

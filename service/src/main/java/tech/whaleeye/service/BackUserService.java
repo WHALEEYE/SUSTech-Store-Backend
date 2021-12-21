@@ -3,7 +3,7 @@ package tech.whaleeye.service;
 import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.model.entity.BackUser;
 import tech.whaleeye.model.entity.BackUserRole;
-import tech.whaleeye.model.vo.StoreUser.BackUserVO;
+import tech.whaleeye.model.vo.BackUser.BackUserVO;
 
 public interface BackUserService {
 

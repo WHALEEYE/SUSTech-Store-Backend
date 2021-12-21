@@ -12,7 +12,7 @@ import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.BackUser;
 import tech.whaleeye.model.entity.BackUserRole;
-import tech.whaleeye.model.vo.StoreUser.BackUserVO;
+import tech.whaleeye.model.vo.BackUser.BackUserVO;
 import tech.whaleeye.service.BackUserService;
 
 import java.util.ArrayList;

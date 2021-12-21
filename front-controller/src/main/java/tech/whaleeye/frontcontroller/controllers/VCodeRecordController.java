@@ -39,7 +39,7 @@ public class VCodeRecordController {
             return AjaxResult.setSuccess(false).setMsg("Invalid phone number.");
         }
         if (storeUserService.getStoreUserByPhoneNumber(phoneNumber) == null) {
-            if (storeUserService.registerStoreUser(phoneNumber) <= 0) {
+            if (!storeUserService.registerStoreUser(phoneNumber)) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to register. Please try again later or contact with the administrator.");
             }
         }

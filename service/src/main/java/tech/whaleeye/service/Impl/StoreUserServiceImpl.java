@@ -12,6 +12,7 @@ import tech.whaleeye.misc.exceptions.IllegalPasswordException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.StoreUser;
+import tech.whaleeye.model.vo.StoreUser.BriefUserVO;
 import tech.whaleeye.model.vo.StoreUser.StoreUserVO;
 import tech.whaleeye.service.StoreUserService;
 
@@ -42,13 +43,42 @@ public class StoreUserServiceImpl implements StoreUserService {
     }
 
     @Override
-    public Integer registerStoreUser(String phoneNumber) {
-        return storeUserMapper.registerStoreUser(phoneNumber);
+    public PageList<BriefUserVO> listFollowers(Integer userId, Integer pageSize, Integer pageNo) {
+        List<BriefUserVO> followers = storeUserMapper.listFollowers(userId, pageSize, (pageNo - 1) * pageSize);
+        int total = storeUserMapper.countFollowers(userId);
+        return new PageList<>(followers, pageSize, pageNo, total);
     }
 
     @Override
-    public Integer followUser(Integer userId, Integer followedId) {
-        return storeUserMapper.followUser(userId, followedId);
+    public Integer countFollowers(Integer userId) {
+        return storeUserMapper.countFollowers(userId);
+    }
+
+    @Override
+    public PageList<BriefUserVO> listFollowings(Integer userId, Integer pageSize, Integer pageNo) {
+        List<BriefUserVO> followings = storeUserMapper.listFollowings(userId, pageSize, (pageNo - 1) * pageSize);
+        int total = storeUserMapper.countFollowings(userId);
+        return new PageList<>(followings, pageSize, pageNo, total);
+    }
+
+    @Override
+    public Integer countFollowings(Integer userId) {
+        return storeUserMapper.countFollowings(userId);
+    }
+
+    @Override
+    public Boolean registerStoreUser(String phoneNumber) {
+        return storeUserMapper.registerStoreUser(phoneNumber) > 0;
+    }
+
+    @Override
+    public Boolean followUser(Integer userId, Integer followedId) {
+        return storeUserMapper.followUser(userId, followedId) < 0;
+    }
+
+    @Override
+    public Boolean unfollowUser(Integer userId, Integer followedId) {
+        return storeUserMapper.unfollowUser(userId, followedId) > 0;
     }
 
     @Override

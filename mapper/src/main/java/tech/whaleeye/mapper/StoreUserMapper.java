@@ -4,6 +4,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.lang.Nullable;
 import tech.whaleeye.model.entity.StoreUser;
+import tech.whaleeye.model.vo.StoreUser.BriefUserVO;
 
 import java.util.List;
 
@@ -14,9 +15,19 @@ public interface StoreUserMapper {
 
     StoreUser getStoreUser(@Nullable @Param("phoneNumber") String phoneNumber, @Nullable @Param("cardNumber") String cardNumber, @Nullable @Param("userId") Integer userId);
 
+    List<BriefUserVO> listFollowers(@Param("userId") Integer userId, @Param("pageSize") Integer pageSize, @Param("offset") Integer offset);
+
+    Integer countFollowers(@Param("userId") Integer userId);
+
+    List<BriefUserVO> listFollowings(@Param("userId") Integer userId, @Param("pageSize") Integer pageSize, @Param("offset") Integer offset);
+
+    Integer countFollowings(@Param("userId") Integer userId);
+
     Integer registerStoreUser(String phoneNumber);
 
     Integer followUser(@Param("followerId") Integer userId, @Param("followedId") Integer followedId);
+
+    Integer unfollowUser(@Param("followerId") Integer followerId, @Param("followingId") Integer followingId);
 
     Integer updatePassword(@Param("userId") Integer userId, @Param("password") String password, @Param("salt") String salt, @Param("firstTime") Boolean firstTime);
 
