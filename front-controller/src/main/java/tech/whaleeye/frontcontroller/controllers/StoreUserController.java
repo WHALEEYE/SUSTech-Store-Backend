@@ -17,6 +17,7 @@ import tech.whaleeye.model.entity.StoreUser;
 import tech.whaleeye.model.entity.VCodeRecord;
 import tech.whaleeye.model.vo.StoreUser.OtherUserVO;
 import tech.whaleeye.model.vo.StoreUser.StoreUserVO;
+import tech.whaleeye.service.SecondHandGoodService;
 import tech.whaleeye.service.StoreUserService;
 import tech.whaleeye.service.VCodeRecordService;
 
@@ -36,11 +37,14 @@ public class StoreUserController {
     private StoreUserService storeUserService;
 
     @Autowired
+    private SecondHandGoodService secondHandGoodService;
+
+    @Autowired
     private VCodeRecordService vCodeRecordService;
 
     @ApiOperation("get current user's information")
-    @GetMapping("info/")
-    public AjaxResult getUserInfo() {
+    @GetMapping("/info")
+    AjaxResult getUserInfo() {
         try {
             StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
             if (storeUser == null) {
@@ -58,8 +62,8 @@ public class StoreUserController {
     }
 
     @ApiOperation("get other user's information")
-    @GetMapping("info/{userId}")
-    public AjaxResult getUserInfo(@PathVariable("userId") Integer userId) {
+    @GetMapping("/info/{userId}")
+    AjaxResult getUserInfo(@PathVariable("userId") Integer userId) {
         try {
             StoreUser otherUser = storeUserService.getStoreUserById(userId);
             if (otherUser == null) {
@@ -84,9 +88,9 @@ public class StoreUserController {
     }
 
     @ApiOperation("get current user's followers")
-    @GetMapping("/followers/")
-    public AjaxResult getFollowers(@RequestParam Integer pageSize,
-                                   @RequestParam Integer pageNo) {
+    @GetMapping("/followers")
+    AjaxResult getFollowers(@RequestParam Integer pageSize,
+                            @RequestParam Integer pageNo) {
         try {
             return AjaxResult.setSuccess(true).setData(storeUserService.listFollowers(MiscUtils.currentUserId(), pageSize, pageNo));
         } catch (Exception e) {
@@ -97,9 +101,9 @@ public class StoreUserController {
 
     @ApiOperation("get other user's followers")
     @GetMapping("/followers/{userId}")
-    public AjaxResult getFollowers(@PathVariable("userId") Integer userId,
-                                   @RequestParam Integer pageSize,
-                                   @RequestParam Integer pageNo) {
+    AjaxResult getFollowers(@PathVariable("userId") Integer userId,
+                            @RequestParam Integer pageSize,
+                            @RequestParam Integer pageNo) {
         try {
             return AjaxResult.setSuccess(true).setData(storeUserService.listFollowers(userId, pageSize, pageNo));
         } catch (Exception e) {
@@ -108,10 +112,10 @@ public class StoreUserController {
         }
     }
 
-    @ApiOperation("get current user's followers")
-    @GetMapping("/followings/")
-    public AjaxResult getFollowings(@RequestParam Integer pageSize,
-                                    @RequestParam Integer pageNo) {
+    @ApiOperation("get current user's followings")
+    @GetMapping("/followings")
+    AjaxResult getFollowings(@RequestParam Integer pageSize,
+                             @RequestParam Integer pageNo) {
         try {
             return AjaxResult.setSuccess(true).setData(storeUserService.listFollowings(MiscUtils.currentUserId(), pageSize, pageNo));
         } catch (Exception e) {
@@ -120,11 +124,11 @@ public class StoreUserController {
         }
     }
 
-    @ApiOperation("get other user's followers")
-    @GetMapping("/followers/{userId}")
-    public AjaxResult getFollowings(@PathVariable("userId") Integer userId,
-                                    @RequestParam Integer pageSize,
-                                    @RequestParam Integer pageNo) {
+    @ApiOperation("get other user's followings")
+    @GetMapping("/followings/{userId}")
+    AjaxResult getFollowings(@PathVariable("userId") Integer userId,
+                             @RequestParam Integer pageSize,
+                             @RequestParam Integer pageNo) {
         try {
             return AjaxResult.setSuccess(true).setData(storeUserService.listFollowings(userId, pageSize, pageNo));
         } catch (Exception e) {
@@ -133,9 +137,34 @@ public class StoreUserController {
         }
     }
 
+    @ApiOperation("get current user's collected goods")
+    @GetMapping("/collected")
+    AjaxResult getCollected(@RequestParam Integer pageSize,
+                            @RequestParam Integer pageNo) {
+        try {
+            return AjaxResult.setSuccess(true).setData(secondHandGoodService.listCollectedGoods(MiscUtils.currentUserId(), pageSize, pageNo));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(true).setMsg("Failed to list collected goods");
+        }
+    }
+
+    @ApiOperation("get other user's collected goods")
+    @GetMapping("/collected/{userId}")
+    AjaxResult getCollected(@PathVariable("userId") Integer userId,
+                            @RequestParam Integer pageSize,
+                            @RequestParam Integer pageNo) {
+        try {
+            return AjaxResult.setSuccess(true).setData(secondHandGoodService.listCollectedGoods(userId, pageSize, pageNo));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to list collected goods");
+        }
+    }
+
     @ApiOperation("Follow One User")
     @PostMapping("/follow/{userId}")
-    public AjaxResult followUser(@PathVariable("userId") Integer userId) {
+    AjaxResult followUser(@PathVariable("userId") Integer userId) {
         try {
             if (storeUserService.followUser(MiscUtils.currentUserId(), userId)) {
                 return AjaxResult.setSuccess(true).setMsg("Followed Successfully");
@@ -148,7 +177,7 @@ public class StoreUserController {
 
     @ApiOperation("Unfollow One User")
     @DeleteMapping("/unfollow/{userId}")
-    public AjaxResult unfollowUser(@PathVariable("userId") Integer userId) {
+    AjaxResult unfollowUser(@PathVariable("userId") Integer userId) {
         try {
             if (storeUserService.unfollowUser(MiscUtils.currentUserId(), userId)) {
                 return AjaxResult.setSuccess(true).setMsg("Unfollowed Successfully");
@@ -161,7 +190,7 @@ public class StoreUserController {
 
     @ApiOperation("set user password")
     @PostMapping("/password")
-    public AjaxResult setPassword(@RequestParam String password) {
+    AjaxResult setPassword(@RequestParam String password) {
         try {
             if (storeUserService.setPassword(MiscUtils.currentUserId(), password)) {
                 return AjaxResult.setSuccess(true).setMsg("Success.");
@@ -177,7 +206,7 @@ public class StoreUserController {
 
     @ApiOperation("set alipay account")
     @PostMapping("/alipay")
-    public AjaxResult setAlipayAccount(@RequestParam String alipayAccount) {
+    AjaxResult setAlipayAccount(@RequestParam String alipayAccount) {
         if (storeUserService.setAlipayAccount(MiscUtils.currentUserId(), alipayAccount) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to set alipay account.");
         }
@@ -186,8 +215,8 @@ public class StoreUserController {
 
     @ApiOperation("set card number")
     @PostMapping("/cardNumber")
-    public AjaxResult setCardNumber(@RequestParam String cardNumber,
-                                    @RequestParam String vCode) {
+    AjaxResult setCardNumber(@RequestParam String cardNumber,
+                             @RequestParam String vCode) {
         try {
             VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailEmailVCode(MiscUtils.currentUserId(), cardNumber);
             if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
@@ -206,8 +235,8 @@ public class StoreUserController {
 
     @ApiOperation("update password")
     @PatchMapping("/password")
-    public AjaxResult updatePassword(@RequestParam String vCode,
-                                     @RequestParam String newPassword) {
+    AjaxResult updatePassword(@RequestParam String vCode,
+                              @RequestParam String newPassword) {
         try {
             VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CHANGE_PASSWORD);
             if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
@@ -228,8 +257,8 @@ public class StoreUserController {
 
     @ApiOperation("update alipay account")
     @PatchMapping("/alipay")
-    public AjaxResult updateAlipayAccount(@RequestParam String vCode,
-                                          @RequestParam String alipayAccount) {
+    AjaxResult updateAlipayAccount(@RequestParam String vCode,
+                                   @RequestParam String alipayAccount) {
         VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CHANGE_ALIPAY);
         if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {
             return AjaxResult.setSuccess(false).setMsg("Verification code incorrect or expired.");
@@ -243,7 +272,7 @@ public class StoreUserController {
 
     @ApiOperation("update self introduction")
     @PatchMapping("/intro")
-    public AjaxResult updateIntroduction(@RequestParam String introduction) {
+    AjaxResult updateIntroduction(@RequestParam String introduction) {
         try {
             if (storeUserService.updateIntroduction(MiscUtils.currentUserId(), introduction) <= 0) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to update introduction.");
@@ -256,7 +285,7 @@ public class StoreUserController {
 
     @ApiOperation("update nickname")
     @PatchMapping("/nickname")
-    public AjaxResult updateNickname(@RequestParam String nickname) {
+    AjaxResult updateNickname(@RequestParam String nickname) {
         try {
             if (storeUserService.updateNickname(MiscUtils.currentUserId(), nickname) <= 0) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to update nickname.");
@@ -269,7 +298,7 @@ public class StoreUserController {
 
     @ApiOperation("update sex")
     @PatchMapping("/sex")
-    public AjaxResult updateNickname(@RequestParam Boolean sex) {
+    AjaxResult updateNickname(@RequestParam Boolean sex) {
         if (storeUserService.updateSex(MiscUtils.currentUserId(), sex) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to update sex information.");
         }
@@ -278,9 +307,9 @@ public class StoreUserController {
 
     @ApiOperation("update notifications")
     @PatchMapping("/notifications")
-    public AjaxResult updateNotifications(@RequestParam Boolean secondHandNotification,
-                                          @RequestParam Boolean agentServiceNotification,
-                                          @RequestParam Boolean apiTradeNotification) {
+    AjaxResult updateNotifications(@RequestParam Boolean secondHandNotification,
+                                   @RequestParam Boolean agentServiceNotification,
+                                   @RequestParam Boolean apiTradeNotification) {
         if (storeUserService.updateNotifications(MiscUtils.currentUserId(), secondHandNotification, agentServiceNotification, apiTradeNotification) <= 0) {
             return AjaxResult.setSuccess(false).setMsg("Failed to update notification settings.");
         }
@@ -289,7 +318,7 @@ public class StoreUserController {
 
     @ApiOperation("update user avatar")
     @PatchMapping("/avatar")
-    public AjaxResult updateAvatar(@RequestPart MultipartFile avatar) {
+    AjaxResult updateAvatar(@RequestPart MultipartFile avatar) {
         try {
             String avatarPath = MiscUtils.processPicture(avatar, UploadFileType.AVATAR);
             if (storeUserService.updateAvatar(MiscUtils.currentUserId(), avatarPath) <= 0) {
@@ -306,7 +335,7 @@ public class StoreUserController {
 
     @ApiOperation("cancel user account")
     @DeleteMapping("/cancel")
-    public AjaxResult cancelAccount(@RequestParam String vCode) {
+    AjaxResult cancelAccount(@RequestParam String vCode) {
         try {
             VCodeRecord vCodeRecord = vCodeRecordService.getLatestAvailAccountVCode(MiscUtils.currentUserId(), VCodeType.CANCEL_ACCOUNT);
             if (vCodeRecord == null || !vCodeRecord.getVCode().equals(vCode)) {

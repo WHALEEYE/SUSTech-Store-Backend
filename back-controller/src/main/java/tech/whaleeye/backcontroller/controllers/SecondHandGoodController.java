@@ -22,11 +22,11 @@ public class SecondHandGoodController {
 
     @ApiOperation("list all the goods")
     @GetMapping("/all")
-    public AjaxResult listAllGoodForBack(@RequestParam Integer pageSize,
-                                         @RequestParam Integer pageNo,
-                                         @RequestParam(required = false) String searchNickname,
-                                         @RequestParam(required = false) String searchPhoneNumber,
-                                         @RequestParam(required = false) String searchKeyword) {
+    AjaxResult listAllGoods(@RequestParam Integer pageSize,
+                            @RequestParam Integer pageNo,
+                            @RequestParam(required = false) String searchNickname,
+                            @RequestParam(required = false) String searchPhoneNumber,
+                            @RequestParam(required = false) String searchKeyword) {
         try {
             return AjaxResult.setSuccess(true).setData(secondHandGoodService.listAllGoodsForBack(pageSize, pageNo, searchNickname, searchPhoneNumber, searchKeyword));
         } catch (Exception e) {
@@ -40,11 +40,12 @@ public class SecondHandGoodController {
     @RequiresRoles(value = {"Admin", "Super"}, logical = Logical.OR)
     AjaxResult offShelf(@PathVariable("goodId") Integer goodId) {
         try {
-            if (secondHandGoodService.deleteGood(goodId, MiscUtils.currentUserId())) {
+            if (secondHandGoodService.deleteGoodForBack(goodId, MiscUtils.currentUserId())) {
                 return AjaxResult.setSuccess(true).setMsg("Good is put off the shelf successfully");
             }
             return AjaxResult.setSuccess(false).setMsg("Failed to put the good off the shelf");
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to put the good off the shelf");
         }
     }

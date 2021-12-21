@@ -97,7 +97,7 @@
         from follow_relation fr
                  join store_user su on su.id = fr.followed_id
         where fr.followed_id = #{userId}
-        order by su.id
+        order by fr.created_time desc
         limit #{pageSize} offset #{offset}
     </select>
 
@@ -114,7 +114,7 @@
         from follow_relation fr
                  join store_user su on su.id = fr.followed_id
         where fr.follower_id = #{userId}
-        order by su.id
+        order by fr.created_time desc
         limit #{pageSize} offset #{offset}
     </select>
 
@@ -122,6 +122,23 @@
         select count(*)
         from follow_relation
         where follower_id = #{userId}
+    </select>
+
+    <select id="listCollectors" resultMap="BriefUserMap">
+        select su.id,
+               su.nickname,
+               su.avatar_path
+        from collect_relation cr
+                 join store_user su on su.id = cr.collector_id
+        where cr.good_id = #{goodId}
+        order by cr.create_time desc
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="countCollectors" resultType="Integer">
+        select count(*)
+        from collect_relation
+        where good_id = #{goodId}
     </select>
 
     <insert id="registerStoreUser" parameterType="String">

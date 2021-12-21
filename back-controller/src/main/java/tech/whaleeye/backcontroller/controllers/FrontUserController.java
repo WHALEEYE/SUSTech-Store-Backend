@@ -21,10 +21,10 @@ public class FrontUserController {
 
     @ApiOperation("list all the front users")
     @GetMapping("/all")
-    public AjaxResult listAllFrontUsers(@RequestParam Integer pageSize,
-                                        @RequestParam Integer pageNo,
-                                        @RequestParam(required = false) String searchNickname,
-                                        @RequestParam(required = false) String searchPhoneNumber) {
+    AjaxResult listAllFrontUsers(@RequestParam Integer pageSize,
+                                 @RequestParam Integer pageNo,
+                                 @RequestParam(required = false) String searchNickname,
+                                 @RequestParam(required = false) String searchPhoneNumber) {
         try {
             return AjaxResult.setSuccess(true).setData(storeUserService.listAll(pageSize, pageNo, searchNickname, searchPhoneNumber));
         } catch (Exception e) {
@@ -34,9 +34,9 @@ public class FrontUserController {
     }
 
     @ApiOperation("Ban front user")
-    @PutMapping("/ban/{userId}")
+    @PatchMapping("/ban/{userId}")
     @RequiresRoles(value = {"Admin", "Super"}, logical = Logical.OR)
-    public AjaxResult banUser(@PathVariable("userId") Integer userId) {
+    AjaxResult banUser(@PathVariable("userId") Integer userId) {
         try {
             if (storeUserService.banUser(userId)) {
                 return AjaxResult.setSuccess(true).setMsg("Success.");
@@ -49,9 +49,9 @@ public class FrontUserController {
     }
 
     @ApiOperation("unban front user")
-    @PutMapping("/unban/{userId}")
+    @PatchMapping("/unban/{userId}")
     @RequiresRoles(value = {"Admin", "Super"}, logical = Logical.OR)
-    public AjaxResult unbanUser(@PathVariable("userId") Integer userId) {
+    AjaxResult unbanUser(@PathVariable("userId") Integer userId) {
         try {
             if (storeUserService.unbanUser(userId)) {
                 return AjaxResult.setSuccess(true).setMsg("Success.");

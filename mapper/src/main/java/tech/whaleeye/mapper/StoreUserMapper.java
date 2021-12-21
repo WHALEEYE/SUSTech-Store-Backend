@@ -23,6 +23,10 @@ public interface StoreUserMapper {
 
     Integer countFollowings(@Param("userId") Integer userId);
 
+    List<BriefUserVO> listCollectors(@Param("goodId") Integer goodId, @Param("pageSize") Integer pageSize, @Param("offset") Integer offset);
+
+    Integer countCollectors(@Param("goodId") Integer goodId);
+
     Integer registerStoreUser(String phoneNumber);
 
     Integer followUser(@Param("followerId") Integer userId, @Param("followedId") Integer followedId);

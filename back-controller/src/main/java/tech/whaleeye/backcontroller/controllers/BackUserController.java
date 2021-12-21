@@ -24,8 +24,8 @@ public class BackUserController {
     @ApiOperation("list all background users")
     @GetMapping("/all")
     @RequiresRoles("Super")
-    public AjaxResult listAllBackUsers(@RequestParam Integer pageSize,
-                                       @RequestParam Integer pageNo) {
+    AjaxResult listAllBackUsers(@RequestParam Integer pageSize,
+                                @RequestParam Integer pageNo) {
         try {
             return AjaxResult.setSuccess(true).setData(backUserService.listAllBackUsers(pageSize, pageNo));
         } catch (Exception e) {
@@ -37,9 +37,9 @@ public class BackUserController {
     @ApiOperation("create new background user")
     @PostMapping("/")
     @RequiresRoles("Super")
-    public AjaxResult createNewBackUser(@RequestParam String username,
-                                        @RequestParam String password,
-                                        @RequestParam Integer roleId) {
+    AjaxResult createNewBackUser(@RequestParam String username,
+                                 @RequestParam String password,
+                                 @RequestParam Integer roleId) {
         try {
             return AjaxResult.setSuccess(true).setData(backUserService.addNewBackUser(username, password, roleId));
         } catch (IllegalPasswordException ipe) {
@@ -53,8 +53,8 @@ public class BackUserController {
     }
 
     @ApiOperation("update user password")
-    @PutMapping("/password")
-    public AjaxResult updateCurrentPassword(@RequestParam String password) {
+    @PatchMapping("/password")
+    AjaxResult updateCurrentPassword(@RequestParam String password) {
         try {
             if (backUserService.updatePassword(MiscUtils.currentUserId(), password)) {
                 return AjaxResult.setSuccess(true).setMsg("Success.");
@@ -69,9 +69,9 @@ public class BackUserController {
     }
 
     @ApiOperation("ban background user")
-    @PutMapping("/ban/{userId}")
+    @PatchMapping("/ban/{userId}")
     @RequiresRoles("Super")
-    public AjaxResult banUser(@PathVariable("userId") Integer userId) {
+    AjaxResult banUser(@PathVariable("userId") Integer userId) {
         try {
             if (backUserService.banUser(userId)) {
                 return AjaxResult.setSuccess(true).setMsg("Success.");
@@ -84,9 +84,9 @@ public class BackUserController {
     }
 
     @ApiOperation("unban background user")
-    @PutMapping("/unban/{userId}")
+    @PatchMapping("/unban/{userId}")
     @RequiresRoles("Super")
-    public AjaxResult unbanUser(@PathVariable("userId") Integer userId) {
+    AjaxResult unbanUser(@PathVariable("userId") Integer userId) {
         try {
             if (backUserService.unbanUser(userId)) {
                 return AjaxResult.setSuccess(true).setMsg("Success.");
@@ -101,7 +101,7 @@ public class BackUserController {
     @ApiOperation("delete background user")
     @DeleteMapping("/{userId}")
     @RequiresRoles("Super")
-    public AjaxResult deleteBackUser(@PathVariable("userId") Integer userId) {
+    AjaxResult deleteBackUser(@PathVariable("userId") Integer userId) {
         try {
             if (backUserService.deleteBackUser(userId, MiscUtils.currentUserId())) {
                 return AjaxResult.setSuccess(true).setMsg("Success.");

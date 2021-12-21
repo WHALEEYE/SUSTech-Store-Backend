@@ -22,9 +22,9 @@ public class SecondHandOrderController {
 
     @ApiOperation("list all the orders")
     @GetMapping("/all")
-    public AjaxResult listAllOrders(@RequestParam Integer pageSize,
-                                    @RequestParam Integer pageNo,
-                                    @RequestParam(required = false) Integer orderId) {
+    AjaxResult listAllOrders(@RequestParam Integer pageSize,
+                             @RequestParam Integer pageNo,
+                             @RequestParam(required = false) Integer orderId) {
         try {
             return AjaxResult.setSuccess(true).setData(secondHandOrderService.listAllOrders(pageSize, pageNo, orderId));
         } catch (Exception e) {

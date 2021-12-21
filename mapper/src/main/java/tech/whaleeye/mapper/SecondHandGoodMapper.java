@@ -22,7 +22,15 @@ public interface SecondHandGoodMapper {
 
     Boolean deleteSecondHandGood(@Param("goodId") Integer goodId, @Param("userId") Integer userId);
 
+    List<SecondHandGood> listCollectedGoods(@Param("userId") Integer userId, @Param("pageSize") Integer pageSize, @Param("offset") Integer offset);
+
+    Integer countCollectedGoods(@Param("userId") Integer userId);
+
     Integer insertSecondHandGood(@Param("userId") Integer userId, @Param("good") SecondHandGoodDTO secondHandGoodDTO);
+
+    Integer collectGood(@Param("userId") Integer userId, @Param("goodId") Integer goodId);
+
+    Integer cancelCollectGood(@Param("userId") Integer userId, @Param("goodId") Integer goodId);
 
     Integer updateGoodInfo(SecondHandGoodDTO secondHandGoodDTO);
 

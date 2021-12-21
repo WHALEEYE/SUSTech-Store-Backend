@@ -67,6 +67,13 @@ public class StoreUserServiceImpl implements StoreUserService {
     }
 
     @Override
+    public PageList<BriefUserVO> listCollectors(Integer goodId, Integer pageSize, Integer pageNo) {
+        List<BriefUserVO> briefGoodVOList = storeUserMapper.listCollectors(goodId, pageSize, (pageNo - 1) * pageSize);
+        int total = storeUserMapper.countCollectors(goodId);
+        return new PageList<>(briefGoodVOList, pageSize, pageNo, total);
+    }
+
+    @Override
     public Boolean registerStoreUser(String phoneNumber) {
         return storeUserMapper.registerStoreUser(phoneNumber) > 0;
     }

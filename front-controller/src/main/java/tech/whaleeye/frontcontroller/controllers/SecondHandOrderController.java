@@ -45,10 +45,10 @@ public class SecondHandOrderController {
 
     @ApiOperation("list orders of the current user")
     @GetMapping("brief")
-    AjaxResult listOrdersOfCurrent(@RequestParam @ApiParam("false: seller; true: buyer") Boolean userType,
-                                   @RequestParam Integer orderStatus,
-                                   @RequestParam Integer pageSize,
-                                   @RequestParam Integer pageNo) {
+    AjaxResult listOrders(@RequestParam @ApiParam("false: seller; true: buyer") Boolean userType,
+                          @RequestParam Integer orderStatus,
+                          @RequestParam Integer pageSize,
+                          @RequestParam Integer pageNo) {
         try {
             PageList<OrderVO> orderList = secondHandOrderService.getOrderByUserId(MiscUtils.currentUserId(), userType, orderStatus, pageSize, pageNo);
             return AjaxResult.setSuccess(true).setData(orderList);
@@ -86,7 +86,7 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("seller's acknowledge")
-    @PutMapping("status/seller/{orderId}")
+    @PatchMapping("status/seller/{orderId}")
     AjaxResult sellerAcknowledge(@PathVariable("orderId") Integer orderId,
                                  @RequestParam Boolean ack,
                                  @RequestParam(required = false) BigDecimal actualPrice) {
@@ -114,7 +114,7 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("buyer's acknowledge")
-    @PutMapping("status/buyer/{orderId}")
+    @PatchMapping("status/buyer/{orderId}")
     AjaxResult buyerAcknowledge(@PathVariable("orderId") Integer orderId,
                                 @RequestParam Boolean ack) {
         try {
@@ -143,7 +143,7 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("deal succeeded")
-    @PutMapping("status/deal/{orderId}")
+    @PatchMapping("status/deal/{orderId}")
     AjaxResult confirmDeal(@PathVariable("orderId") Integer orderId,
                            @RequestParam String dealCode) {
         try {
@@ -161,7 +161,7 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("deal refunded")
-    @PutMapping("status/refund/{orderId}")
+    @PatchMapping("status/refund/{orderId}")
     AjaxResult refundDeal(@PathVariable("orderId") Integer orderId,
                           @RequestParam String refundCode) {
         try {
@@ -179,7 +179,7 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("seller's comment and grade")
-    @PutMapping("comment/{orderId}")
+    @PatchMapping("comment/{orderId}")
     AjaxResult leaveComment(@PathVariable("orderId") Integer orderId,
                             @RequestParam Integer grade,
                             @RequestParam String comment) {

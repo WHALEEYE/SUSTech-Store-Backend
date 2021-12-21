@@ -35,9 +35,9 @@ public class LoginController {
 
     @ApiOperation("login by phone number")
     @PostMapping("/phone")
-    public AjaxResult phoneLogin(ServletResponse response,
-                                 @RequestParam String phoneNumber,
-                                 @RequestParam String VCode) {
+    AjaxResult phoneLogin(ServletResponse response,
+                          @RequestParam String phoneNumber,
+                          @RequestParam String VCode) {
         if (phoneNumber.length() != 11) {
             return AjaxResult.setSuccess(false).setMsg("Invalid phone number.");
         }
@@ -69,9 +69,9 @@ public class LoginController {
 
     @ApiOperation("login by card number")
     @PostMapping("/card")
-    public AjaxResult cardLogin(ServletResponse response,
-                                @RequestParam String cardNumber,
-                                @RequestParam String password) {
+    AjaxResult cardLogin(ServletResponse response,
+                         @RequestParam String cardNumber,
+                         @RequestParam String password) {
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         Subject subject = SecurityUtils.getSubject();
         LoginToken token = new LoginToken(cardNumber, password, LoginType.CARD_PWD);

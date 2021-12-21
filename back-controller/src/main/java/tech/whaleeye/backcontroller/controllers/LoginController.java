@@ -24,9 +24,9 @@ public class LoginController {
 
     @ApiOperation("login by username and password")
     @PostMapping("/")
-    public AjaxResult userLogin(ServletResponse response,
-                                @RequestParam String username,
-                                @RequestParam String password) {
+    AjaxResult userLogin(ServletResponse response,
+                         @RequestParam String username,
+                         @RequestParam String password) {
         HttpServletResponse httpResponse = WebUtils.toHttp(response);
         Subject subject = SecurityUtils.getSubject();
         UsernamePasswordToken token = new UsernamePasswordToken(username, password);

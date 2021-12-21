@@ -21,8 +21,8 @@ public class GoodTypeController {
 
     @ApiOperation("list all good types")
     @GetMapping("/all")
-    public AjaxResult listAllGoodTypes(@RequestParam Integer pageSize,
-                                       @RequestParam Integer pageNo) {
+    AjaxResult listAllGoodTypes(@RequestParam Integer pageSize,
+                                @RequestParam Integer pageNo) {
         try {
             return AjaxResult.setSuccess(true).setData(goodTypeService.listAllGoodTypes(pageSize, pageNo));
         } catch (Exception e) {
@@ -34,7 +34,7 @@ public class GoodTypeController {
     @ApiOperation("create a new good type")
     @PostMapping("/")
     @RequiresRoles(value = {"Admin", "Super"}, logical = Logical.OR)
-    public AjaxResult createNewType(@RequestParam String typeName) {
+    AjaxResult createNewType(@RequestParam String typeName) {
         try {
             if (goodTypeService.createNewType(typeName)) {
                 return AjaxResult.setSuccess(true).setMsg("New good type created successfully");
@@ -47,10 +47,10 @@ public class GoodTypeController {
     }
 
     @ApiOperation("update type name")
-    @PutMapping("/name/{typeId}")
+    @PatchMapping("/name/{typeId}")
     @RequiresRoles(value = {"Admin", "Super"}, logical = Logical.OR)
-    public AjaxResult updateTypeName(@PathVariable("typeId") Integer typeId,
-                                     @RequestParam String typeName) {
+    AjaxResult updateTypeName(@PathVariable("typeId") Integer typeId,
+                              @RequestParam String typeName) {
         try {
             if (goodTypeService.updateTypeName(typeId, typeName)) {
                 return AjaxResult.setSuccess(true).setMsg("Changed the name successfully");
@@ -63,9 +63,9 @@ public class GoodTypeController {
     }
 
     @ApiOperation("move up one position")
-    @PutMapping("/pos/up/{typeId}")
+    @PatchMapping("/pos/up/{typeId}")
     @RequiresRoles(value = {"Admin", "Super"}, logical = Logical.OR)
-    public AjaxResult moveUp(@PathVariable("typeId") Integer typeId) {
+    AjaxResult moveUp(@PathVariable("typeId") Integer typeId) {
         try {
             if (goodTypeService.moveUp(typeId)) {
                 return AjaxResult.setSuccess(true).setMsg("Moved up successfully");
@@ -78,9 +78,9 @@ public class GoodTypeController {
     }
 
     @ApiOperation("move down one position")
-    @PutMapping("/pos/down/{typeId}")
+    @PatchMapping("/pos/down/{typeId}")
     @RequiresRoles(value = {"Admin", "Super"}, logical = Logical.OR)
-    public AjaxResult moveDown(@PathVariable("typeId") Integer typeId) {
+    AjaxResult moveDown(@PathVariable("typeId") Integer typeId) {
         try {
             if (goodTypeService.moveDown(typeId)) {
                 return AjaxResult.setSuccess(true).setMsg("Moved down successfully");
@@ -95,7 +95,7 @@ public class GoodTypeController {
     @ApiOperation("delete one good type")
     @DeleteMapping("/{typeId}")
     @RequiresRoles(value = {"Admin", "Super"}, logical = Logical.OR)
-    public AjaxResult deleteType(@PathVariable("typeId") Integer typeId) {
+    AjaxResult deleteType(@PathVariable("typeId") Integer typeId) {
         try {
             if (goodTypeService.deleteType(typeId)) {
                 return AjaxResult.setSuccess(true).setMsg("Good type deleted successfully");

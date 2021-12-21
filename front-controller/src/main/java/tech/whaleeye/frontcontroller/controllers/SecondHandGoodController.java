@@ -15,6 +15,7 @@ import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.dto.SecondHandGoodDTO;
 import tech.whaleeye.model.vo.GoodType.GoodTypeVO;
 import tech.whaleeye.service.SecondHandGoodService;
+import tech.whaleeye.service.StoreUserService;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,12 +29,16 @@ public class SecondHandGoodController {
     @Autowired
     private SecondHandGoodService secondHandGoodService;
 
+    @Autowired
+    private StoreUserService storeUserService;
+
     @ApiOperation("get one good's full information")
     @GetMapping("/detail/{goodId}")
     AjaxResult getGoodById(@PathVariable("goodId") Integer goodId) {
         try {
             return AjaxResult.setSuccess(true).setData(secondHandGoodService.getGoodById(goodId));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to get the good's information.");
         }
     }
@@ -47,6 +52,7 @@ public class SecondHandGoodController {
         try {
             return AjaxResult.setSuccess(true).setData(secondHandGoodService.listAllGoods(pageSize, pageNo, typeId, searchKeyword));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to list goods.");
         }
     }
@@ -54,28 +60,29 @@ public class SecondHandGoodController {
     @RequiresRoles("user")
     @ApiOperation("list goods of the current user")
     @GetMapping("/brief/current")
-    AjaxResult listGoodsOfCurrent(@RequestParam Integer pageSize,
-                                  @RequestParam Integer pageNo,
-                                  @RequestParam(required = false) Boolean sold,
-                                  @RequestParam(required = false) String searchKeyword) {
+    AjaxResult listGoods(@RequestParam Integer pageSize,
+                         @RequestParam Integer pageNo,
+                         @RequestParam(required = false) Boolean sold,
+                         @RequestParam(required = false) String searchKeyword) {
         try {
             return AjaxResult.setSuccess(true).setData(secondHandGoodService.getGoodsByPublisher(MiscUtils.currentUserId(), pageSize, pageNo, sold, searchKeyword));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to list user's good.");
         }
     }
 
     @ApiOperation("list goods of other user")
     @GetMapping("/brief/{userId}")
-    AjaxResult listGoodsOfOther(@PathVariable("userId") Integer userId,
-                                @RequestParam Integer pageSize,
-                                @RequestParam Integer pageNo,
-                                @RequestParam(required = false) Boolean sold,
-                                @RequestParam(required = false) String searchKeyword) {
+    AjaxResult listGoods(@PathVariable("userId") Integer userId,
+                         @RequestParam Integer pageSize,
+                         @RequestParam Integer pageNo,
+                         @RequestParam(required = false) Boolean sold,
+                         @RequestParam(required = false) String searchKeyword) {
         try {
             return AjaxResult.setSuccess(true).setData(secondHandGoodService.getGoodsByPublisher(userId, pageSize, pageNo, sold, searchKeyword));
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to list user's good.");
         }
     }
@@ -87,6 +94,7 @@ public class SecondHandGoodController {
             List<GoodTypeVO> goodTypeVOList = secondHandGoodService.getAllGoodTypes();
             return AjaxResult.setSuccess(true).setData(goodTypeVOList);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to get good types");
         }
     }
@@ -95,10 +103,23 @@ public class SecondHandGoodController {
     @GetMapping("/type/{typeId}")
     AjaxResult getGoodTypeById(@PathVariable("typeId") Integer typeId) {
         try {
-            GoodTypeVO goodTypeVO = secondHandGoodService.getGoodTypeById(typeId);
-            return AjaxResult.setSuccess(true).setData(goodTypeVO);
+            return AjaxResult.setSuccess(true).setData(secondHandGoodService.getGoodTypeById(typeId));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to get good type");
+        }
+    }
+
+    @ApiOperation("list the collectors of one good")
+    @GetMapping("/collectors/{goodId}")
+    AjaxResult getAllCollectors(@PathVariable("goodId") Integer goodId,
+                                @RequestParam Integer pageSize,
+                                @RequestParam Integer pageNo) {
+        try {
+            return AjaxResult.setSuccess(true).setData(storeUserService.listCollectors(goodId, pageSize, pageNo));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed list collectors");
         }
     }
 
@@ -127,6 +148,34 @@ public class SecondHandGoodController {
             return AjaxResult.setSuccess(false).setMsg("Failed to upload picture.");
         } catch (InvalidValueException e) {
             return AjaxResult.setSuccess(false).setMsg("Invalid picture. Seems like it's not a picture.");
+        }
+    }
+
+    @ApiOperation("collect one good")
+    @PostMapping("/collect/{goodId}")
+    AjaxResult collectGood(@PathVariable("goodId") Integer goodId) {
+        try {
+            if (secondHandGoodService.collectGood(goodId)) {
+                return AjaxResult.setSuccess(true).setMsg("Collected successfully");
+            }
+            return AjaxResult.setSuccess(false).setMsg("Failed to add collection");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to add collection");
+        }
+    }
+
+    @ApiOperation("cancel collect one good")
+    @DeleteMapping("/cancelCollect/{goodId}")
+    AjaxResult cancelCollectGood(@PathVariable("goodId") Integer goodId) {
+        try {
+            if (secondHandGoodService.cancelCollectGood(goodId)) {
+                return AjaxResult.setSuccess(true).setMsg("Collection deleted successfully");
+            }
+            return AjaxResult.setSuccess(false).setMsg("Failed to cancel collection");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to cancel collection");
         }
     }
 
@@ -159,6 +208,7 @@ public class SecondHandGoodController {
         } catch (BadIdentityException bie) {
             return AjaxResult.setSuccess(false).setMsg("You are not allowed to put this good off the shelf");
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to put the good off the shelf");
         }
     }

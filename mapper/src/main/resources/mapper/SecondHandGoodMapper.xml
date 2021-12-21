@@ -107,12 +107,47 @@
         select delete_second_hand_good(#{goodId}, #{userId})
     </select>
 
+    <select id="listCollectedGoods" resultMap="BaseResultMap">
+        select shg.id,
+               shg.type_id,
+               shg.title,
+               shg.description,
+               shg.price,
+               shg.publisher,
+               shg.sold,
+               shg.created_time,
+               shg.updated_time
+        from collect_relation cr
+                 join second_hand_good shg on shg.id = cr.good_id
+        where cr.collector_id = #{userId}
+        order by cr.create_time desc
+        limit #{pageSize} offset #{offset}
+    </select>
+
+    <select id="countCollectedGoods" resultType="Integer">
+        select count(*)
+        from collect_relation
+        where collector_id = #{userId}
+    </select>
+
     <insert id="insertSecondHandGood" useGeneratedKeys="true" keyProperty="id">
         insert into second_hand_good (id, type_id, title, description, price, publisher, sold, created_time,
                                       updated_time)
-        values (default, #{good.typeId}, #{good.title}, #{good.description}, #{good.price}, #{publisher}, false, now(),
-                now())
+        values (default, #{good.typeId}, #{good.title}, #{good.description}, #{good.price}, #{publisher}, false,
+                default, default)
     </insert>
+
+    <insert id="collectGood">
+        insert into collect_relation (good_id, collector_id, create_time)
+        values (#{goodId}, #{userId}, default)
+    </insert>
+
+    <delete id="cancelCollectGood">
+        delete
+        from collect_relation
+        where good_id = #{goodId}
+          and collector_id = #{userId}
+    </delete>
 
     <update id="updateGoodInfo" parameterType="tech.whaleeye.model.dto.SecondHandGoodDTO">
         update second_hand_good

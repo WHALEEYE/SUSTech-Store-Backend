@@ -34,7 +34,7 @@ public class VCodeRecordController {
 
     @ApiOperation("send verification code for login")
     @PostMapping("/login/{phoneNumber}")
-    public AjaxResult sendLoginVCode(@PathVariable("phoneNumber") String phoneNumber) {
+    AjaxResult sendLoginVCode(@PathVariable("phoneNumber") String phoneNumber) {
         if (!phoneNumber.matches("[0-9]{11}")) {
             return AjaxResult.setSuccess(false).setMsg("Invalid phone number.");
         }
@@ -61,7 +61,7 @@ public class VCodeRecordController {
 
     @ApiOperation("send verification code after login")
     @PostMapping("/account/{vCodeType}")
-    public AjaxResult sendAccountVCode(@PathVariable("vCodeType") Integer vCodeType) {
+    AjaxResult sendAccountVCode(@PathVariable("vCodeType") Integer vCodeType) {
         StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
         String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {
@@ -80,8 +80,8 @@ public class VCodeRecordController {
 
     @ApiOperation("send verification code to email")
     @PostMapping("/email/{cardNumber}")
-    public AjaxResult sendEmailVCode(@PathVariable("cardNumber") String cardNumber,
-                                     @RequestParam String postfix) {
+    AjaxResult sendEmailVCode(@PathVariable("cardNumber") String cardNumber,
+                              @RequestParam String postfix) {
         String receiveEmail = cardNumber.concat(postfix);
         String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {

@@ -91,6 +91,25 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     }
 
     @Override
+    public PageList<BriefGoodVO> listCollectedGoods(Integer userId, Integer pageSize, Integer pageNo) {
+        List<BriefGoodVO> briefGoodVOList = new ArrayList<>();
+        List<SecondHandGood> secondHandGoodList = secondHandGoodMapper.listCollectedGoods(userId, pageSize, (pageNo - 1) * pageSize);
+        BriefGoodVO briefGoodVO;
+        for (SecondHandGood secondHandGood : secondHandGoodList) {
+            briefGoodVO = modelMapper.map(secondHandGood, BriefGoodVO.class);
+            GoodType goodType = null;
+            if (secondHandGood.getTypeId() != null)
+                goodType = goodTypeMapper.getGoodTypeById(secondHandGood.getTypeId());
+            if (goodType != null)
+                briefGoodVO.setGoodTypeVO(modelMapper.map(goodType, GoodTypeVO.class));
+            briefGoodVO.setMainPicPath(goodPictureMapper.getMainPicPathByGoodId(briefGoodVO.getId()));
+            briefGoodVOList.add(briefGoodVO);
+        }
+        int total = secondHandGoodMapper.countCollectedGoods(userId);
+        return new PageList<>(briefGoodVOList, pageSize, pageNo, total);
+    }
+
+    @Override
     public GoodTypeVO getGoodTypeById(Integer typeId) {
         GoodType goodType = goodTypeMapper.getGoodTypeById(typeId);
         return goodType == null ? null : modelMapper.map(goodType, GoodTypeVO.class);
@@ -111,6 +130,16 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
             return false;
         }
         return goodPictureMapper.insertGoodPictures(secondHandGoodDTO.getId(), secondHandGoodDTO.getPicturePathList()) > 0;
+    }
+
+    @Override
+    public Boolean collectGood(Integer goodId) {
+        return secondHandGoodMapper.collectGood(MiscUtils.currentUserId(), goodId) > 0;
+    }
+
+    @Override
+    public Boolean cancelCollectGood(Integer goodId) {
+        return secondHandGoodMapper.cancelCollectGood(MiscUtils.currentUserId(), goodId) > 0;
     }
 
     @Override
