@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.constants.VCodeType;
+import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.entity.VCodeRecord;
 import tech.whaleeye.service.StoreUserService;
@@ -51,6 +52,8 @@ public class StoreUserController {
                 return AjaxResult.setSuccess(true).setMsg("Account has cancelled successfully");
             }
             return AjaxResult.setSuccess(false).setMsg("Failed to cancel account");
+        } catch (InvalidValueException ive) {
+            return AjaxResult.setSuccess(false).setMsg("There are balance left in the account");
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to cancel account");

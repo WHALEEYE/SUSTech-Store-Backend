@@ -125,6 +125,9 @@ public class StoreUserServiceImpl implements StoreUserService {
 
     @Override
     public Boolean deleteStoreUser(Integer userId) {
+        if (storeUserMapper.getUserById(userId).getAccountBalance().doubleValue() > 0) {
+            throw new InvalidValueException();
+        }
         return storeUserMapper.deleteStoreUser(userId) > 0;
     }
 
