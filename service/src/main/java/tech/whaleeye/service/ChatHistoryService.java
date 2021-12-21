@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface ChatHistoryService {
 
-    List<ChatHistoryVO> listChatHistory(Integer userId, Date beginTime, Date endTime);
+    List<ChatHistoryVO> listChatHistory(Integer currentUser, Integer otherUser, Date beginTime, Date endTime);
 
     Boolean addChatHistory(Integer sender, Integer receiver, String messageContent);
 

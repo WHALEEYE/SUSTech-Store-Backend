@@ -16,8 +16,8 @@ public class ChatHistoryServiceImpl implements ChatHistoryService {
     ChatHistoryMapper chatHistoryMapper;
 
     @Override
-    public List<ChatHistoryVO> listChatHistory(Integer userId, Date beginTime, Date endTime) {
-        return chatHistoryMapper.listChatHistory(userId, beginTime, endTime);
+    public List<ChatHistoryVO> listChatHistory(Integer currentUser, Integer otherUser, Date beginTime, Date endTime) {
+        return chatHistoryMapper.listChatHistory(currentUser, otherUser, beginTime, endTime);
     }
 
     @Override

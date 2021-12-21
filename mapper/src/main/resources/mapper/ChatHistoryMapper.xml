@@ -2,26 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="tech.whaleeye.mapper.dao.ChatHistoryDao">
 
-    <resultMap id="BaseResultMap" type="tech.whaleeye.mapper.entity.ChatHistory">
-        <!--@Table chat_history-->
-        <result property="sender" column="sender" jdbcType="INTEGER"/>
-        <result property="receiver" column="receiver" jdbcType="INTEGER"/>
-        <result property="messageContent" column="message_content" jdbcType="VARCHAR"/>
-        <result property="sendTime" column="send_time" jdbcType="TIMESTAMP"/>
-    </resultMap>
-
-    <resultMap id="ChatHistoryMap" type="tech.whaleeye.mapper.entity.ChatHistory">
+    <resultMap id="ChatHistoryMap" type="tech.whaleeye.model.vo.ChatHistory.ChatHistoryVO">
         <!--@Table chat_history-->
         <result property="messageContent" column="message_content" jdbcType="VARCHAR"/>
         <result property="sendTime" column="send_time" jdbcType="TIMESTAMP"/>
         <result property="isSender" column="is_sender" jdbcType="BOOLEAN"/>
     </resultMap>
 
-    <select id="listChatHistory">
-        select message_content, send_time, (sender = #{userId}) as is_sender
+    <select id="listChatHistory" resultType="ChatHistoryMap">
+        select message_content, send_time, (sender = #{currentUser}) as is_sender
         from chat_history
-        where (sender = #{userId}
-            or receiver = #{userId})
+        where (sender = #{currentUser} and receiver = #{otherUser}
+            or receiver = #{currentUser} and sender = #{otherUser})
           and send_time between #{beginTime} and #{endTime}
         order by send_time
     </select>
