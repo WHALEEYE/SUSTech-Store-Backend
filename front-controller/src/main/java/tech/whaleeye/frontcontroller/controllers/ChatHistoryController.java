@@ -25,9 +25,9 @@ public class ChatHistoryController {
 
     @ApiOperation("get chat history")
     @RequestMapping("/{userId}")
-    public AjaxResult getChatHistory(@PathVariable("userId") Integer userId,
-                                     @RequestParam Date beginTime,
-                                     @RequestParam Date endTime) {
+    AjaxResult getChatHistory(@PathVariable("userId") Integer userId,
+                              @RequestParam Date beginTime,
+                              @RequestParam Date endTime) {
         try {
             return AjaxResult.setSuccess(true).setData(chatHistoryService.listChatHistory(MiscUtils.currentUserId(), userId, beginTime, endTime));
         } catch (Exception e) {
