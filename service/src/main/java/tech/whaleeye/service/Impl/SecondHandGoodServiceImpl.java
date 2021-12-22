@@ -131,7 +131,7 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
         if (secondHandGoodMapper.insertSecondHandGood(secondHandGood) <= 0) {
             return false;
         }
-        return goodPictureMapper.insertGoodPictures(secondHandGoodDTO.getId(), secondHandGoodDTO.getPicturePathList()) > 0;
+        return goodPictureMapper.insertGoodPictures(secondHandGood.getId(), secondHandGoodDTO.getPicturePathList()) > 0;
     }
 
     @Override
