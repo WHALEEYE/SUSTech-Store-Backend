@@ -133,7 +133,7 @@
     <insert id="insertSecondHandGood" useGeneratedKeys="true" keyProperty="id">
         insert into second_hand_good (id, type_id, title, description, price, publisher, sold, created_time,
                                       updated_time)
-        values (default, #{good.typeId}, #{good.title}, #{good.description}, #{good.price}, #{publisher}, false,
+        values (default, #{good.typeId}, #{good.title}, #{good.description}, #{good.price}, #{userId}, false,
                 default, default)
     </insert>
 
