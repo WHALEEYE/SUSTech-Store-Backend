@@ -126,7 +126,9 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
         if (secondHandGoodDTO.getPrice().doubleValue() < 0f || secondHandGoodDTO.getPicturePathList().isEmpty()) {
             throw new InvalidValueException();
         }
-        if (secondHandGoodMapper.insertSecondHandGood(MiscUtils.currentUserId(), secondHandGoodDTO) <= 0) {
+        SecondHandGood secondHandGood = modelMapper.map(secondHandGoodDTO, SecondHandGood.class);
+        secondHandGood.setPublisher(MiscUtils.currentUserId());
+        if (secondHandGoodMapper.insertSecondHandGood(secondHandGood) <= 0) {
             return false;
         }
         return goodPictureMapper.insertGoodPictures(secondHandGoodDTO.getId(), secondHandGoodDTO.getPicturePathList()) > 0;

@@ -26,7 +26,7 @@ public interface SecondHandGoodMapper {
 
     Integer countCollectedGoods(@Param("userId") Integer userId);
 
-    Integer insertSecondHandGood(@Param("userId") Integer userId, @Param("good") SecondHandGoodDTO secondHandGoodDTO);
+    Integer insertSecondHandGood(@Param("good") SecondHandGood secondHandGood);
 
     Integer collectGood(@Param("userId") Integer userId, @Param("goodId") Integer goodId);
 
