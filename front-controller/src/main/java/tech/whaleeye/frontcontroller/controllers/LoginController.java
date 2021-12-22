@@ -78,7 +78,7 @@ public class LoginController {
         try {
             subject.login(token);
         } catch (UnknownAccountException uae) {
-            return AjaxResult.setSuccess(false).setMsg("This card number doesn't have corresponding accounts.");
+            return AjaxResult.setSuccess(false).setMsg("This card number doesn't have accounts or password not set.");
         } catch (IncorrectCredentialsException ice) {
             return AjaxResult.setSuccess(false).setMsg("Wrong password.");
         } catch (LockedAccountException lae) {

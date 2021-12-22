@@ -26,7 +26,7 @@ public class CardNumberPasswordRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken authenticationToken) throws AuthenticationException {
         LoginToken loginToken = (LoginToken) authenticationToken;
         StoreUser storeUser = storeUserService.getStoreUserByCardNumber(loginToken.getUsername());
-        if (storeUser == null) {
+        if (storeUser == null || storeUser.getPassword() == null) {
             throw new UnknownAccountException();
         } else if (storeUser.getBanned()) {
             throw new LockedAccountException();
