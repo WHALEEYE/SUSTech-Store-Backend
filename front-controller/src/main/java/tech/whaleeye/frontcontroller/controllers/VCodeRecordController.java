@@ -3,6 +3,7 @@ package tech.whaleeye.frontcontroller.controllers;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -61,7 +62,8 @@ public class VCodeRecordController {
 
     @ApiOperation("send verification code after login")
     @PostMapping("/account/{vCodeType}")
-    AjaxResult sendAccountVCode(@PathVariable("vCodeType") Integer vCodeType) {
+    AjaxResult sendAccountVCode(@PathVariable("vCodeType")
+                                @ApiParam("1: change password; 2: change alipay; 3: cancel account") Integer vCodeType) {
         StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
         String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {
