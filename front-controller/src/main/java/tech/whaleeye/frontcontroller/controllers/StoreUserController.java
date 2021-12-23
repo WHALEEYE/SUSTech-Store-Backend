@@ -326,7 +326,7 @@ public class StoreUserController {
     }
 
     @ApiOperation("update user avatar")
-    @PatchMapping("/avatar")
+    @PostMapping("/avatar")
     AjaxResult updateAvatar(@RequestPart MultipartFile avatar) {
         try {
             String avatarPath = MiscUtils.processPicture(avatar, UploadFileType.AVATAR);
