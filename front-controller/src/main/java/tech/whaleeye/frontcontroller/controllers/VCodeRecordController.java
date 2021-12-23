@@ -67,10 +67,10 @@ public class VCodeRecordController {
         StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
         String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {
+            TencentCloudUtils.sendVCodeSMS(storeUser.getPhoneNumber(), vCode, VCodeType.values()[vCodeType]);
             if (vCodeRecordService.setAccountVCode(storeUser.getId(), vCode, VCodeType.values()[vCodeType]) <= 0) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
             }
-            TencentCloudUtils.sendVCodeSMS(storeUser.getPhoneNumber(), vCode, VCodeType.values()[vCodeType]);
         } catch (TencentCloudSDKException e) {
             log.error("User ID [" + MiscUtils.currentUserId() + "]: verification code failed to send.");
             return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
@@ -87,10 +87,10 @@ public class VCodeRecordController {
         String receiveEmail = cardNumber.concat(postfix);
         String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {
+            EmailUtils.sendVCodeEmail(receiveEmail, vCode);
             if (vCodeRecordService.setEmailVCode(MiscUtils.currentUserId(), cardNumber, vCode) <= 0) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
             }
-            EmailUtils.sendVCodeEmail(receiveEmail, vCode);
         } catch (GeneralSecurityException | MessagingException e) {
             log.error("User ID [" + MiscUtils.currentUserId() + "]: verification code mail failed to send (Internal Error).");
             return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
