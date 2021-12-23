@@ -79,6 +79,7 @@ public class StoreUserController {
                 otherUserVO.setFollowerCount(storeUserService.countFollowers(userId));
                 otherUserVO.setFollowingCount(storeUserService.countFollowings(userId));
                 otherUserVO.setPhoneNumber(otherUser.getPhoneNumber().substring(0, 3) + "****" + otherUser.getPhoneNumber().substring(8));
+                otherUserVO.setIsFollowing(storeUserService.isFollowing(MiscUtils.currentUserId(), userId));
                 return AjaxResult.setSuccess(true).setData(otherUserVO);
             }
         } catch (Exception e) {
@@ -274,46 +275,54 @@ public class StoreUserController {
     @PatchMapping("/intro")
     AjaxResult updateIntroduction(@RequestParam String introduction) {
         try {
-            if (storeUserService.updateIntroduction(MiscUtils.currentUserId(), introduction) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to update introduction.");
+            if (storeUserService.updateIntroduction(MiscUtils.currentUserId(), introduction)) {
+                return AjaxResult.setSuccess(true).setMsg("Introduction updated successfully.");
             }
+            return AjaxResult.setSuccess(false).setMsg("Failed to update introduction.");
         } catch (InvalidValueException e) {
             return AjaxResult.setSuccess(false).setMsg("Introduction too long.");
         }
-        return AjaxResult.setSuccess(true).setMsg("Introduction updated successfully.");
     }
 
     @ApiOperation("update nickname")
     @PatchMapping("/nickname")
     AjaxResult updateNickname(@RequestParam String nickname) {
         try {
-            if (storeUserService.updateNickname(MiscUtils.currentUserId(), nickname) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to update nickname.");
+            if (storeUserService.updateNickname(MiscUtils.currentUserId(), nickname)) {
+                return AjaxResult.setSuccess(true).setMsg("Nickname updated successfully.");
             }
+            return AjaxResult.setSuccess(false).setMsg("Failed to update nickname.");
         } catch (InvalidValueException e) {
             return AjaxResult.setSuccess(false).setMsg("Nickname too long.");
         }
-        return AjaxResult.setSuccess(true).setMsg("Nickname updated successfully.");
     }
 
     @ApiOperation("update sex")
     @PatchMapping("/sex")
     AjaxResult updateNickname(@RequestParam Boolean sex) {
-        if (storeUserService.updateSex(MiscUtils.currentUserId(), sex) <= 0) {
+        try {
+            if (storeUserService.updateSex(MiscUtils.currentUserId(), sex)) {
+                return AjaxResult.setSuccess(true).setMsg("Sex information updated successfully.");
+            }
+            return AjaxResult.setSuccess(false).setMsg("Failed to update sex information.");
+        } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to update sex information.");
         }
-        return AjaxResult.setSuccess(true).setMsg("Sex information updated successfully.");
     }
 
     @ApiOperation("update notifications")
     @PatchMapping("/notifications")
-    AjaxResult updateNotifications(@RequestParam Boolean secondHandNotification,
-                                   @RequestParam Boolean agentServiceNotification,
-                                   @RequestParam Boolean apiTradeNotification) {
-        if (storeUserService.updateNotifications(MiscUtils.currentUserId(), secondHandNotification, agentServiceNotification, apiTradeNotification) <= 0) {
+    AjaxResult updateNotifications(@RequestParam Boolean secondHandNotification) {
+        try {
+            if (storeUserService.updateNotifications(MiscUtils.currentUserId(), secondHandNotification, true, true)) {
+                return AjaxResult.setSuccess(true).setMsg("Notification settings updated successfully.");
+            }
+            return AjaxResult.setSuccess(false).setMsg("Failed to update notification settings.");
+        } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to update notification settings.");
         }
-        return AjaxResult.setSuccess(true).setMsg("Notification settings updated successfully.");
     }
 
     @ApiOperation("update user avatar")

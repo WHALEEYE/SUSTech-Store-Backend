@@ -21,6 +21,8 @@ public class OtherUserVO implements Serializable {
 
     private String introduction;
 
+    private Boolean isFollowing;
+
     private Integer followerCount;
 
     private Integer followingCount;

@@ -23,6 +23,8 @@ public class FullGoodVO implements Serializable {
 
     private BigDecimal price;
 
+    private Boolean isCollecting;
+
     private Integer publisher;
 
     private Boolean sold;

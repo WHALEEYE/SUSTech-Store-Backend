@@ -74,6 +74,11 @@ public class StoreUserServiceImpl implements StoreUserService {
     }
 
     @Override
+    public Boolean isFollowing(Integer followerId, Integer followedId) {
+        return storeUserMapper.isFollowing(followerId, followedId);
+    }
+
+    @Override
     public Boolean registerStoreUser(String phoneNumber) {
         return storeUserMapper.registerStoreUser(phoneNumber) > 0;
     }
@@ -130,29 +135,29 @@ public class StoreUserServiceImpl implements StoreUserService {
     }
 
     @Override
-    public Integer updateIntroduction(Integer userId, String introduction) {
+    public Boolean updateIntroduction(Integer userId, String introduction) {
         if (introduction.length() > 255) {
             throw new InvalidValueException();
         }
-        return storeUserMapper.updateIntroduction(userId, introduction);
+        return storeUserMapper.updateIntroduction(userId, introduction) > 0;
     }
 
     @Override
-    public Integer updateNickname(Integer userId, String nickname) {
+    public Boolean updateNickname(Integer userId, String nickname) {
         if (nickname.length() > 20) {
             throw new InvalidValueException();
         }
-        return storeUserMapper.updateNickname(userId, nickname);
+        return storeUserMapper.updateNickname(userId, nickname) > 0;
     }
 
     @Override
-    public Integer updateSex(Integer userId, Boolean sex) {
-        return storeUserMapper.updateSex(userId, sex);
+    public Boolean updateSex(Integer userId, Boolean sex) {
+        return storeUserMapper.updateSex(userId, sex) > 0;
     }
 
     @Override
-    public Integer updateNotifications(Integer userId, Boolean secondHandNotification, Boolean agentServiceNotification, Boolean apiTradeNotification) {
-        return storeUserMapper.updateNotifications(userId, secondHandNotification, agentServiceNotification, apiTradeNotification);
+    public Boolean updateNotifications(Integer userId, Boolean secondHandNotification, Boolean agentServiceNotification, Boolean apiTradeNotification) {
+        return storeUserMapper.updateNotifications(userId, secondHandNotification, agentServiceNotification, apiTradeNotification) > 0;
     }
 
     @Override

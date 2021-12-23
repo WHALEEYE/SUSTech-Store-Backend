@@ -27,6 +27,8 @@ public interface StoreUserMapper {
 
     Integer countCollectors(@Param("goodId") Integer goodId);
 
+    Boolean isFollowing(@Param("followerId") Integer followerId, @Param("followedId") Integer followedId);
+
     Integer registerStoreUser(String phoneNumber);
 
     Integer followUser(@Param("followerId") Integer userId, @Param("followedId") Integer followedId);

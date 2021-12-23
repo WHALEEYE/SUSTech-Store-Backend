@@ -3,7 +3,6 @@ package tech.whaleeye.service;
 import org.springframework.lang.Nullable;
 import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.model.entity.StoreUser;
-import tech.whaleeye.model.vo.SecondHandGood.BriefGoodVO;
 import tech.whaleeye.model.vo.StoreUser.BriefUserVO;
 import tech.whaleeye.model.vo.StoreUser.StoreUserVO;
 
@@ -25,6 +24,8 @@ public interface StoreUserService {
 
     PageList<BriefUserVO> listCollectors(Integer goodId, Integer pageSize, Integer pageNo);
 
+    Boolean isFollowing(Integer followerId, Integer followedId);
+
     Boolean registerStoreUser(String phoneNumber);
 
     Boolean followUser(Integer userId, Integer followedId);
@@ -37,17 +38,17 @@ public interface StoreUserService {
 
     Boolean setCardNumber(Integer userId, String cardNumber);
 
-    Integer updateIntroduction(Integer userId, String introduction);
+    Boolean updateIntroduction(Integer userId, String introduction);
 
-    Integer updateNickname(Integer userId, String nickname);
+    Boolean updateNickname(Integer userId, String nickname);
 
     Integer setAlipayAccount(Integer userId, String alipayAccount);
 
     Integer updateAlipayAccount(Integer userId, String alipayAccount);
 
-    Integer updateSex(Integer userId, Boolean sex);
+    Boolean updateSex(Integer userId, Boolean sex);
 
-    Integer updateNotifications(Integer userId, Boolean secondHandNotification, Boolean agentServiceNotification, Boolean apiTradeNotification);
+    Boolean updateNotifications(Integer userId, Boolean secondHandNotification, Boolean agentServiceNotification, Boolean apiTradeNotification);
 
     Integer updateAvatar(Integer userId, String avatarPath);
 

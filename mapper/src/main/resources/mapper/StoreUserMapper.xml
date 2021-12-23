@@ -141,6 +141,13 @@
         where good_id = #{goodId}
     </select>
 
+    <select id="isFollowing" resultType="Boolean">
+        select count(*) > 0
+        from follow_relation
+        where follower_id = #{followerId}
+          and followed_id = #{followedId}
+    </select>
+
     <insert id="registerStoreUser" parameterType="String">
         insert into store_user (phone_number)
         values (#{phoneNumber})
