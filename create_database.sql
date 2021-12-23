@@ -1,3 +1,4 @@
+drop table if exists chat_history;
 drop index if exists collector_id_index;
 drop table if exists collect_relation;
 drop index if exists good_id_of_picture;
@@ -28,7 +29,7 @@ create table if not exists store_user
     card_number                char(8) unique,
     password                   char(32),
     salt                       char(16),
-    introduction               varchar(255),
+    introduction               varchar(30),
     avatar_path                varchar(255)    not null default 'no_avatar.png',
     sex                        bool,
     alipay_account             varchar(50),
@@ -53,7 +54,7 @@ create table if not exists deleted_store_user
     card_number                char(8),
     password                   char(60),
     salt                       char(16),
-    introduction               varchar(255),
+    introduction               varchar(30),
     avatar_path                varchar(255),
     sex                        bool,
     alipay_account             varchar(50),
@@ -487,3 +488,11 @@ begin
 end;
 $$
     language plpgsql;
+
+create table if not exists chat_history
+(
+    sender          int          not null references store_user (id) on delete cascade,
+    receiver        int          not null references store_user (id) on delete cascade,
+    message_content varchar(255) not null,
+    send_time       timestamp    not null default now()
+);
