@@ -22,12 +22,12 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Log4j2
 public class WebSocketServer {
+    //记录当前在线连接数
+    public static final Map<Integer, Session> sessionMap = new ConcurrentHashMap<>();
     @Autowired
     private ChatHistoryService chatHistoryService;
     @Autowired
     private StoreUserService storeUserService;
-    //记录当前在线连接数
-    public static final Map<Integer, Session> sessionMap = new ConcurrentHashMap<>();
 
     /**
      * 连接建立成功调用的方法
@@ -37,7 +37,7 @@ public class WebSocketServer {
         int userId = -1;
         try {
             userId = Integer.parseInt(userIdStr);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.info("传入UserId={}，不是Integer", userIdStr);
             return;
         }
@@ -65,7 +65,7 @@ public class WebSocketServer {
         int userId = -1;
         try {
             userId = Integer.parseInt(userIdStr);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.info("传入UserId={}，不是Integer", userIdStr);
             return;
         }
@@ -78,6 +78,7 @@ public class WebSocketServer {
      * 后台收到客户端发送过来的消息
      * onMessage 是一个消息的中转站
      * 接受 浏览器端 socket.send 发送过来的 json数据
+     *
      * @param message 客户端发送过来的消息
      */
     @OnMessage
@@ -94,7 +95,7 @@ public class WebSocketServer {
         int userId = -1;
         try {
             userId = Integer.parseInt(userIdStr);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.info("传入UserId={}，不是Integer", userIdStr);
             return;
         }
