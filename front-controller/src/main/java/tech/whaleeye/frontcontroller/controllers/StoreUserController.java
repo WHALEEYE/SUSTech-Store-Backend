@@ -272,7 +272,7 @@ public class StoreUserController {
     }
 
     @ApiOperation("update self introduction")
-    @PatchMapping("/intro")
+    @PatchMapping("/introduction")
     AjaxResult updateIntroduction(@RequestParam String introduction) {
         try {
             if (storeUserService.updateIntroduction(MiscUtils.currentUserId(), introduction)) {
