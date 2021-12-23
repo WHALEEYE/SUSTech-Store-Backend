@@ -24,7 +24,7 @@ public class ChatHistoryController {
     private ChatHistoryService chatHistoryService;
 
     @ApiOperation("get chat history")
-    @RequestMapping("/{userId}")
+    @GetMapping("/{userId}")
     AjaxResult getChatHistory(@PathVariable("userId") Integer userId,
                               @RequestParam Date beginTime,
                               @RequestParam Date endTime) {
