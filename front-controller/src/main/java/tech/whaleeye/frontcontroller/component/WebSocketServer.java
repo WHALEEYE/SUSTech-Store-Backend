@@ -24,8 +24,10 @@ import java.util.concurrent.ConcurrentHashMap;
 public class WebSocketServer {
     //记录当前在线连接数
     public static final Map<Integer, Session> sessionMap = new ConcurrentHashMap<>();
+
     @Autowired
     private ChatHistoryService chatHistoryService;
+
     @Autowired
     private StoreUserService storeUserService;
 
@@ -106,7 +108,7 @@ public class WebSocketServer {
             // 服务器端 再把消息组装一下，组装后的消息包含发送人和发送的文本内容
             // {"from": "zhang", "text": "hello"}
             JSONObject jsonObject = new JSONObject();
-            jsonObject.set("from", storeUserService.getStoreUserById(userId).getNickname());  // from 是 zhang
+            jsonObject.set("from", userId);  // from 是 zhang
             jsonObject.set("text", text);  // text 同上面的text
             this.sendMessage(jsonObject.toString(), toSession);
             log.info("发送给用户userId={}，消息：{}", toUserId, jsonObject.toString());
