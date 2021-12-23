@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="tech.whaleeye.mapper.dao.ChatHistoryDao">
+<mapper namespace="tech.whaleeye.mapper.ChatHistoryMapper">
 
     <resultMap id="ChatHistoryMap" type="tech.whaleeye.model.vo.ChatHistory.ChatHistoryVO">
         <!--@Table chat_history-->
@@ -9,7 +9,7 @@
         <result property="isSender" column="is_sender" jdbcType="BOOLEAN"/>
     </resultMap>
 
-    <select id="listChatHistory" resultType="ChatHistoryMap">
+    <select id="listChatHistory" resultMap="ChatHistoryMap">
         select message_content, send_time, (sender = #{currentUser}) as is_sender
         from chat_history
         where (sender = #{currentUser} and receiver = #{otherUser}
