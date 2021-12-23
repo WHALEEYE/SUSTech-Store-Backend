@@ -2,8 +2,6 @@ package tech.whaleeye.mapper;
 
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
-import tech.whaleeye.model.dto.GoodPictureDTO;
-import tech.whaleeye.model.entity.GoodPicture;
 
 import java.util.List;
 

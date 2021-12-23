@@ -66,7 +66,7 @@ public class TencentCloudUtils {
     /**
      * Send SMS to the users.
      *
-     * @param SMSTemplate    the SMS SMSTemplate, for example, verification code
+     * @param SMSTemplate      the SMS SMSTemplate, for example, verification code
      * @param phoneNumberSet   the users that are sent SMS
      * @param templateParamSet the parameters needed by {@param SMSTemplate}
      * @return an array of {@link SendStatus} object, each object corresponds to the sending status of one user

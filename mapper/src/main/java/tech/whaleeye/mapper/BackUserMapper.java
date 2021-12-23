@@ -1,6 +1,5 @@
 package tech.whaleeye.mapper;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import tech.whaleeye.model.entity.BackUser;
