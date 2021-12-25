@@ -184,6 +184,7 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
             if (secondHandGood.getTypeId() != null)
                 goodType = goodTypeMapper.getGoodTypeById(secondHandGood.getTypeId());
             backGoodVO.setGoodType(goodType == null ? "No Type" : goodType.getTypeName());
+            backGoodVOList.add(backGoodVO);
         }
         int total = secondHandGoodMapper.countAllGoodsForBack(searchNickname, searchPhoneNumber, searchKeyword);
         return new PageList<>(backGoodVOList, pageSize, pageNo, total);
