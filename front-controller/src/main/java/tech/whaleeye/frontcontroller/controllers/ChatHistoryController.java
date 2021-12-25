@@ -11,7 +11,7 @@ import tech.whaleeye.service.ChatHistoryService;
 
 import java.util.Date;
 
-@Api("chat history controller")
+@Api("Chat History Controller")
 @RestController
 @RequestMapping("/chatHistory")
 @Log4j2
@@ -35,6 +35,29 @@ public class ChatHistoryController {
             return AjaxResult.setSuccess(false).setMsg("Failed to list the chat history");
         }
     }
+
+    @ApiOperation("get friend list")
+    @GetMapping("/friends")
+    AjaxResult getFriendList() {
+        try {
+            return AjaxResult.setSuccess(true).setData(chatHistoryService.getFriendList());
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed get friend list");
+        }
+    }
+
+//    @ApiOperation("insert chat history")
+//    @PostMapping("/history/{userId}")
+//    AjaxResult addChatHistory(@PathVariable("userId") Integer userId,
+//                              @RequestParam String messageContent) {
+//        try {
+//            return AjaxResult.setSuccess(true).setData(chatHistoryService.addChatHistory(MiscUtils.currentUserId(), userId, messageContent));
+//        } catch (Exception e) {
+//            log.error(e.getMessage());
+//            return AjaxResult.setSuccess(false).setMsg("Failed to renew chat history");
+//        }
+//    }
 
 
 }
