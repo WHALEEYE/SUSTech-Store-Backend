@@ -41,8 +41,8 @@ public class BackUserServiceImpl implements BackUserService {
     }
 
     @Override
-    public PageList<BackUserVO> listAllBackUsers(Integer pageSize, Integer pageNo, String searchKeyWord) {
-        List<BackUser> userList = backUserMapper.listAllBackUsers(pageSize, (pageNo - 1) * pageSize);
+    public PageList<BackUserVO> listAllBackUsers(Integer pageSize, Integer pageNo, String searchKeyword) {
+        List<BackUser> userList = backUserMapper.listAllBackUsers(pageSize, (pageNo - 1) * pageSize, searchKeyword);
         List<BackUserVO> userVOList = new ArrayList<>();
         BackUserVO backUserVO;
         for (BackUser backUser : userList) {
