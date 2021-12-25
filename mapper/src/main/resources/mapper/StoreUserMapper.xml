@@ -167,9 +167,9 @@
 
     <update id="updatePassword">
         update store_user
-        set password = #{password},
-        salt = #{salt},
-        updated_time = now()
+        set password     = #{password},
+            salt         = #{salt},
+            updated_time = now()
         where id = #{userId}
     </update>
 
