@@ -16,15 +16,18 @@
 
     <select id="queryById" resultMap="BaseResultMap">
         select id,
-               username,
-               password,
-               salt,
-               role_id,
-               banned,
-               created_time,
-               updated_time
+        username,
+        password,
+        salt,
+        role_id,
+        banned,
+        created_time,
+        updated_time
         from back_user
         where id = #{userId}
+        <if test="searchKeyword != null and searchKeyword != ''">
+            and username like concat('%', #{searchKeyWord}, '%')
+        </if>
     </select>
 
     <select id="queryByUsername" resultMap="BaseResultMap">

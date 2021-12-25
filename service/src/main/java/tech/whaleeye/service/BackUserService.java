@@ -11,7 +11,7 @@ public interface BackUserService {
 
     BackUser queryByUsername(String userName);
 
-    PageList<BackUserVO> listAllBackUsers(Integer pageSize, Integer pageNo);
+    PageList<BackUserVO> listAllBackUsers(Integer pageSize, Integer pageNo, String searchKeyWord);
 
     BackUserRole getRoleByUserId(Integer userId);
 

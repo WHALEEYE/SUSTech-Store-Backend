@@ -13,7 +13,7 @@ public interface BackUserMapper {
 
     BackUser queryByUsername(@Param("username") String username);
 
-    List<BackUser> listAllBackUsers(@Param("pageSize") Integer pageSize, @Param("offset") Integer offset);
+    List<BackUser> listAllBackUsers(@Param("pageSize") Integer pageSize, @Param("offset") Integer offset, @Param("searchKeyWord") String searchKeyWord);
 
     Integer countBackUsers();
 
