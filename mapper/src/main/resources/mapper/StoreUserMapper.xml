@@ -171,9 +171,6 @@
         salt = #{salt},
         updated_time = now()
         where id = #{userId}
-        <if test="firstTime == true">
-            and password is null
-        </if>
     </update>
 
     <update id="setCardNumber">
