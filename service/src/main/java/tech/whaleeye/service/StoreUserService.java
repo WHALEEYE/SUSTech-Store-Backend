@@ -32,8 +32,6 @@ public interface StoreUserService {
 
     Boolean unfollowUser(Integer userId, Integer followedId);
 
-    Boolean setPassword(Integer userId, String password);
-
     Boolean updatePassword(Integer userId, String password);
 
     Boolean setCardNumber(Integer userId, String cardNumber);

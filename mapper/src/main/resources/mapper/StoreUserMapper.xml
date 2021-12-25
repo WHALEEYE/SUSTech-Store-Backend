@@ -141,6 +141,23 @@
         where good_id = #{goodId}
     </select>
 
+    <select id="listFriends" resultMap="BriefUserMap">
+        select su.id, su.nickname, su.avatar_path
+        from store_user su
+                 join (select x1.friend_id,
+                              x1.send_time,
+                              row_number() over (partition by x1.friend_id order by x1.send_time desc) as rn
+                       from (select receiver as friend_id, send_time
+                             from chat_history
+                             where sender = #{userId}
+                             union all
+                             select sender as friend_id, send_time
+                             from chat_history
+                             where receiver = #{userId}) x1) x2 on su.id = x2.friend_id
+        where x2.rn = 1
+        order by x2.send_time desc
+    </select>
+
     <select id="isFollowing" resultType="Boolean">
         select count(*) > 0
         from follow_relation
@@ -167,13 +184,10 @@
 
     <update id="updatePassword">
         update store_user
-        set password = #{password},
-        salt = #{salt},
-        updated_time = now()
+        set password     = #{password},
+            salt         = #{salt},
+            updated_time = now()
         where id = #{userId}
-        <if test="firstTime == true">
-            and password is null
-        </if>
     </update>
 
     <update id="setCardNumber">

@@ -94,23 +94,13 @@ public class StoreUserServiceImpl implements StoreUserService {
     }
 
     @Override
-    public Boolean setPassword(Integer userId, String password) {
-        if (!password.matches("[a-zA-Z0-9!@#$%^&*()_+\\-=,.<>?/\\\\|\\[\\]{}:;\"'`~]{6,20}")) {
-            throw new IllegalPasswordException();
-        }
-        String hexSalt = MiscUtils.generateSalt(8);
-        password = new Md5Hash(password, MiscUtils.getSaltFromHex(hexSalt), 1024).toHex();
-        return storeUserMapper.updatePassword(userId, password, hexSalt, true) > 0;
-    }
-
-    @Override
     public Boolean updatePassword(Integer userId, String password) {
         if (!password.matches("[a-zA-Z0-9!@#$%^&*()_+\\-=,.<>?/\\\\|\\[\\]{}:;\"'`~]{6,20}")) {
             throw new IllegalPasswordException();
         }
         String hexSalt = MiscUtils.generateSalt(8);
         password = new Md5Hash(password, MiscUtils.getSaltFromHex(hexSalt), 1024).toHex();
-        return storeUserMapper.updatePassword(userId, password, hexSalt, false) > 0;
+        return storeUserMapper.updatePassword(userId, password, hexSalt) > 0;
     }
 
     @Override

@@ -189,22 +189,6 @@ public class StoreUserController {
         }
     }
 
-    @ApiOperation("set user password")
-    @PostMapping("/password")
-    AjaxResult setPassword(@RequestParam String password) {
-        try {
-            if (storeUserService.setPassword(MiscUtils.currentUserId(), password)) {
-                return AjaxResult.setSuccess(true).setMsg("Success.");
-            }
-            return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
-        } catch (IllegalPasswordException ipe) {
-            return AjaxResult.setSuccess(false).setMsg("This password is illegal");
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return AjaxResult.setSuccess(false).setMsg("Failed to set password.");
-        }
-    }
-
     @ApiOperation("set alipay account")
     @PostMapping("/alipay")
     AjaxResult setAlipayAccount(@RequestParam String alipayAccount) {
@@ -215,7 +199,7 @@ public class StoreUserController {
     }
 
     @ApiOperation("set card number")
-    @PostMapping("/cardNumber")
+    @PatchMapping("/cardNumber")
     AjaxResult setCardNumber(@RequestParam String cardNumber,
                              @RequestParam String vCode) {
         try {

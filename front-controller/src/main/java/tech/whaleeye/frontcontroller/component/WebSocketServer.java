@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RestController;
 import tech.whaleeye.service.ChatHistoryService;
 import tech.whaleeye.service.StoreUserService;
 
@@ -19,17 +20,26 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author websocket服务
  */
 @ServerEndpoint(value = "/imserver/{userId}")
+@RestController
 @Component
 @Log4j2
 public class WebSocketServer {
     //记录当前在线连接数
     public static final Map<Integer, Session> sessionMap = new ConcurrentHashMap<>();
 
-    @Autowired
-    private ChatHistoryService chatHistoryService;
+    private static ChatHistoryService chatHistoryService;
+
+    private static StoreUserService storeUserService;
 
     @Autowired
-    private StoreUserService storeUserService;
+    public void setStoreUserService(StoreUserService service) {
+        WebSocketServer.storeUserService = service;
+    }
+
+    @Autowired
+    public void setChatHistoryService(ChatHistoryService service) {
+        WebSocketServer.chatHistoryService = service;
+    }
 
     /**
      * 连接建立成功调用的方法
@@ -44,7 +54,7 @@ public class WebSocketServer {
             return;
         }
         sessionMap.put(userId, session);
-        log.info("有新用户加入，username={}, 当前在线人数为：{}", userId, sessionMap.size());
+        log.info("有新用户加入，userId={}, 当前在线人数为：{}", userId, sessionMap.size());
         JSONObject result = new JSONObject();
         JSONArray array = new JSONArray();
         result.set("users", array);

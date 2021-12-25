@@ -27,6 +27,8 @@ public interface StoreUserMapper {
 
     Integer countCollectors(@Param("goodId") Integer goodId);
 
+    List<BriefUserVO> listFriends(@Param("userId") Integer userId);
+
     Boolean isFollowing(@Param("followerId") Integer followerId, @Param("followedId") Integer followedId);
 
     Integer registerStoreUser(String phoneNumber);
@@ -35,7 +37,7 @@ public interface StoreUserMapper {
 
     Integer unfollowUser(@Param("followerId") Integer followerId, @Param("followingId") Integer followingId);
 
-    Integer updatePassword(@Param("userId") Integer userId, @Param("password") String password, @Param("salt") String salt, @Param("firstTime") Boolean firstTime);
+    Integer updatePassword(@Param("userId") Integer userId, @Param("password") String password, @Param("salt") String salt);
 
     Integer updateAlipayAccount(@Param("userId") Integer userId, @Param("alipayAccount") String alipayAccount, @Param("firstTime") Boolean firstTime);
 
