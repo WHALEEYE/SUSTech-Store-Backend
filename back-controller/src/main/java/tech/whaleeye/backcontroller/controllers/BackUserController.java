@@ -27,9 +27,9 @@ public class BackUserController {
     @RequiresRoles("Super")
     AjaxResult listAllBackUsers(@RequestParam Integer pageSize,
                                 @RequestParam Integer pageNo,
-                                @RequestParam(required = false) String searchKeyWord) {
+                                @RequestParam(required = false) String searchKeyword) {
         try {
-            return AjaxResult.setSuccess(true).setData(backUserService.listAllBackUsers(pageSize, pageNo, searchKeyWord));
+            return AjaxResult.setSuccess(true).setData(backUserService.listAllBackUsers(pageSize, pageNo, searchKeyword));
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to list users");
