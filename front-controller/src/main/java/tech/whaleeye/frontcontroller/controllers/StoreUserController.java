@@ -199,7 +199,7 @@ public class StoreUserController {
     }
 
     @ApiOperation("set card number")
-    @PostMapping("/cardNumber")
+    @PatchMapping("/cardNumber")
     AjaxResult setCardNumber(@RequestParam String cardNumber,
                              @RequestParam String vCode) {
         try {
