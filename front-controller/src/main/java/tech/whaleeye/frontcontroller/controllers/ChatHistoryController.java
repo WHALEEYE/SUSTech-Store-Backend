@@ -23,10 +23,13 @@ public class ChatHistoryController {
     @ApiOperation("get chat history")
     @GetMapping("/{userId}")
     AjaxResult getChatHistory(@PathVariable("userId") Integer userId,
-                              @RequestParam Date beginTime,
-                              @RequestParam Date endTime) {
+                              @RequestParam Long beginTime,
+                              @RequestParam Long endTime) {
         try {
-            return AjaxResult.setSuccess(true).setData(chatHistoryService.listChatHistory(MiscUtils.currentUserId(), userId, beginTime, endTime));
+            log.info("查询历史参数 {} {} {}", userId, beginTime, endTime);
+            AjaxResult result = AjaxResult.setSuccess(true).setData(chatHistoryService.listChatHistory(MiscUtils.currentUserId(), userId, new Date(beginTime), new Date(endTime)));
+            log.info(result);
+            return result;
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to list the chat history");
