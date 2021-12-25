@@ -46,57 +46,70 @@ public class VCodeRecordController {
         }
         String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {
-            if (vCodeRecordService.setLoginVCode(phoneNumber, vCode) <= 0) {
+            if (!vCodeRecordService.setLoginVCode(phoneNumber, vCode)) {
                 log.error("Phone number [" + phoneNumber + "]: verification code failed to set.");
                 return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
             }
             TencentCloudUtils.sendVCodeSMS(phoneNumber, vCode, VCodeType.LOGIN);
+            return AjaxResult.setSuccess(true);
         } catch (TencentCloudSDKException e) {
             log.error("Phone number [" + phoneNumber + "]: verification code failed to send (internal error).");
             return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
         } catch (VCodeLimitException e) {
             return AjaxResult.setSuccess(false).setMsg("The request is too often.");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to send verification code.");
         }
-        return AjaxResult.setSuccess(true).setMsg("Success");
     }
 
     @ApiOperation("send verification code after login")
     @PostMapping("/account/{vCodeType}")
     AjaxResult sendAccountVCode(@PathVariable("vCodeType")
                                 @ApiParam("1: change password; 2: change alipay; 3: cancel account") Integer vCodeType) {
-        StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
-        String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {
+            StoreUser storeUser = storeUserService.getStoreUserById(MiscUtils.currentUserId());
+            String vCode = String.format("%06d", new Random().nextInt(1000000));
             TencentCloudUtils.sendVCodeSMS(storeUser.getPhoneNumber(), vCode, VCodeType.values()[vCodeType]);
-            if (vCodeRecordService.setAccountVCode(storeUser.getId(), vCode, VCodeType.values()[vCodeType]) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
+            if (vCodeRecordService.setAccountVCode(storeUser.getId(), vCode, VCodeType.values()[vCodeType])) {
+                return AjaxResult.setSuccess(true).setMsg("Success.");
             }
+            return AjaxResult.setSuccess(false).setMsg("Failed to send verification code.");
         } catch (TencentCloudSDKException e) {
             log.error("User ID [" + MiscUtils.currentUserId() + "]: verification code failed to send.");
             return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
         } catch (VCodeLimitException e) {
             return AjaxResult.setSuccess(false).setMsg("The request is too often.");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to send verification code.");
         }
-        return AjaxResult.setSuccess(true).setMsg("Success.");
     }
 
     @ApiOperation("send verification code to email")
     @PostMapping("/email/{cardNumber}")
     AjaxResult sendEmailVCode(@PathVariable("cardNumber") String cardNumber,
                               @RequestParam String postfix) {
-        String receiveEmail = cardNumber.concat(postfix);
-        String vCode = String.format("%06d", new Random().nextInt(1000000));
         try {
-            EmailUtils.sendVCodeEmail(receiveEmail, vCode);
-            if (vCodeRecordService.setEmailVCode(MiscUtils.currentUserId(), cardNumber, vCode) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
+            StoreUser storeUser = storeUserService.getStoreUserByCardNumber(cardNumber);
+            if (storeUser != null) {
+                return AjaxResult.setSuccess(false).setMsg("The card number is already bound to another user");
             }
+            String receiveEmail = cardNumber.concat(postfix);
+            String vCode = String.format("%06d", new Random().nextInt(1000000));
+            EmailUtils.sendVCodeEmail(receiveEmail, vCode);
+            if (!vCodeRecordService.setEmailVCode(MiscUtils.currentUserId(), cardNumber, vCode)) {
+                return AjaxResult.setSuccess(true).setMsg("Success.");
+            }
+            return AjaxResult.setSuccess(false).setMsg("Failed to send verification code");
         } catch (GeneralSecurityException | MessagingException e) {
             log.error("User ID [" + MiscUtils.currentUserId() + "]: verification code mail failed to send (Internal Error).");
             return AjaxResult.setSuccess(false).setMsg("Failed to send verification code. Please try again later or contact with the administrator.");
         } catch (VCodeLimitException e) {
             return AjaxResult.setSuccess(false).setMsg("The request is too often.");
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to send verification code");
         }
-        return AjaxResult.setSuccess(true).setMsg("Success.");
     }
 }

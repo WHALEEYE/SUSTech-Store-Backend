@@ -7,6 +7,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
+import tech.whaleeye.misc.exceptions.DuplicateException;
 import tech.whaleeye.misc.exceptions.IllegalPasswordException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
@@ -47,6 +48,8 @@ public class BackUserController {
             return AjaxResult.setSuccess(false).setMsg("This password is illegal");
         } catch (InvalidValueException ive) {
             return AjaxResult.setSuccess(false).setMsg("Bad username or role");
+        } catch (DuplicateException de) {
+            return AjaxResult.setSuccess(false).setMsg("The username already exists");
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to create background user");
