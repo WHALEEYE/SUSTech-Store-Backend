@@ -25,8 +25,8 @@ public class EmailUtils {
             "\n" +
             "    .center-in-center {\n" +
             "        position: absolute;\n" +
-            "        top: 27%;\n" +
-            "        left: 33%;\n" +
+            "        top: 27%%;\n" +
+            "        left: 33%%;\n" +
             "    }\n" +
             "</style>\n" +
             "\n" +
@@ -121,7 +121,7 @@ public class EmailUtils {
 
         // prepare text
         MimeBodyPart text = new MimeBodyPart();
-        text.setContent(String.format("<div style=\"margin: auto;text-align: left\"><img src='cid:logo.png' style=\"transform: scale(0.4)\" alt=\"wrong\"></div>\n<div>\n    Your verification code is <u style=\"color: blue\">%s</u>, please enter.\n</div>\n", VCode), "text/html;charset=utf-8");
+        text.setContent(String.format(EMAIL_TEMPLATE, VCode), "text/html;charset=utf-8");
 
         // assemble the pictures and the text into an email
         MimeMultipart mimeMultipart = new MimeMultipart();
