@@ -16,13 +16,13 @@
 
     <select id="queryById" resultMap="BaseResultMap">
         select id,
-               username,
-               password,
-               salt,
-               role_id,
-               banned,
-               created_time,
-               updated_time
+        username,
+        password,
+        salt,
+        role_id,
+        banned,
+        created_time,
+        updated_time
         from back_user
         where id = #{userId}
     </select>
@@ -50,6 +50,9 @@
                created_time,
                updated_time
         from back_user
+        <if test="searchKeyword != null and searchKeyword != ''">
+            where username like concat('%', #{searchKeyword}, '%')
+        </if>
         order by role_id desc, created_time desc
         limit #{pageSize} offset #{offset}
     </select>

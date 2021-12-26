@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.bind.annotation.RestController;
 import tech.whaleeye.service.ChatHistoryService;
 import tech.whaleeye.service.StoreUserService;
 
@@ -19,15 +20,26 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author websocket服务
  */
 @ServerEndpoint(value = "/imserver/{userId}")
+@RestController
 @Component
 @Log4j2
 public class WebSocketServer {
-    @Autowired
-    private ChatHistoryService chatHistoryService;
-    @Autowired
-    private StoreUserService storeUserService;
     //记录当前在线连接数
     public static final Map<Integer, Session> sessionMap = new ConcurrentHashMap<>();
+
+    private static ChatHistoryService chatHistoryService;
+
+    private static StoreUserService storeUserService;
+
+    @Autowired
+    public void setStoreUserService(StoreUserService service) {
+        WebSocketServer.storeUserService = service;
+    }
+
+    @Autowired
+    public void setChatHistoryService(ChatHistoryService service) {
+        WebSocketServer.chatHistoryService = service;
+    }
 
     /**
      * 连接建立成功调用的方法
@@ -37,12 +49,12 @@ public class WebSocketServer {
         int userId = -1;
         try {
             userId = Integer.parseInt(userIdStr);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.info("传入UserId={}，不是Integer", userIdStr);
             return;
         }
         sessionMap.put(userId, session);
-        log.info("有新用户加入，username={}, 当前在线人数为：{}", userId, sessionMap.size());
+        log.info("有新用户加入，userId={}, 当前在线人数为：{}", userId, sessionMap.size());
         JSONObject result = new JSONObject();
         JSONArray array = new JSONArray();
         result.set("users", array);
@@ -65,7 +77,7 @@ public class WebSocketServer {
         int userId = -1;
         try {
             userId = Integer.parseInt(userIdStr);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.info("传入UserId={}，不是Integer", userIdStr);
             return;
         }
@@ -78,6 +90,7 @@ public class WebSocketServer {
      * 后台收到客户端发送过来的消息
      * onMessage 是一个消息的中转站
      * 接受 浏览器端 socket.send 发送过来的 json数据
+     *
      * @param message 客户端发送过来的消息
      */
     @OnMessage
@@ -94,7 +107,7 @@ public class WebSocketServer {
         int userId = -1;
         try {
             userId = Integer.parseInt(userIdStr);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.info("传入UserId={}，不是Integer", userIdStr);
             return;
         }
@@ -105,7 +118,7 @@ public class WebSocketServer {
             // 服务器端 再把消息组装一下，组装后的消息包含发送人和发送的文本内容
             // {"from": "zhang", "text": "hello"}
             JSONObject jsonObject = new JSONObject();
-            jsonObject.set("from", storeUserService.getStoreUserById(userId).getNickname());  // from 是 zhang
+            jsonObject.set("from", userId);  // from 是 zhang
             jsonObject.set("text", text);  // text 同上面的text
             this.sendMessage(jsonObject.toString(), toSession);
             log.info("发送给用户userId={}，消息：{}", toUserId, jsonObject.toString());

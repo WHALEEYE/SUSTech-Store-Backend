@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import tech.whaleeye.mapper.BackUserMapper;
 import tech.whaleeye.mapper.BackUserRoleMapper;
 import tech.whaleeye.misc.ajax.PageList;
+import tech.whaleeye.misc.exceptions.DuplicateException;
 import tech.whaleeye.misc.exceptions.IllegalPasswordException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
@@ -41,8 +42,8 @@ public class BackUserServiceImpl implements BackUserService {
     }
 
     @Override
-    public PageList<BackUserVO> listAllBackUsers(Integer pageSize, Integer pageNo) {
-        List<BackUser> userList = backUserMapper.listAllBackUsers(pageSize, (pageNo - 1) * pageSize);
+    public PageList<BackUserVO> listAllBackUsers(Integer pageSize, Integer pageNo, String searchKeyword) {
+        List<BackUser> userList = backUserMapper.listAllBackUsers(pageSize, (pageNo - 1) * pageSize, searchKeyword);
         List<BackUserVO> userVOList = new ArrayList<>();
         BackUserVO backUserVO;
         for (BackUser backUser : userList) {
@@ -61,7 +62,9 @@ public class BackUserServiceImpl implements BackUserService {
 
     @Override
     public Integer addNewBackUser(String username, String password, Integer roleId) {
-        if (!username.matches("[0-9a-zA-Z]*") || (roleId != 1 && roleId != 2)) {
+        if (backUserMapper.queryByUsername(username) != null) {
+            throw new DuplicateException();
+        } else if (!username.matches("[0-9a-zA-Z]*") || (roleId != 1 && roleId != 2)) {
             throw new InvalidValueException();
         } else if (!password.matches("[a-zA-Z0-9!@#$%^&*()_+\\-=,.<>?/\\\\|\\[\\]{}:;\"'`~]{6,20}")) {
             throw new IllegalPasswordException();

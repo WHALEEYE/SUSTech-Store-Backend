@@ -9,8 +9,11 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import java.io.File;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
+
+import static tech.whaleeye.misc.constants.Values.STATIC_RESOURCE_PATH;
 
 public class EmailUtils {
     private static final String EMAIL = System.getenv("SUSTechStoreEmail");
@@ -111,7 +114,7 @@ public class EmailUtils {
         // set the content of the email
         // prepare pictures
         MimeBodyPart image = new MimeBodyPart();
-        DataHandler handler = new DataHandler(new FileDataSource("misc\\src\\main\\resources\\logo_temp.png"));
+        DataHandler handler = new DataHandler(new FileDataSource(new File(STATIC_RESOURCE_PATH, "logo.png")));
         image.setDataHandler(handler);
         // set the id of the picture (can be used by cid)
         image.setContentID("logo.png");

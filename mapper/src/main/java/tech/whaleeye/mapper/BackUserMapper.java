@@ -1,6 +1,5 @@
 package tech.whaleeye.mapper;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import tech.whaleeye.model.entity.BackUser;
@@ -14,7 +13,7 @@ public interface BackUserMapper {
 
     BackUser queryByUsername(@Param("username") String username);
 
-    List<BackUser> listAllBackUsers(@Param("pageSize") Integer pageSize, @Param("offset") Integer offset);
+    List<BackUser> listAllBackUsers(@Param("pageSize") Integer pageSize, @Param("offset") Integer offset, @Param("searchKeyword") String searchKeyword);
 
     Integer countBackUsers();
 

@@ -45,9 +45,14 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
 
     @Override
     public FullGoodVO getGoodById(Integer goodId) {
-        FullGoodVO fullGoodVO = modelMapper.map(secondHandGoodMapper.getGoodById(goodId), FullGoodVO.class);
+        SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(goodId);
+        FullGoodVO fullGoodVO = modelMapper.map(secondHandGood, FullGoodVO.class);
         fullGoodVO.setIsCollecting(secondHandGoodMapper.isCollecting(MiscUtils.currentUserId(), goodId));
-        fullGoodVO.setGoodTypeVO(modelMapper.map(goodTypeMapper.getGoodTypeById(fullGoodVO.getId()), GoodTypeVO.class));
+        GoodType goodType = null;
+        if (secondHandGood.getTypeId() != null)
+            goodType = goodTypeMapper.getGoodTypeById(secondHandGood.getTypeId());
+        if (goodType != null)
+            fullGoodVO.setGoodTypeVO(modelMapper.map(goodType, GoodTypeVO.class));
         fullGoodVO.setPicturePathList(goodPictureMapper.getPicturesByGoodId(fullGoodVO.getId()));
         return fullGoodVO;
     }
@@ -184,6 +189,7 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
             if (secondHandGood.getTypeId() != null)
                 goodType = goodTypeMapper.getGoodTypeById(secondHandGood.getTypeId());
             backGoodVO.setGoodType(goodType == null ? "No Type" : goodType.getTypeName());
+            backGoodVOList.add(backGoodVO);
         }
         int total = secondHandGoodMapper.countAllGoodsForBack(searchNickname, searchPhoneNumber, searchKeyword);
         return new PageList<>(backGoodVOList, pageSize, pageNo, total);

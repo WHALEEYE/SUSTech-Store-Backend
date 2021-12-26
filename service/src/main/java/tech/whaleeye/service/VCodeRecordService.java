@@ -11,11 +11,11 @@ public interface VCodeRecordService {
 
     VCodeRecord getLatestAvailEmailVCode(Integer userId, String cardNumber);
 
-    Integer setLoginVCode(String phoneNumber, String vCode);
+    Boolean setLoginVCode(String phoneNumber, String vCode);
 
-    Integer setAccountVCode(Integer userId, String vCode, VCodeType vCodeType);
+    Boolean setAccountVCode(Integer userId, String vCode, VCodeType vCodeType);
 
-    Integer setEmailVCode(Integer userId, String cardNumber, String vCode);
+    Boolean setEmailVCode(Integer userId, String cardNumber, String vCode);
 
     void setVCodeUsed(Integer vCodeId);
 }

@@ -7,6 +7,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
+import tech.whaleeye.misc.exceptions.DuplicateException;
 import tech.whaleeye.misc.exceptions.IllegalPasswordException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
@@ -25,9 +26,10 @@ public class BackUserController {
     @GetMapping("/all")
     @RequiresRoles("Super")
     AjaxResult listAllBackUsers(@RequestParam Integer pageSize,
-                                @RequestParam Integer pageNo) {
+                                @RequestParam Integer pageNo,
+                                @RequestParam(required = false) String searchKeyword) {
         try {
-            return AjaxResult.setSuccess(true).setData(backUserService.listAllBackUsers(pageSize, pageNo));
+            return AjaxResult.setSuccess(true).setData(backUserService.listAllBackUsers(pageSize, pageNo, searchKeyword));
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to list users");
@@ -46,6 +48,8 @@ public class BackUserController {
             return AjaxResult.setSuccess(false).setMsg("This password is illegal");
         } catch (InvalidValueException ive) {
             return AjaxResult.setSuccess(false).setMsg("Bad username or role");
+        } catch (DuplicateException de) {
+            return AjaxResult.setSuccess(false).setMsg("The username already exists");
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to create background user");

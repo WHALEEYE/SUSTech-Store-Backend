@@ -33,7 +33,7 @@ public class VCodeRecordServiceImpl implements VCodeRecordService {
     }
 
     @Override
-    public Integer setLoginVCode(String phoneNumber, String vCode) {
+    public Boolean setLoginVCode(String phoneNumber, String vCode) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, Values.V_CODE_EXPIRE_TIME_MINUTES - 1);
         VCodeRecord vCodeRecord = vCodeRecordMapper.getLatest(null, phoneNumber, null, VCodeType.LOGIN.getTypeCode(), false);
@@ -42,11 +42,11 @@ public class VCodeRecordServiceImpl implements VCodeRecordService {
             throw new VCodeLimitException();
         }
         cal.add(Calendar.MINUTE, 1);
-        return vCodeRecordMapper.insertVCodeRecord(null, phoneNumber, null, vCode, cal.getTime(), VCodeType.LOGIN.getTypeCode());
+        return vCodeRecordMapper.insertVCodeRecord(null, phoneNumber, null, vCode, cal.getTime(), VCodeType.LOGIN.getTypeCode()) > 0;
     }
 
     @Override
-    public Integer setAccountVCode(Integer userId, String vCode, VCodeType vCodeType) {
+    public Boolean setAccountVCode(Integer userId, String vCode, VCodeType vCodeType) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, Values.V_CODE_EXPIRE_TIME_MINUTES - 1);
         VCodeRecord vCodeRecord = vCodeRecordMapper.getLatest(userId, null, null, vCodeType.getTypeCode(), false);
@@ -55,11 +55,11 @@ public class VCodeRecordServiceImpl implements VCodeRecordService {
             throw new VCodeLimitException();
         }
         cal.add(Calendar.MINUTE, 1);
-        return vCodeRecordMapper.insertVCodeRecord(userId, null, null, vCode, cal.getTime(), vCodeType.getTypeCode());
+        return vCodeRecordMapper.insertVCodeRecord(userId, null, null, vCode, cal.getTime(), vCodeType.getTypeCode()) > 0;
     }
 
     @Override
-    public Integer setEmailVCode(Integer userId, String cardNumber, String vCode) {
+    public Boolean setEmailVCode(Integer userId, String cardNumber, String vCode) {
         Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, Values.V_CODE_EXPIRE_TIME_MINUTES - 1);
         VCodeRecord vCodeRecord = vCodeRecordMapper.getLatest(userId, null, cardNumber, VCodeType.EMAIL_VERIFICATION.getTypeCode(), false);
@@ -68,7 +68,7 @@ public class VCodeRecordServiceImpl implements VCodeRecordService {
             throw new VCodeLimitException();
         }
         cal.add(Calendar.MINUTE, 1);
-        return vCodeRecordMapper.insertVCodeRecord(userId, null, cardNumber, vCode, cal.getTime(), VCodeType.EMAIL_VERIFICATION.getTypeCode());
+        return vCodeRecordMapper.insertVCodeRecord(userId, null, cardNumber, vCode, cal.getTime(), VCodeType.EMAIL_VERIFICATION.getTypeCode()) > 0;
     }
 
     @Override
