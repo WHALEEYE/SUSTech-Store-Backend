@@ -47,7 +47,7 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     public FullGoodVO getGoodById(Integer goodId) {
         SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(goodId);
         FullGoodVO fullGoodVO = modelMapper.map(secondHandGood, FullGoodVO.class);
-        fullGoodVO.setIsCollecting(secondHandGoodMapper.isCollecting(MiscUtils.currentUserId(), goodId));
+        fullGoodVO.setIsCollecting(MiscUtils.currentUserId() != null && secondHandGoodMapper.isCollecting(MiscUtils.currentUserId(), goodId));
         GoodType goodType = null;
         if (secondHandGood.getTypeId() != null)
             goodType = goodTypeMapper.getGoodTypeById(secondHandGood.getTypeId());
