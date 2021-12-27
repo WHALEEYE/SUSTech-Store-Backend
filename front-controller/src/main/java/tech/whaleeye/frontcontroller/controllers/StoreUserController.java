@@ -69,19 +69,12 @@ public class StoreUserController {
             if (otherUser == null) {
                 return AjaxResult.setSuccess(false).setMsg("Failed to fetch user info.");
             }
-            if (userId.equals(MiscUtils.currentUserId())) {
-                StoreUserVO storeUserVO = modelMapper.map(otherUser, StoreUserVO.class);
-                storeUserVO.setFollowerCount(storeUserService.countFollowers(userId));
-                storeUserVO.setFollowingCount(storeUserService.countFollowings(userId));
-                return AjaxResult.setSuccess(true).setData(storeUserVO);
-            } else {
-                OtherUserVO otherUserVO = modelMapper.map(otherUser, OtherUserVO.class);
-                otherUserVO.setFollowerCount(storeUserService.countFollowers(userId));
-                otherUserVO.setFollowingCount(storeUserService.countFollowings(userId));
-                otherUserVO.setPhoneNumber(otherUser.getPhoneNumber().substring(0, 3) + "****" + otherUser.getPhoneNumber().substring(8));
-                otherUserVO.setIsFollowing(storeUserService.isFollowing(MiscUtils.currentUserId(), userId));
-                return AjaxResult.setSuccess(true).setData(otherUserVO);
-            }
+            OtherUserVO otherUserVO = modelMapper.map(otherUser, OtherUserVO.class);
+            otherUserVO.setFollowerCount(storeUserService.countFollowers(userId));
+            otherUserVO.setFollowingCount(storeUserService.countFollowings(userId));
+            otherUserVO.setPhoneNumber(otherUser.getPhoneNumber().substring(0, 3) + "****" + otherUser.getPhoneNumber().substring(8));
+            otherUserVO.setIsFollowing(storeUserService.isFollowing(MiscUtils.currentUserId(), userId));
+            return AjaxResult.setSuccess(true).setData(otherUserVO);
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to fetch user info.");

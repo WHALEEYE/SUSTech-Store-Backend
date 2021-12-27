@@ -102,20 +102,20 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/good/type/**", "anon");
 
         // APIs in store user controller
-        filterChainDefinitionMap.put("/info", "jwtFilter");
-        filterChainDefinitionMap.put("/followers", "jwtFilter");
-        filterChainDefinitionMap.put("/followings", "jwtFilter");
-        filterChainDefinitionMap.put("/collected", "jwtFilter");
-        filterChainDefinitionMap.put("/info/**", "anon");
-        filterChainDefinitionMap.put("/followers/**", "anon");
-        filterChainDefinitionMap.put("/followings/**", "anon");
-        filterChainDefinitionMap.put("/collected/**", "anon");
+        filterChainDefinitionMap.put("/storeUser/info", "jwtFilter");
+        filterChainDefinitionMap.put("/storeUser/followers", "jwtFilter");
+        filterChainDefinitionMap.put("/storeUser/followings", "jwtFilter");
+        filterChainDefinitionMap.put("/storeUser/collected", "jwtFilter");
+        filterChainDefinitionMap.put("/storeUser/info/**", "anon");
+        filterChainDefinitionMap.put("/storeUser/followers/**", "anon");
+        filterChainDefinitionMap.put("/storeUser/followings/**", "anon");
+        filterChainDefinitionMap.put("/storeUser/collected/**", "anon");
 
 
         filterChainDefinitionMap.put("/upload/**", "anon");
         filterChainDefinitionMap.put("/login/**", "anon");
         filterChainDefinitionMap.put("/vCode/login/**", "anon");
-        filterChainDefinitionMap.put("/**", "anon");
+        filterChainDefinitionMap.put("/**", "jwtFilter");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;
