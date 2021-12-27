@@ -222,3 +222,28 @@
         - 王志灏
     - API交易（不一定做）
         - 暂定
+
+
+### TODO List
+* Main Application
+ 
+- [ ] Second Hand Good Orders
+  - The hard point is Baidu Map API
+
+* Background Manage System
+
+- [ ] Front user controller
+- [ ] Order Controller
+- [ ] Privilege management
+  - use `v-if`
+- [ ] Credit management
+
+* Backend
+
+- [ ] Three tables: event, input record and credit record
+- [ ] Database function of renewing the credit records
+  - note that the points recovered by login can only up to 90
+- [ ] Add feat: add events to change credit
+- [ ] Add feat: users can only trade if the credit is 85 or higher
+- [ ] Baidu Map API
+- [ ] 

@@ -1,3 +1,6 @@
+drop table if exists credit_history;
+drop table if exists credit_event;
+drop table if exists input_history;
 drop table if exists chat_history;
 drop index if exists collector_id_index;
 drop table if exists collect_relation;
@@ -412,6 +415,81 @@ begin
 end
 $$ language plpgsql;
 
+create table if not exists chat_history
+(
+    sender          int          not null references store_user (id) on delete cascade,
+    receiver        int          not null references store_user (id) on delete cascade,
+    message_content varchar(255) not null,
+    send_time       timestamp    not null default now()
+);
+
+create table if not exists input_history
+(
+    user_id    int       not null references store_user (id),
+    order_id   int       not null references second_hand_order (id),
+    input_code char(6)   not null,
+    result     bool      not null,
+    input_time timestamp not null default now()
+);
+
+create table if not exists credit_event
+(
+    id            int primary key,
+    event_name    varchar(20)   not null,
+    description   varchar(255),
+    is_add        bool          not null,
+    credit_change decimal(6, 1) not null,
+    created_time  timestamp     not null default now(),
+    updated_time  timestamp     not null default now()
+);
+
+insert into credit_event (id, event_name, description, is_add, credit_change, created_time, updated_time)
+values (1, 'Login', 'The user will recover credit when he logs in', true, 0.5, default, default),
+       (2, 'Great comment', 'The user receives a comment with grade equal or higher than 4', true, 1, default,
+        default),
+       (3, 'Success trade', 'The user traded successfully', true, 0.5, default, default),
+       (4, 'Wrong input', 'The user inputs a wrong code (deal code or refund code) more than 3 times', false, 3,
+        default, default);
+
+create table if not exists credit_history
+(
+    user_id       int           not null references store_user (id),
+    is_add        bool          not null,
+    credit_change decimal(6, 1) not null,
+    event_id      int           not null references credit_event (id),
+    change_time   timestamp     not null default now()
+);
+
+create or replace function change_credit(p_user_id int, p_event_id int)
+    returns void as
+$$
+declare
+    v_credit_score  decimal(6, 1);
+    v_is_add        bool;
+    v_credit_change decimal(6, 1);
+begin
+    select credit_score into v_credit_score from store_user where id = p_user_id for update;
+    select is_add, credit_change into v_is_add, v_credit_change from credit_event where id = p_event_id;
+
+    if p_event_id = 1 then
+        if v_credit_score <= 89.5 then
+            update store_user set credit_score = v_credit_score + v_credit_change where id = p_user_id;
+        elsif v_credit_score <= 90 then
+            update store_user set credit_score = 90 where id = p_user_id;
+        end if;
+    else
+        if v_is_add then
+            update store_user set credit_score = v_credit_score + v_credit_change where id = p_user_id;
+        else
+            update store_user set credit_score = v_credit_score - v_credit_change where id = p_user_id;
+        end if;
+    end if;
+
+    insert into credit_history (user_id, is_add, credit_change, event_id, change_time)
+    values (p_user_id, v_is_add, v_credit_change, p_event_id, default);
+
+end;
+$$ language plpgsql;
 
 drop table if exists deleted_back_user;
 drop table if exists back_user;
@@ -488,11 +566,3 @@ begin
 end;
 $$
     language plpgsql;
-
-create table if not exists chat_history
-(
-    sender          int          not null references store_user (id) on delete cascade,
-    receiver        int          not null references store_user (id) on delete cascade,
-    message_content varchar(255) not null,
-    send_time       timestamp    not null default now()
-);
