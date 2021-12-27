@@ -240,8 +240,8 @@
 
 * Backend
 
-- [ ] Three tables: event, input record and credit record
-- [ ] Database function of renewing the credit records
+- [x] Three tables: event, input record and credit record
+- [x] Database function of renewing the credit records
   - note that the points recovered by login can only up to 90
 - [ ] Add feat: add events to change credit
 - [ ] Add feat: users can only trade if the credit is 85 or higher
