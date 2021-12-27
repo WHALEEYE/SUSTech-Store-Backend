@@ -96,10 +96,10 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/imserver/**", "anon");
 
         // APIs in second hand good controller
-        filterChainDefinitionMap.put("/secondHandGood/brief/current", "jwtFilter");
-        filterChainDefinitionMap.put("/secondHandGood/brief/**", "anon");
-        filterChainDefinitionMap.put("/secondHandGood/detail/**", "anon");
-        filterChainDefinitionMap.put("/secondHandGood/type/**", "anon");
+        filterChainDefinitionMap.put("/good/brief/current", "jwtFilter");
+        filterChainDefinitionMap.put("/good/brief/**", "anon");
+        filterChainDefinitionMap.put("/good/detail/**", "anon");
+        filterChainDefinitionMap.put("/good/type/**", "anon");
 
         filterChainDefinitionMap.put("/upload/**", "anon");
         filterChainDefinitionMap.put("/login/**", "anon");
