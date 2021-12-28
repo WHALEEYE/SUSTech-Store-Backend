@@ -156,6 +156,18 @@ public class StoreUserController {
         }
     }
 
+    @ApiOperation("get current user's credit history")
+    @GetMapping("/creditHistory")
+    AjaxResult listCreditHistory(@RequestParam Integer pageSize,
+                                 @RequestParam Integer pageNo) {
+        try {
+            return AjaxResult.setSuccess(true).setData(storeUserService.listCreditHistory(pageSize, pageNo));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to list credit history");
+        }
+    }
+
     @ApiOperation("Follow One User")
     @PostMapping("/follow/{userId}")
     AjaxResult followUser(@PathVariable("userId") Integer userId) {

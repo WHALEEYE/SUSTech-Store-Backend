@@ -2,7 +2,9 @@ package tech.whaleeye.service;
 
 import org.springframework.lang.Nullable;
 import tech.whaleeye.misc.ajax.PageList;
+import tech.whaleeye.model.entity.CreditHistory;
 import tech.whaleeye.model.entity.StoreUser;
+import tech.whaleeye.model.vo.CreditSystem.CreditHistoryVO;
 import tech.whaleeye.model.vo.StoreUser.BriefUserVO;
 import tech.whaleeye.model.vo.StoreUser.StoreUserVO;
 
@@ -25,6 +27,8 @@ public interface StoreUserService {
     PageList<BriefUserVO> listCollectors(Integer goodId, Integer pageSize, Integer pageNo);
 
     Boolean isFollowing(Integer followerId, Integer followedId);
+
+    PageList<CreditHistoryVO> listCreditHistory(Integer pageSize, Integer pageNo);
 
     Boolean registerStoreUser(String phoneNumber);
 

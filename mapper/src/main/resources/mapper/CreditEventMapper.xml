@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="tech.whaleeye.mapper.CreditEventMapper">
+
+    <resultMap id="BaseResultMap" type="tech.whaleeye.model.entity.CreditEvent">
+        <!--@Table credit_event-->
+        <result property="id" column="id" jdbcType="INTEGER"/>
+        <result property="eventName" column="event_name" jdbcType="VARCHAR"/>
+        <result property="description" column="description" jdbcType="VARCHAR"/>
+        <result property="isAdd" column="is_add" jdbcType="BOOLEAN"/>
+        <result property="creditChange" column="credit_change" jdbcType="OTHER"/>
+        <result property="createdTime" column="created_time" jdbcType="TIMESTAMP"/>
+        <result property="updatedTime" column="updated_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <select id="queryById" resultMap="BaseResultMap">
+        select id,
+               event_name,
+               description,
+               is_add,
+               credit_change,
+               created_time,
+               updated_time
+        from credit_event
+        where id = #{eventId}
+    </select>
+
+    <select id="listAll" resultMap="BaseResultMap">
+        select id,
+               event_name,
+               description,
+               is_add,
+               credit_change,
+               created_time,
+               updated_time
+        from credit_event
+        order by id
+    </select>
+
+    <update id="updateCreditChange">
+        update credit_event
+        set credit_change = #{creditChange},
+            updated_time  = now()
+        where id = #{eventId}
+    </update>
+
+
+</mapper>

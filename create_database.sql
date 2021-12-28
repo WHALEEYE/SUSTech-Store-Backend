@@ -453,11 +453,12 @@ values (1, 'Login', 'The user will recover credit when he logs in', true, 0.5, d
 
 create table if not exists credit_history
 (
-    user_id       int           not null references store_user (id),
-    is_add        bool          not null,
-    credit_change decimal(6, 1) not null,
-    event_id      int           not null references credit_event (id),
-    change_time   timestamp     not null default now()
+    user_id            int           not null references store_user (id),
+    is_add             bool          not null,
+    credit_change      decimal(6, 1) not null,
+    after_credit_score decimal(6, 1) not null,
+    event_id           int           not null references credit_event (id),
+    change_time        timestamp     not null default now()
 );
 
 create or replace function change_credit(p_user_id int, p_event_id int)
@@ -472,21 +473,22 @@ begin
     select is_add, credit_change into v_is_add, v_credit_change from credit_event where id = p_event_id;
 
     if p_event_id = 1 then
-        if v_credit_score <= 89.5 then
-            update store_user set credit_score = v_credit_score + v_credit_change where id = p_user_id;
-        elsif v_credit_score <= 90 then
-            update store_user set credit_score = 90 where id = p_user_id;
+        if v_credit_score <= 90 then
+            v_credit_score = least(v_credit_score + v_credit_change, 90);
+        else
+            return;
         end if;
     else
         if v_is_add then
-            update store_user set credit_score = v_credit_score + v_credit_change where id = p_user_id;
+            v_credit_score = least(v_credit_score + v_credit_change, 100);
         else
-            update store_user set credit_score = v_credit_score - v_credit_change where id = p_user_id;
+            v_credit_score = greatest(v_credit_score - v_credit_change, 0);
         end if;
     end if;
 
-    insert into credit_history (user_id, is_add, credit_change, event_id, change_time)
-    values (p_user_id, v_is_add, v_credit_change, p_event_id, default);
+    update store_user set credit_score = v_credit_score where id = p_user_id;
+    insert into credit_history (user_id, is_add, credit_change, after_credit_score, event_id, change_time)
+    values (p_user_id, v_is_add, v_credit_change, v_credit_score, p_event_id, default);
 
 end;
 $$ language plpgsql;

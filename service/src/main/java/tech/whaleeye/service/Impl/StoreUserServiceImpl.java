@@ -6,16 +6,21 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import tech.whaleeye.mapper.CreditEventMapper;
+import tech.whaleeye.mapper.CreditHistoryMapper;
 import tech.whaleeye.mapper.StoreUserMapper;
 import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.misc.exceptions.IllegalPasswordException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.utils.MiscUtils;
+import tech.whaleeye.model.entity.CreditHistory;
 import tech.whaleeye.model.entity.StoreUser;
+import tech.whaleeye.model.vo.CreditSystem.CreditHistoryVO;
 import tech.whaleeye.model.vo.StoreUser.BriefUserVO;
 import tech.whaleeye.model.vo.StoreUser.StoreUserVO;
 import tech.whaleeye.service.StoreUserService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -26,6 +31,13 @@ public class StoreUserServiceImpl implements StoreUserService {
 
     @Autowired
     private StoreUserMapper storeUserMapper;
+
+    @Autowired
+    private CreditHistoryMapper creditHistoryMapper;
+
+    @Autowired
+    private CreditEventMapper creditEventMapper;
+
 
     @Override
     public StoreUser getStoreUserByPhoneNumber(String phoneNumber) {
@@ -75,7 +87,24 @@ public class StoreUserServiceImpl implements StoreUserService {
 
     @Override
     public Boolean isFollowing(Integer followerId, Integer followedId) {
+        if (followerId == null) {
+            return false;
+        }
         return storeUserMapper.isFollowing(followerId, followedId);
+    }
+
+    @Override
+    public PageList<CreditHistoryVO> listCreditHistory(Integer pageSize, Integer pageNo) {
+        List<CreditHistory> creditHistoryList = creditHistoryMapper.listByUser(MiscUtils.currentUserId(), pageSize, (pageNo - 1) * pageSize);
+        List<CreditHistoryVO> creditHistoryVOList = new ArrayList<>();
+        CreditHistoryVO creditHistoryVO;
+        for (CreditHistory creditHistory : creditHistoryList) {
+            creditHistoryVO = modelMapper.map(creditHistory, CreditHistoryVO.class);
+            creditHistoryVO.setEventName(creditEventMapper.queryById(creditHistory.getEventId()).getEventName());
+            creditHistoryVOList.add(creditHistoryVO);
+        }
+        int total = creditHistoryMapper.countByUser(MiscUtils.currentUserId());
+        return new PageList<>(creditHistoryVOList, pageSize, pageNo, total);
     }
 
     @Override
