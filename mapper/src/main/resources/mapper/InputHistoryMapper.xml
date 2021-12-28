@@ -2,4 +2,17 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="tech.whaleeye.mapper.InputHistoryMapper">
 
+    <select id="countWrongInputTime" resultType="Integer">
+        select count(*)
+        from input_history
+        where user_id = #{userId}
+          and order_id = #{orderId}
+          and not result
+    </select>
+
+    <insert id="insertInputHistory">
+        insert into input_history (user_id, order_id, input_code, result)
+        values (#{userId}, #{orderId}, #{inputCode}, #{result})
+    </insert>
+
 </mapper>

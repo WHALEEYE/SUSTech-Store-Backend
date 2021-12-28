@@ -15,6 +15,8 @@ public interface SecondHandOrderMapper {
 
     SecondHandOrder getOrderById(@Param("orderId") Integer orderId);
 
+    Boolean alreadyHaveOrder(@Param("userId") Integer userId, @Param("goodId") Integer goodId);
+
     List<SecondHandOrder> getOrderByUserId(@Param("userId") Integer userId,
                                            @Param("userType") Boolean userType,
                                            @Param("orderStatus") Integer orderStatus,

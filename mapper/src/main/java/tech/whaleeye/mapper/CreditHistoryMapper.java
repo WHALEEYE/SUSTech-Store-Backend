@@ -13,8 +13,6 @@ public interface CreditHistoryMapper {
 
     Integer countByUser(@Param("userId") Integer userId);
 
-    Boolean loggedInToday(@Param("userId") Integer userId);
-
     void changeCredit(@Param("userId") Integer userId, @Param("eventId") Integer eventId);
 
 }

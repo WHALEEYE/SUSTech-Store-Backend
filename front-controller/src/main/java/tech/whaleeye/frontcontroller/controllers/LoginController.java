@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RestController;
 import tech.whaleeye.frontcontroller.config.shiro.LoginToken;
 import tech.whaleeye.frontcontroller.config.shiro.LoginType;
 import tech.whaleeye.misc.ajax.AjaxResult;
+import tech.whaleeye.misc.constants.CreditChangeEvents;
 import tech.whaleeye.misc.constants.Values;
 import tech.whaleeye.misc.utils.JWTUtils;
 import tech.whaleeye.model.entity.VCodeRecord;
+import tech.whaleeye.service.CreditHistoryService;
 import tech.whaleeye.service.VCodeRecordService;
 
 import javax.servlet.ServletResponse;
@@ -32,6 +34,9 @@ public class LoginController {
 
     @Autowired
     private VCodeRecordService vCodeRecordService;
+
+    @Autowired
+    private CreditHistoryService creditHistoryService;
 
     @ApiOperation("login by phone number")
     @PostMapping("/phone")
@@ -64,6 +69,9 @@ public class LoginController {
         String jwtToken = JWTUtils.sign(subject.getPrincipal().toString(), Values.JWT_FRONT_SECRET);
         httpResponse.setHeader(Values.JWT_AUTH_HEADER, jwtToken);
 
+        // Add credit score
+        creditHistoryService.changeCredit((Integer) subject.getPrincipal(), CreditChangeEvents.LOGIN.getCode());
+
         return AjaxResult.setSuccess(true).setMsg("Login success.");
     }
 
@@ -89,6 +97,10 @@ public class LoginController {
         // If login success, give the token to user
         String jwtToken = JWTUtils.sign(subject.getPrincipal().toString(), Values.JWT_FRONT_SECRET);
         httpResponse.setHeader(Values.JWT_AUTH_HEADER, jwtToken);
+
+        // Add credit score
+        creditHistoryService.changeCredit((Integer) subject.getPrincipal(), CreditChangeEvents.LOGIN.getCode());
+
         return AjaxResult.setSuccess(true).setMsg("Logged in successfully.");
     }
 }

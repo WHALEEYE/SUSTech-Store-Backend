@@ -11,9 +11,9 @@ import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.exceptions.BadOrderStatusException;
+import tech.whaleeye.misc.exceptions.LowCreditException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.dto.SecondHandOrderDTO;
-import tech.whaleeye.model.entity.SecondHandOrder;
 import tech.whaleeye.model.vo.SecondHandOrder.OrderVO;
 import tech.whaleeye.service.SecondHandOrderService;
 
@@ -31,7 +31,7 @@ public class SecondHandOrderController {
     private SecondHandOrderService secondHandOrderService;
 
     @ApiOperation("get order by order id")
-    @GetMapping("detail/{orderId}")
+    @GetMapping("/detail/{orderId}")
     AjaxResult getOrderById(@PathVariable("orderId") Integer orderId) {
         try {
             OrderVO order = modelMapper.map(secondHandOrderService.getOrderById(MiscUtils.currentUserId(), orderId), OrderVO.class);
@@ -44,9 +44,9 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("list orders of the current user")
-    @GetMapping("brief")
+    @GetMapping("/brief")
     AjaxResult listOrders(@RequestParam @ApiParam("false: seller; true: buyer") Boolean userType,
-                          @RequestParam Integer orderStatus,
+                          @RequestParam @ApiParam("0: Waiting for acknowledge; 1: Waiting for payment; 2: Trading; 3: Trade Success; 4: Refund Success; 5: Closed") Integer orderStatus,
                           @RequestParam Integer pageSize,
                           @RequestParam Integer pageNo) {
         try {
@@ -58,7 +58,7 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("list orders of one good")
-    @GetMapping("good/{goodId}")
+    @GetMapping("/good/{goodId}")
     AjaxResult listOrdersOfGood(@PathVariable("goodId") Integer goodId,
                                 @RequestParam Integer pageSize,
                                 @RequestParam Integer pageNo) {
@@ -71,22 +71,26 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("create a new order")
-    @PostMapping("new")
+    @PostMapping("/new")
     AjaxResult createOrder(@RequestBody SecondHandOrderDTO secondHandOrderDTO) {
         try {
-            SecondHandOrder secondHandOrder = modelMapper.map(secondHandOrderDTO, SecondHandOrder.class);
-            secondHandOrder.setBuyerId(MiscUtils.currentUserId());
-            if (secondHandOrderService.insertSecondHandOrder(secondHandOrder) <= 0) {
-                return AjaxResult.setSuccess(false).setMsg("Failed to create the order");
+            if (secondHandOrderService.insertSecondHandOrder(secondHandOrderDTO)) {
+                return AjaxResult.setSuccess(true).setMsg("Order created successfully");
             }
-            return AjaxResult.setSuccess(true).setMsg("Order created successfully");
+            return AjaxResult.setSuccess(false).setMsg("Failed to create the order");
+        } catch (LowCreditException lce) {
+            return AjaxResult.setSuccess(false).setMsg("Your credit score is too low");
+        } catch (BadIdentityException bie) {
+            return AjaxResult.setSuccess(false).setMsg("You are not allowed to buy this good");
+        } catch (BadOrderStatusException bse) {
+            return AjaxResult.setSuccess(false).setMsg("You already have a order of this good");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Failed to create the order");
         }
     }
 
     @ApiOperation("seller's acknowledge")
-    @PatchMapping("status/seller/{orderId}")
+    @PatchMapping("/status/seller/{orderId}")
     AjaxResult sellerAcknowledge(@PathVariable("orderId") Integer orderId,
                                  @RequestParam Boolean ack,
                                  @RequestParam(required = false) BigDecimal actualPrice) {
@@ -114,7 +118,7 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("buyer's acknowledge")
-    @PatchMapping("status/buyer/{orderId}")
+    @PatchMapping("/status/buyer/{orderId}")
     AjaxResult buyerAcknowledge(@PathVariable("orderId") Integer orderId,
                                 @RequestParam Boolean ack) {
         try {
@@ -143,7 +147,7 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("deal succeeded")
-    @PatchMapping("status/deal/{orderId}")
+    @PatchMapping("/status/deal/{orderId}")
     AjaxResult confirmDeal(@PathVariable("orderId") Integer orderId,
                            @RequestParam String dealCode) {
         try {
@@ -161,7 +165,7 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("deal refunded")
-    @PatchMapping("status/refund/{orderId}")
+    @PatchMapping("/status/refund/{orderId}")
     AjaxResult refundDeal(@PathVariable("orderId") Integer orderId,
                           @RequestParam String refundCode) {
         try {
@@ -179,7 +183,7 @@ public class SecondHandOrderController {
     }
 
     @ApiOperation("seller's comment and grade")
-    @PatchMapping("comment/{orderId}")
+    @PatchMapping("/comment/{orderId}")
     AjaxResult leaveComment(@PathVariable("orderId") Integer orderId,
                             @RequestParam Integer grade,
                             @RequestParam String comment) {

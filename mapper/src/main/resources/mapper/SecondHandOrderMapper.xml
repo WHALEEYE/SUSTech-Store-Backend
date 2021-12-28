@@ -59,6 +59,10 @@
         where id = #{orderId}
     </select>
 
+    <select id="alreadyHaveOrder" resultType="Boolean">
+        select exists(select null from second_hand_order where buyer_id = #{userId} and good_id = #{goodId})
+    </select>
+
     <select id="getOrderByUserId" resultMap="BaseResultMap">
         select sho.id,
                sho.good_id,

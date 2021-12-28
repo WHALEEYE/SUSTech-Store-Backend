@@ -31,14 +31,6 @@
         where user_id = #{userId}
     </select>
 
-    <select id="loggedInToday" resultType="Boolean">
-        select exists(select null
-                      from credit_history
-                      where user_id = #{userId}
-                        and event_id = 1
-                        and change_time between current_date and current_date + 1)
-    </select>
-
     <update id="changeCredit">
         select change_credit(#{userId}, #{eventId})
     </update>

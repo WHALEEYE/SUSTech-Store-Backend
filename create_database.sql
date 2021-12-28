@@ -250,7 +250,7 @@ create table if not exists second_hand_order
     id                int primary key         default nextval('second_hand_order_id'),
     good_id           int            not null references second_hand_good (id) on delete cascade,
     buyer_id          int            not null references store_user (id) on delete cascade,
-    order_status      int            not null default 1,
+    order_status      int            not null default 0,
     actual_price      decimal(12, 2) not null,
     trade_location    varchar(255)   not null,
     trade_latitude    varchar(30)    not null,
@@ -473,16 +473,19 @@ begin
     select is_add, credit_change into v_is_add, v_credit_change from credit_event where id = p_event_id;
 
     if p_event_id = 1 then
-        if v_credit_score <= 90 then
-            v_credit_score = least(v_credit_score + v_credit_change, 90);
-        else
+        if v_credit_score >= 90 or exists(select null
+                                          from credit_history
+                                          where user_id = p_user_id
+                                            and event_id = 1
+                                            and change_time between current_date and current_date + 1) then
             return;
         end if;
+        v_credit_score := least(v_credit_score + v_credit_change, 90);
     else
         if v_is_add then
-            v_credit_score = least(v_credit_score + v_credit_change, 100);
+            v_credit_score := least(v_credit_score + v_credit_change, 100);
         else
-            v_credit_score = greatest(v_credit_score - v_credit_change, 0);
+            v_credit_score := greatest(v_credit_score - v_credit_change, 0);
         end if;
     end if;
 

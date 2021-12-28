@@ -3,7 +3,7 @@ package tech.whaleeye.service;
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import org.springframework.lang.Nullable;
 import tech.whaleeye.misc.ajax.PageList;
-import tech.whaleeye.model.entity.SecondHandOrder;
+import tech.whaleeye.model.dto.SecondHandOrderDTO;
 import tech.whaleeye.model.vo.SecondHandOrder.BackOrderVO;
 import tech.whaleeye.model.vo.SecondHandOrder.OrderVO;
 
@@ -17,7 +17,7 @@ public interface SecondHandOrderService {
 
     PageList<OrderVO> getOrderByGoodId(Integer publisher, Integer goodId, Integer pageSize, Integer pageNo);
 
-    Integer insertSecondHandOrder(SecondHandOrder secondHandOrder);
+    Boolean insertSecondHandOrder(SecondHandOrderDTO secondHandOrderDTO);
 
     boolean sellerAcknowledge(Integer userId, Integer orderId, BigDecimal actualPrice) throws TencentCloudSDKException;
 
