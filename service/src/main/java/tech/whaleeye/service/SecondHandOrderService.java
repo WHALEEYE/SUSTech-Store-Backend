@@ -15,9 +15,9 @@ public interface SecondHandOrderService {
 
     PageList<OrderVO> getOrderByUserId(Integer userId, Boolean userType, Integer orderStatus, Integer pageSize, Integer pageNo);
 
-    PageList<OrderVO> getOrderByGoodId(Integer publisher, Integer goodId, Integer pageSize, Integer pageNo);
+    PageList<OrderVO> getOrderByGoodId(Integer goodId, Integer pageSize, Integer pageNo);
 
-    Boolean insertSecondHandOrder(SecondHandOrderDTO secondHandOrderDTO);
+    Boolean insertSecondHandOrder(SecondHandOrderDTO secondHandOrderDTO) throws TencentCloudSDKException;
 
     boolean sellerAcknowledge(Integer userId, Integer orderId, BigDecimal actualPrice) throws TencentCloudSDKException;
 

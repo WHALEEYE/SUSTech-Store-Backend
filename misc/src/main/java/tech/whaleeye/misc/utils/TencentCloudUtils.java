@@ -30,6 +30,15 @@ public class TencentCloudUtils {
         sendSMS(vCodeType.getSmsTemplate(), phoneNumberSet, templateParamSet);
     }
 
+    public static void sendNewOrderInfo(String sellerNumber, String goodTitle) throws TencentCloudSDKException {
+        if (goodTitle.length() > 5) {
+            goodTitle = goodTitle.substring(0, 5).concat("...");
+        }
+        String[] phoneNumberSet = {"+86" + sellerNumber};
+        String[] templateParamSet = {goodTitle};
+        sendSMS(OrderState.ACK_PENDING.getSmsTemplate(), phoneNumberSet, templateParamSet);
+    }
+
     public static void sendTradeEstablishedInfo(String sellerNumber, String buyerNumber, String goodTitle, Integer orderId, String password, String dealCode, String refundCode) throws TencentCloudSDKException {
         if (goodTitle.length() > 5) {
             goodTitle = goodTitle.substring(0, 5).concat("...");

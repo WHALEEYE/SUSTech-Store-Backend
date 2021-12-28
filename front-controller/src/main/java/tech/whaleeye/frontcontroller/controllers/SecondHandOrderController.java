@@ -63,8 +63,10 @@ public class SecondHandOrderController {
                                 @RequestParam Integer pageSize,
                                 @RequestParam Integer pageNo) {
         try {
-            PageList<OrderVO> orderList = secondHandOrderService.getOrderByGoodId(MiscUtils.currentUserId(), goodId, pageSize, pageNo);
+            PageList<OrderVO> orderList = secondHandOrderService.getOrderByGoodId(goodId, pageSize, pageNo);
             return AjaxResult.setSuccess(true).setData(orderList);
+        } catch (BadIdentityException bie) {
+            return AjaxResult.setSuccess(false).setMsg("You are not allowed to check the orders");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Failed to get the info of the orders");
         }
@@ -84,6 +86,8 @@ public class SecondHandOrderController {
             return AjaxResult.setSuccess(false).setMsg("You are not allowed to buy this good");
         } catch (BadOrderStatusException bse) {
             return AjaxResult.setSuccess(false).setMsg("You already have a order of this good");
+        } catch (TencentCloudSDKException tcse) {
+            return AjaxResult.setSuccess(true).setMsg("Succeeded but failed to send SMS. Please contact with the administrator.");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Failed to create the order");
         }
@@ -112,6 +116,8 @@ public class SecondHandOrderController {
             return AjaxResult.setSuccess(false).setMsg("You are not allowed to this operation");
         } catch (BadOrderStatusException bose) {
             return AjaxResult.setSuccess(false).setMsg("Bad order status");
+        } catch (TencentCloudSDKException tcse) {
+            return AjaxResult.setSuccess(false).setMsg("Failed to send SMS. Please contact with the administrator.");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Operation failed");
         }
@@ -140,7 +146,7 @@ public class SecondHandOrderController {
         } catch (BadOrderStatusException bose) {
             return AjaxResult.setSuccess(false).setMsg("Bad order status");
         } catch (TencentCloudSDKException tcse) {
-            return AjaxResult.setSuccess(false).setMsg("Failed to send SMS. Please contact with the administrator.");
+            return AjaxResult.setSuccess(true).setMsg("Succeeded but failed to send SMS. Please contact with the administrator.");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Operation failed");
         }
@@ -151,14 +157,16 @@ public class SecondHandOrderController {
     AjaxResult confirmDeal(@PathVariable("orderId") Integer orderId,
                            @RequestParam String dealCode) {
         try {
-            if (!secondHandOrderService.confirmDeal(MiscUtils.currentUserId(), orderId, dealCode)) {
-                return AjaxResult.setSuccess(false).setMsg("Deal confirmation failed");
+            if (secondHandOrderService.confirmDeal(MiscUtils.currentUserId(), orderId, dealCode)) {
+                return AjaxResult.setSuccess(true).setMsg("Deal confirmed");
             }
-            return AjaxResult.setSuccess(false).setMsg("Deal confirmed");
+            return AjaxResult.setSuccess(false).setMsg("Deal confirmation failed");
         } catch (BadIdentityException bie) {
             return AjaxResult.setSuccess(false).setMsg("You are not allowed to this operation");
         } catch (BadOrderStatusException bose) {
             return AjaxResult.setSuccess(false).setMsg("Bad order status");
+        } catch (TencentCloudSDKException tcse) {
+            return AjaxResult.setSuccess(true).setMsg("Succeeded but failed to send SMS. Please contact with the administrator.");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Deal confirmation failed");
         }
@@ -169,33 +177,35 @@ public class SecondHandOrderController {
     AjaxResult refundDeal(@PathVariable("orderId") Integer orderId,
                           @RequestParam String refundCode) {
         try {
-            if (!secondHandOrderService.refundDeal(MiscUtils.currentUserId(), orderId, refundCode)) {
-                return AjaxResult.setSuccess(false).setMsg("Refund failed");
+            if (secondHandOrderService.refundDeal(MiscUtils.currentUserId(), orderId, refundCode)) {
+                return AjaxResult.setSuccess(true).setMsg("Refund succeeded");
             }
-            return AjaxResult.setSuccess(false).setMsg("Refund succeeded");
+            return AjaxResult.setSuccess(false).setMsg("Refund failed");
         } catch (BadIdentityException bie) {
             return AjaxResult.setSuccess(false).setMsg("You are not allowed to this operation");
         } catch (BadOrderStatusException bose) {
             return AjaxResult.setSuccess(false).setMsg("Bad order status");
+        } catch (TencentCloudSDKException tcse) {
+            return AjaxResult.setSuccess(true).setMsg("Succeeded but failed to send SMS. Please contact with the administrator.");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Operation failed");
         }
     }
 
-    @ApiOperation("seller's comment and grade")
+    @ApiOperation("comment and grade")
     @PatchMapping("/comment/{orderId}")
     AjaxResult leaveComment(@PathVariable("orderId") Integer orderId,
                             @RequestParam Integer grade,
                             @RequestParam String comment) {
         try {
-            if (!secondHandOrderService.leaveComment(MiscUtils.currentUserId(), orderId, grade, comment)) {
-                return AjaxResult.setSuccess(false).setMsg("Comment failed");
+            if (secondHandOrderService.leaveComment(MiscUtils.currentUserId(), orderId, grade, comment)) {
+                return AjaxResult.setSuccess(true).setMsg("Comment succeeded");
             }
-            return AjaxResult.setSuccess(true).setMsg("Comment succeeded");
+            return AjaxResult.setSuccess(false).setMsg("Comment failed");
         } catch (BadIdentityException bie) {
             return AjaxResult.setSuccess(false).setMsg("You are not allowed to this operation");
         } catch (BadOrderStatusException bose) {
-            return AjaxResult.setSuccess(false).setMsg("Bad order status");
+            return AjaxResult.setSuccess(false).setMsg("Bad order status or already commented");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Comment failed");
         }

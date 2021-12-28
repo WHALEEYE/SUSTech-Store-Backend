@@ -69,15 +69,20 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
     }
 
     @Override
-    public PageList<OrderVO> getOrderByGoodId(Integer publisher, Integer goodId, Integer pageSize, Integer pageNo) {
-        List<OrderVO> orderList = modelMapper.map(secondHandOrderMapper.getOrderByGoodId(publisher, goodId, pageSize, pageSize * (pageNo - 1)), new TypeToken<List<OrderVO>>() {
+    public PageList<OrderVO> getOrderByGoodId(Integer goodId, Integer pageSize, Integer pageNo) {
+        Integer publisher = MiscUtils.currentUserId();
+        SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(goodId);
+        if (!secondHandGood.getPublisher().equals(MiscUtils.currentUserId())) {
+            throw new BadIdentityException();
+        }
+        List<OrderVO> orderList = modelMapper.map(secondHandOrderMapper.getOrderByGoodId(MiscUtils.currentUserId(), goodId, pageSize, pageSize * (pageNo - 1)), new TypeToken<List<OrderVO>>() {
         }.getType());
         Integer total = secondHandOrderMapper.countOrderByGoodId(publisher, goodId);
         return new PageList<>(orderList, pageSize, pageNo, total);
     }
 
     @Override
-    public Boolean insertSecondHandOrder(SecondHandOrderDTO secondHandOrderDTO) {
+    public Boolean insertSecondHandOrder(SecondHandOrderDTO secondHandOrderDTO) throws TencentCloudSDKException {
         SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrderDTO.getGoodId());
         if (storeUserMapper.getUserById(MiscUtils.currentUserId()).getCreditScore().doubleValue() < 85) {
             throw new LowCreditException();
@@ -89,8 +94,15 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
         SecondHandOrder secondHandOrder = modelMapper.map(secondHandOrderDTO, SecondHandOrder.class);
         secondHandOrder.setBuyerId(MiscUtils.currentUserId());
         secondHandOrder.setActualPrice(secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId()).getPrice());
+
+        if (secondHandOrderMapper.insertSecondHandOrder(secondHandOrder) <= 0) {
+            return false;
+        }
+
+        String phoneNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
+        TencentCloudUtils.sendNewOrderInfo(phoneNumber, secondHandGood.getTitle());
         // TODO: Baidu Map Verify Location
-        return secondHandOrderMapper.insertSecondHandOrder(secondHandOrder) > 0;
+        return true;
     }
 
     @Override
@@ -185,14 +197,12 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
             inputHistoryMapper.insertInputHistory(userId, orderId, dealCode, false);
             throw new InvalidValueException();
         }
-        if (secondHandOrderMapper.orderConfirm(orderId) <= 0) {
-            return false;
-        }
-
-        inputHistoryMapper.insertInputHistory(userId, orderId, dealCode, true);
+        secondHandOrderMapper.orderConfirm(orderId);
 
         creditHistoryMapper.changeCredit(userId, CreditChangeEvents.TRADE.getCode());
         creditHistoryMapper.changeCredit(secondHandOrder.getBuyerId(), CreditChangeEvents.TRADE.getCode());
+
+        inputHistoryMapper.insertInputHistory(userId, orderId, dealCode, true);
 
         String phoneNumber = storeUserMapper.getUserById(secondHandOrder.getBuyerId()).getPhoneNumber();
         TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.DEAL);
@@ -213,9 +223,8 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
             inputHistoryMapper.insertInputHistory(userId, orderId, refundCode, false);
             throw new InvalidValueException();
         }
-        if (secondHandOrderMapper.orderRefund(orderId) <= 0) {
-            return false;
-        }
+
+        secondHandOrderMapper.orderRefund(orderId);
 
         inputHistoryMapper.insertInputHistory(userId, orderId, refundCode, true);
         SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
@@ -246,7 +255,7 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
                 creditHistoryMapper.changeCredit(secondHandOrder.getBuyerId(), CreditChangeEvents.COMM.getCode());
             }
         }
-        return secondHandOrderMapper.updateCommentAndGrade(orderId, comment, userType) > 0;
+        return secondHandOrderMapper.updateCommentAndGrade(orderId, comment, grade, userType) > 0;
     }
 
     @Override

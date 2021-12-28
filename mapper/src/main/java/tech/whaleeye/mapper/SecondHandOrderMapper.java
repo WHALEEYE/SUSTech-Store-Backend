@@ -40,9 +40,9 @@ public interface SecondHandOrderMapper {
                      @Param("refundCode") String refundCode,
                      @Param("tradePassword") String tradePassword);
 
-    Integer orderConfirm(@Param("orderId") Integer orderId);
+    void orderConfirm(@Param("orderId") Integer orderId);
 
-    Integer orderRefund(@Param("orderId") Integer orderId);
+    void orderRefund(@Param("orderId") Integer orderId);
 
     Integer insertSecondHandOrder(SecondHandOrder secondHandOrder);
 
@@ -50,7 +50,10 @@ public interface SecondHandOrderMapper {
 
     Integer updateActualPrice(@Param("orderId") Integer orderId, @Param("actualPrice") BigDecimal actualPrice);
 
-    Integer updateCommentAndGrade(@Param("orderId") Integer orderId, @Param("comment") String comment, @Param("userType") Boolean userType);
+    Integer updateCommentAndGrade(@Param("orderId") Integer orderId,
+                                  @Param("comment") String comment,
+                                  @Param("grade") Integer grade,
+                                  @Param("userType") Boolean userType);
 
     /* used in background system */
 

@@ -370,7 +370,7 @@ end
 $$ language plpgsql;
 
 create or replace function order_confirm(order_id int)
-    returns int as
+    returns void as
 $$
 declare
     v_balance   numeric(12, 2);
@@ -389,13 +389,12 @@ begin
         updated_time = now()
     where id = order_id;
 
-    update store_user set account_balance = v_balance - v_price where id = v_seller_id;
-    return 1;
+    update store_user set account_balance = v_balance + v_price where id = v_seller_id;
 end
 $$ language plpgsql;
 
 create or replace function order_refund(order_id int)
-    returns int as
+    returns void as
 $$
 declare
     v_balance  numeric(12, 2);
@@ -410,8 +409,7 @@ begin
         updated_time = now()
     where id = order_id;
 
-    update store_user set account_balance = v_balance - v_price where id = v_buyer_id;
-    return 1;
+    update store_user set account_balance = v_balance + v_price where id = v_buyer_id;
 end
 $$ language plpgsql;
 
