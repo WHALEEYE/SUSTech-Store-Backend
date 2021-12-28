@@ -43,8 +43,19 @@ public class SecondHandGoodController {
         }
     }
 
+    @ApiOperation("get one good's brief information")
+    @GetMapping("/brief/{goodId}")
+    AjaxResult getBriefGoodById(@PathVariable("goodId") Integer goodId) {
+        try {
+            return AjaxResult.setSuccess(true).setData(secondHandGoodService.getBriefGoodById(goodId));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to get the good's information.");
+        }
+    }
+
     @ApiOperation("list all goods")
-    @GetMapping("/brief")
+    @GetMapping("/all")
     AjaxResult listAllGoods(@RequestParam Integer pageSize,
                             @RequestParam Integer pageNo,
                             @RequestParam(required = false) Integer typeId,
@@ -59,7 +70,7 @@ public class SecondHandGoodController {
 
     @RequiresRoles("user")
     @ApiOperation("list goods of the current user")
-    @GetMapping("/brief/current")
+    @GetMapping("/current")
     AjaxResult listGoods(@RequestParam Integer pageSize,
                          @RequestParam Integer pageNo,
                          @RequestParam(required = false) Boolean sold,
@@ -73,7 +84,7 @@ public class SecondHandGoodController {
     }
 
     @ApiOperation("list goods of other user")
-    @GetMapping("/brief/{userId}")
+    @GetMapping("/all/{userId}")
     AjaxResult listGoods(@PathVariable("userId") Integer userId,
                          @RequestParam Integer pageSize,
                          @RequestParam Integer pageNo,

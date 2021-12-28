@@ -13,6 +13,8 @@ public interface SecondHandGoodService {
 
     FullGoodVO getGoodById(Integer goodId);
 
+    BriefGoodVO getBriefGoodById(Integer goodId);
+
     PageList<BriefGoodVO> listAllGoods(Integer pageSize, Integer pageNo, Integer typeId, String searchKeyword);
 
     PageList<BriefGoodVO> getGoodsByPublisher(Integer publisher, Integer pageSize, Integer pageNo, Boolean sold, String searchKeyword);

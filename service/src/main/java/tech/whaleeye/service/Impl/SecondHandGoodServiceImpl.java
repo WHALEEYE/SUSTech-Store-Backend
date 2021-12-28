@@ -58,6 +58,19 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
     }
 
     @Override
+    public BriefGoodVO getBriefGoodById(Integer goodId) {
+        SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(goodId);
+        BriefGoodVO briefGoodVO = modelMapper.map(secondHandGood, BriefGoodVO.class);
+        GoodType goodType = null;
+        if (secondHandGood.getTypeId() != null)
+            goodType = goodTypeMapper.getGoodTypeById(secondHandGood.getTypeId());
+        if (goodType != null)
+            briefGoodVO.setGoodTypeVO(modelMapper.map(goodType, GoodTypeVO.class));
+        briefGoodVO.setMainPicPath(goodPictureMapper.getMainPicPathByGoodId(briefGoodVO.getId()));
+        return briefGoodVO;
+    }
+
+    @Override
     public PageList<BriefGoodVO> listAllGoods(Integer pageSize, Integer pageNo, Integer typeId, String searchKeyword) {
         List<BriefGoodVO> briefGoodVOList = new ArrayList<>();
         List<SecondHandGood> secondHandGoodList = secondHandGoodMapper.listAllGoods(pageSize, (pageNo - 1) * pageSize, typeId, searchKeyword);
