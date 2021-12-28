@@ -22,6 +22,18 @@ public class BackUserController {
     @Autowired
     private BackUserService backUserService;
 
+    @ApiOperation("get information of the current user")
+    @GetMapping("/info")
+    AjaxResult getCurrentInfo() {
+        try {
+            return AjaxResult.setSuccess(true).setData(backUserService.queryById(MiscUtils.currentUserId()));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Failed to list users");
+        }
+    }
+
+
     @ApiOperation("list all background users")
     @GetMapping("/all")
     @RequiresRoles("Super")
