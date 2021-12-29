@@ -22,10 +22,10 @@ public class BaiduMapUtils {
 
 //    public static void main(String[] args) {
 //        try {
-//            JSONObject rst = geoCoding("南方科技大学", "深圳市", CoordinateType.BAIDU_LL);
+//            JSONObject rst = revGeoCoding("22.615485", "114.008661", CoordinateType.BAIDU_LL);
 //            System.out.println(rst);
-//            System.out.println("latitude-->" + ((JSONObject) ((JSONArray) rst.get("result")).get(0)).get("y"));
-//            System.out.println("longitude-->" + ((JSONObject) ((JSONArray) rst.get("result")).get(0)).get("x"));
+////            System.out.println("latitude-->" + ((JSONObject) ((JSONArray) rst.get("result")).get(0)).get("y"));
+////            System.out.println("longitude-->" + ((JSONObject) ((JSONArray) rst.get("result")).get(0)).get("x"));
 //        } catch (MalformedURLException | UnsupportedEncodingException e) {
 //            e.printStackTrace();
 //        }
@@ -170,10 +170,7 @@ public class BaiduMapUtils {
     }
 
     private enum Prefix {
-        IP_LOCATE("/location/ip/?"),
-        GEO_CODING("/geocoding/v3/?"),
-        REVERSE_GEO_CODING("/reverse_geocoding/v3/?"),
-        GEO_CONV("/geoconv/v1/?");
+        IP_LOCATE("/location/ip/?"), GEO_CODING("/geocoding/v3/?"), REVERSE_GEO_CODING("/reverse_geocoding/v3/?"), GEO_CONV("/geoconv/v1/?");
 
         final String content;
 
@@ -183,9 +180,7 @@ public class BaiduMapUtils {
     }
 
     public enum CoordinateType {
-        GCJ_LL("gcj02ll"),
-        BAIDU_MC("bd09mc"),
-        BAIDU_LL("bd09ll");
+        GCJ_LL("gcj02ll"), BAIDU_MC("bd09mc"), BAIDU_LL("bd09ll");
 
         final String code;
 
@@ -195,14 +190,7 @@ public class BaiduMapUtils {
     }
 
     public enum SrcCoordinateType {
-        WGS(1),
-        SOUGOU(2),
-        GCJ_LL(3),
-        GCJ_MC(4),
-        BAIDU_LL(5),
-        BAIDU_MC(6),
-        TUBA(7),
-        MAP_51(8);
+        WGS(1), SOUGOU(2), GCJ_LL(3), GCJ_MC(4), BAIDU_LL(5), BAIDU_MC(6), TUBA(7), MAP_51(8);
 
         final int code;
 
@@ -212,9 +200,7 @@ public class BaiduMapUtils {
     }
 
     public enum DstCoordinateType {
-        GCJ_LL(3),
-        BAIDU_LL(5),
-        BAIDU_MC(6);
+        GCJ_LL(3), BAIDU_LL(5), BAIDU_MC(6);
 
         final int code;
 

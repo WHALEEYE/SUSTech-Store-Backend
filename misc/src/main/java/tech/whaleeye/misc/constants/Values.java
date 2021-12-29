@@ -25,8 +25,8 @@ public class Values {
     public final static String STATIC_RESOURCE_PATH = System.getenv("SUSTechStoreStatic");
 
     // Used in order service
-    public final static String centerLatitude = "";
-    public final static String centerLongitude = "";
-    public final static int maxDistance = 1000;
+    public final static String CENTER_LATITUDE = "22.60593";
+    public final static String CENTER_LONGITUDE = "114.006689";
+    public final static int MAX_DISTANCE = 1100;
 
 }

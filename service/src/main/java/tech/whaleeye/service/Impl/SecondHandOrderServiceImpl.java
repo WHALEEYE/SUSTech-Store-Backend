@@ -103,7 +103,7 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
         String phoneNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
         TencentCloudUtils.sendNewOrderInfo(phoneNumber, secondHandGood.getTitle());
         // Verify Location (Inside SUSTech)
-        if (MiscUtils.getDistance(Values.centerLatitude, Values.centerLongitude, secondHandOrderDTO.getTradeLatitude(), secondHandOrderDTO.getTradeLongitude()) > Values.maxDistance) {
+        if (MiscUtils.getDistance(Values.CENTER_LATITUDE, Values.CENTER_LONGITUDE, secondHandOrderDTO.getTradeLatitude(), secondHandOrderDTO.getTradeLongitude()) > Values.MAX_DISTANCE) {
             throw new InvalidValueException();
         }
         return secondHandOrder.getId();

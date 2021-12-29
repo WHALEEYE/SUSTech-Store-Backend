@@ -18,14 +18,11 @@ import java.util.UUID;
 
 public class MiscUtils {
 
-//    public static void main(String[] args) {
-//        String a = generateSalt(8);
-//        System.out.println(a);
-//        String password = "What1sth1s";
-//        System.out.println(new Md5Hash(password, getSaltFromHex(a), 1024));
-//    }
+    public static void main(String[] args) {
+        System.out.println(getDistance(Values.CENTER_LATITUDE, Values.CENTER_LONGITUDE, "22.615318", "114.008647"));
+    }
 
-    private static final double EARTH_RADIUS = 6371393; // 平均半径,单位：m；不是赤道半径。赤道为6378左右
+    private static final double EARTH_RADIUS = 6371393;
 
     /**
      * Get the user ID of the current user. The user's ID can only be got after the user has logged in.
@@ -138,7 +135,7 @@ public class MiscUtils {
         double hSinX = Math.sin((lng1 - lng2) * 0.5);
         double hSinY = Math.sin((lat1 - lat2) * 0.5);
         double h = hSinY * hSinY + (Math.cos(lat1) * Math.cos(lat2) * hSinX * hSinX);
-        return 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h)) * 6367000;
+        return 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h)) * EARTH_RADIUS;
     }
 
 }
