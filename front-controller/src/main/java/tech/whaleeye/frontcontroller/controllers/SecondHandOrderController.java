@@ -132,6 +132,8 @@ public class SecondHandOrderController {
             return AjaxResult.setSuccess(false).setMsg("Bad order status");
         } catch (TencentCloudSDKException tcse) {
             return AjaxResult.setSuccess(false).setMsg("Failed to send SMS. Please contact with the administrator.");
+        } catch (InvalidValueException ive) {
+            return AjaxResult.setSuccess(false).setMsg("Actual value must bigger than 0");
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Operation failed");

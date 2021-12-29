@@ -132,7 +132,7 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
             throw new BadIdentityException();
         } else if (secondHandOrder.getOrderStatus() != OrderState.ACK_PENDING.ordinal()) {
             throw new BadOrderStatusException();
-        } else if (actualPrice == null || actualPrice.doubleValue() < 0) {
+        } else if (actualPrice != null && actualPrice.doubleValue() <= 0) {
             throw new InvalidValueException();
         }
         if (secondHandOrderMapper.updateActualPrice(orderId, actualPrice) <= 0) {
