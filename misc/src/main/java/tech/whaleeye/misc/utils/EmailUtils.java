@@ -19,7 +19,6 @@ public class EmailUtils {
     private static final String EMAIL = System.getenv("SUSTechStoreEmail");
     private static final String EMAIL_PWD = System.getenv("SUSTechStoreEmailPWD");
     private static final String EMAIL_SVR = System.getenv("SUSTechStoreEmailSVR");
-    // TODO: make the email template prettier
     private static final String EMAIL_TEMPLATE = "<body style=\"background-color:#FFAA43\">\n" +
             "<style type=\"text/css\">\n" +
             "\n" +

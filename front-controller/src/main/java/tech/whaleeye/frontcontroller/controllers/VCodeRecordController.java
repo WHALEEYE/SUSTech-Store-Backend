@@ -98,7 +98,7 @@ public class VCodeRecordController {
             String receiveEmail = cardNumber.concat(postfix);
             String vCode = String.format("%06d", new Random().nextInt(1000000));
             EmailUtils.sendVCodeEmail(receiveEmail, vCode);
-            if (!vCodeRecordService.setEmailVCode(MiscUtils.currentUserId(), cardNumber, vCode)) {
+            if (vCodeRecordService.setEmailVCode(MiscUtils.currentUserId(), cardNumber, vCode)) {
                 return AjaxResult.setSuccess(true).setMsg("Success.");
             }
             return AjaxResult.setSuccess(false).setMsg("Failed to send verification code");
