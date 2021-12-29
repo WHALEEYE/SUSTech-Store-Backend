@@ -82,7 +82,7 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
     }
 
     @Override
-    public Boolean insertSecondHandOrder(SecondHandOrderDTO secondHandOrderDTO) throws TencentCloudSDKException {
+    public Integer insertSecondHandOrder(SecondHandOrderDTO secondHandOrderDTO) throws TencentCloudSDKException {
         SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrderDTO.getGoodId());
         if (storeUserMapper.getUserById(MiscUtils.currentUserId()).getCreditScore().doubleValue() < 85) {
             throw new LowCreditException();
@@ -96,13 +96,13 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
         secondHandOrder.setActualPrice(secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId()).getPrice());
 
         if (secondHandOrderMapper.insertSecondHandOrder(secondHandOrder) <= 0) {
-            return false;
+            return null;
         }
 
         String phoneNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
         TencentCloudUtils.sendNewOrderInfo(phoneNumber, secondHandGood.getTitle());
         // TODO: Baidu Map Verify Location
-        return true;
+        return secondHandOrder.getId();
     }
 
     @Override

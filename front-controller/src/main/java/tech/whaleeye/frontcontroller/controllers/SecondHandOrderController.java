@@ -18,6 +18,8 @@ import tech.whaleeye.model.vo.SecondHandOrder.OrderVO;
 import tech.whaleeye.service.SecondHandOrderService;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.Map;
 
 @Api("Second Hand Order Controller")
 @RestController
@@ -76,8 +78,11 @@ public class SecondHandOrderController {
     @PostMapping("/new")
     AjaxResult createOrder(@RequestBody SecondHandOrderDTO secondHandOrderDTO) {
         try {
-            if (secondHandOrderService.insertSecondHandOrder(secondHandOrderDTO)) {
-                return AjaxResult.setSuccess(true).setMsg("Order created successfully");
+            Integer id = secondHandOrderService.insertSecondHandOrder(secondHandOrderDTO);
+            if (id != null) {
+                Map<String, Integer> idMap = new HashMap<>();
+                idMap.put("orderId", id);
+                return AjaxResult.setSuccess(true).setMsg("Order created successfully").setData(idMap);
             }
             return AjaxResult.setSuccess(false).setMsg("Failed to create the order");
         } catch (LowCreditException lce) {
