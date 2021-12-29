@@ -60,7 +60,9 @@
     </select>
 
     <select id="alreadyHaveOrder" resultType="Boolean">
-        select exists(select null from second_hand_order where buyer_id = #{userId} and good_id = #{goodId})
+        select exists(select null
+                      from second_hand_order
+                      where buyer_id = #{userId} and good_id = #{goodId} and (order_status == 0 or order_status == 1))
     </select>
 
     <select id="getOrderByUserId" resultMap="BaseResultMap">
@@ -118,7 +120,7 @@
                sho.updated_time
         from second_hand_order sho
                  join second_hand_good shg on shg.id = sho.good_id
-          and shg.id = #{goodId}
+            and shg.id = #{goodId}
         limit #{pageSize} offset #{offset}
     </select>
 

@@ -100,8 +100,11 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
             return null;
         }
 
-        String phoneNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
-        TencentCloudUtils.sendNewOrderInfo(phoneNumber, secondHandGood.getTitle());
+        StoreUser storeUser = storeUserMapper.getUserById(secondHandGood.getPublisher());
+        if (storeUser.getSecondHandNotification()) {
+            String phoneNumber = storeUser.getPhoneNumber();
+            TencentCloudUtils.sendNewOrderInfo(phoneNumber, secondHandGood.getTitle());
+        }
         // Verify Location (Inside SUSTech)
         if (MiscUtils.getDistance(Values.CENTER_LATITUDE, Values.CENTER_LONGITUDE, secondHandOrderDTO.getTradeLatitude(), secondHandOrderDTO.getTradeLongitude()) > Values.MAX_DISTANCE) {
             throw new InvalidValueException();
@@ -139,8 +142,11 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
             return false;
         }
 
-        String phoneNumber = storeUserMapper.getUserById(secondHandOrder.getBuyerId()).getPhoneNumber();
-        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.PAY_PENDING);
+        StoreUser storeUser = storeUserMapper.getUserById(secondHandOrder.getBuyerId());
+        if (storeUser.getSecondHandNotification()) {
+            String phoneNumber = storeUser.getPhoneNumber();
+            TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.PAY_PENDING);
+        }
         return true;
     }
 
@@ -156,8 +162,12 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
         if (secondHandOrderMapper.sellerCancelOrder(orderId) <= 0) {
             return false;
         }
-        String phoneNumber = storeUserMapper.getUserById(secondHandOrder.getBuyerId()).getPhoneNumber();
-        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.SELLER_CANCELED);
+
+        StoreUser storeUser = storeUserMapper.getUserById(secondHandOrder.getBuyerId());
+        if (storeUser.getSecondHandNotification()) {
+            String phoneNumber = storeUser.getPhoneNumber();
+            TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.SELLER_CANCELED);
+        }
         return true;
     }
 
@@ -196,9 +206,13 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
         if (secondHandOrderMapper.buyerCancelOrder(orderId) <= 0) {
             return false;
         }
+
         SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
-        String phoneNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
-        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.BUYER_CANCELLED);
+        StoreUser storeUser = storeUserMapper.getUserById(secondHandGood.getPublisher());
+        if (storeUser.getSecondHandNotification()) {
+            String phoneNumber = storeUser.getPhoneNumber();
+            TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.BUYER_CANCELLED);
+        }
         return true;
     }
 
@@ -224,8 +238,11 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
 
         inputHistoryMapper.insertInputHistory(userId, orderId, dealCode, true);
 
-        String phoneNumber = storeUserMapper.getUserById(secondHandOrder.getBuyerId()).getPhoneNumber();
-        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.DEAL);
+        StoreUser storeUser = storeUserMapper.getUserById(secondHandOrder.getBuyerId());
+        if (storeUser.getSecondHandNotification()) {
+            String phoneNumber = storeUser.getPhoneNumber();
+            TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.DEAL);
+        }
         return true;
     }
 
