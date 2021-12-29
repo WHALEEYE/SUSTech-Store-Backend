@@ -158,7 +158,7 @@ begin
     into temp_id, sort_no2
     from good_type
     where sort_no > sort_no1
-    order by sort_no desc
+    order by sort_no
     limit 1 for update;
 
     update good_type set sort_no = sort_no2 where id = type_id;
