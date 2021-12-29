@@ -275,6 +275,7 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
             backOrderVO.setBuyerNickname(buyer.getNickname());
             backOrderVO.setBuyerPhoneNumber(buyer.getPhoneNumber());
             backOrderVO.setGoodTitle(secondHandGood.getTitle());
+            backOrderVOList.add(backOrderVO);
         }
         int total = secondHandOrderMapper.countAllOrders(orderId);
         return new PageList<>(backOrderVOList, pageSize, pageNo, total);
