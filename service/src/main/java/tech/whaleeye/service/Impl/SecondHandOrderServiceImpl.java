@@ -9,6 +9,7 @@ import tech.whaleeye.mapper.*;
 import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.misc.constants.CreditChangeEvents;
 import tech.whaleeye.misc.constants.OrderState;
+import tech.whaleeye.misc.constants.Values;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.exceptions.BadOrderStatusException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
@@ -101,7 +102,10 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
 
         String phoneNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
         TencentCloudUtils.sendNewOrderInfo(phoneNumber, secondHandGood.getTitle());
-        // TODO: Baidu Map Verify Location
+        // Verify Location (Inside SUSTech)
+        if (MiscUtils.getDistance(Values.centerLatitude, Values.centerLongitude, secondHandOrderDTO.getTradeLatitude(), secondHandOrderDTO.getTradeLongitude()) > Values.maxDistance) {
+            throw new InvalidValueException();
+        }
         return secondHandOrder.getId();
     }
 

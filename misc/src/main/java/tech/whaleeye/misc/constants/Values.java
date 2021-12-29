@@ -24,4 +24,9 @@ public class Values {
     // path to static resources
     public final static String STATIC_RESOURCE_PATH = System.getenv("SUSTechStoreStatic");
 
+    // Used in order service
+    public final static String centerLatitude = "";
+    public final static String centerLongitude = "";
+    public final static int maxDistance = 1000;
+
 }

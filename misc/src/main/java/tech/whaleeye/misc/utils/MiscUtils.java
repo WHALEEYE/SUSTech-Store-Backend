@@ -25,6 +25,8 @@ public class MiscUtils {
 //        System.out.println(new Md5Hash(password, getSaltFromHex(a), 1024));
 //    }
 
+    private static final double EARTH_RADIUS = 6371393; // 平均半径,单位：m；不是赤道半径。赤道为6378左右
+
     /**
      * Get the user ID of the current user. The user's ID can only be got after the user has logged in.
      *
@@ -61,6 +63,30 @@ public class MiscUtils {
         }
         return ByteSource.Util.bytes(saltByte);
     }
+
+//    /**
+//     * Generate a watermark of one user's nickname.
+//     *
+//     * @param nickName the nickname of one user
+//     * @return a watermark in the form of one {@link BufferedImage} object
+//     */
+//    private static BufferedImage handleTextWaterMark(String nickName) {
+//
+//        BufferedImage image = new BufferedImage(20, 20, BufferedImage.TYPE_INT_RGB);
+//        Graphics2D g = image.createGraphics();
+//        image = g.getDeviceConfiguration().createCompatibleImage(20, 20, Transparency.TRANSLUCENT);
+//
+//        g = image.createGraphics();
+//        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//        g.setColor(Color.red);
+//
+//        if (StringUtils.isNotBlank(nickName)) {
+//            g.drawString("@" + nickName, 5, 0);
+//        }
+//
+//        g.dispose();
+//        return image;
+//    }
 
     /**
      * Compress and rename one picture.
@@ -99,28 +125,20 @@ public class MiscUtils {
         return name.concat(".png");
     }
 
-//    /**
-//     * Generate a watermark of one user's nickname.
-//     *
-//     * @param nickName the nickname of one user
-//     * @return a watermark in the form of one {@link BufferedImage} object
-//     */
-//    private static BufferedImage handleTextWaterMark(String nickName) {
-//
-//        BufferedImage image = new BufferedImage(20, 20, BufferedImage.TYPE_INT_RGB);
-//        Graphics2D g = image.createGraphics();
-//        image = g.getDeviceConfiguration().createCompatibleImage(20, 20, Transparency.TRANSLUCENT);
-//
-//        g = image.createGraphics();
-//        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-//        g.setColor(Color.red);
-//
-//        if (StringUtils.isNotBlank(nickName)) {
-//            g.drawString("@" + nickName, 5, 0);
-//        }
-//
-//        g.dispose();
-//        return image;
-//    }
+    /**
+     * Get the distance between two coordinates.
+     *
+     * @return the distance in the unit of meter
+     */
+    public static double getDistance(String latitude1, String longitude1, String latitude2, String longitude2) {
+        double lat1 = Double.parseDouble(latitude1) * Math.PI / 180;
+        double lng1 = Double.parseDouble(longitude1) * Math.PI / 180;
+        double lat2 = Double.parseDouble(latitude2) * Math.PI / 180;
+        double lng2 = Double.parseDouble(longitude2) * Math.PI / 180;
+        double hSinX = Math.sin((lng1 - lng2) * 0.5);
+        double hSinY = Math.sin((lat1 - lat2) * 0.5);
+        double h = hSinY * hSinY + (Math.cos(lat1) * Math.cos(lat2) * hSinX * hSinX);
+        return 2 * Math.atan2(Math.sqrt(h), Math.sqrt(1 - h)) * 6367000;
+    }
 
 }

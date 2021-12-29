@@ -11,6 +11,7 @@ import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.exceptions.BadOrderStatusException;
+import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.misc.exceptions.LowCreditException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.dto.SecondHandOrderDTO;
@@ -93,6 +94,8 @@ public class SecondHandOrderController {
             return AjaxResult.setSuccess(false).setMsg("You already have a order of this good");
         } catch (TencentCloudSDKException tcse) {
             return AjaxResult.setSuccess(true).setMsg("Succeeded but failed to send SMS. Please contact with the administrator.");
+        } catch (InvalidValueException ive) {
+            return AjaxResult.setSuccess(false).setMsg("The trade location is too far from SUSTech");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Failed to create the order");
         }
