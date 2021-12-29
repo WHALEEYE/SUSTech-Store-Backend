@@ -134,11 +134,11 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
         } else if (secondHandOrder.getOrderStatus() != OrderState.ACK_PENDING.ordinal()) {
             throw new BadOrderStatusException();
         }
-        if (secondHandOrderMapper.cancelOrder(orderId) <= 0) {
+        if (secondHandOrderMapper.sellerCancelOrder(orderId) <= 0) {
             return false;
         }
         String phoneNumber = storeUserMapper.getUserById(secondHandOrder.getBuyerId()).getPhoneNumber();
-        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.CANCELED);
+        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.SELLER_CANCELED);
         return true;
     }
 
@@ -173,12 +173,12 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
         } else if (secondHandOrder.getOrderStatus() != OrderState.PAY_PENDING.ordinal()) {
             throw new BadOrderStatusException();
         }
-        if (secondHandOrderMapper.cancelOrder(orderId) <= 0) {
+        if (secondHandOrderMapper.buyerCancelOrder(orderId) <= 0) {
             return false;
         }
         SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
         String phoneNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
-        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.CANCELED);
+        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.BUYER_CANCELLED);
         return true;
     }
 

@@ -9,7 +9,8 @@ public enum OrderState {
     TRADING(null),
     DEAL(SMSTemplate.ORDER_CONFIRM),
     REFUND(SMSTemplate.ORDER_REFUND),
-    CANCELED(SMSTemplate.ORDER_CANCEL);
+    SELLER_CANCELED(SMSTemplate.ORDER_CANCEL),
+    BUYER_CANCELLED(SMSTemplate.ORDER_CANCEL);
 
     private final SMSTemplate smsTemplate;
 

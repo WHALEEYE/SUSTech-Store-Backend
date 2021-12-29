@@ -48,7 +48,7 @@ public class SecondHandOrderController {
     @ApiOperation("list orders of the current user")
     @GetMapping("/brief")
     AjaxResult listOrders(@RequestParam @ApiParam("false: seller; true: buyer") Boolean userType,
-                          @RequestParam @ApiParam("0: Waiting for acknowledge; 1: Waiting for payment; 2: Trading; 3: Trade Success; 4: Refund Success; 5: Closed") Integer orderStatus,
+                          @RequestParam @ApiParam("0: Waiting for acknowledge; 1: Waiting for payment; 2: Trading; 3: Trade Success; 4: Refund Success; 5: Closed by Seller; 6: Closed by Buyer") Integer orderStatus,
                           @RequestParam Integer pageSize,
                           @RequestParam Integer pageNo) {
         try {

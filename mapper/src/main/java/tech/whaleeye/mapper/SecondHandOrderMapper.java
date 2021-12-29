@@ -46,7 +46,9 @@ public interface SecondHandOrderMapper {
 
     Integer insertSecondHandOrder(SecondHandOrder secondHandOrder);
 
-    Integer cancelOrder(@Param("orderId") Integer orderId);
+    Integer sellerCancelOrder(@Param("orderId") Integer orderId);
+
+    Integer buyerCancelOrder(@Param("orderId") Integer orderId);
 
     Integer updateActualPrice(@Param("orderId") Integer orderId, @Param("actualPrice") BigDecimal actualPrice);
 

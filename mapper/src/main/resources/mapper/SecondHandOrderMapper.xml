@@ -152,9 +152,15 @@
                 #{tradeLongitude}, #{tradeTime}, null, null, null, null, null, null, null, now(), now())
     </insert>
 
-    <update id="cancelOrder">
+    <update id="sellerCancelOrder">
         update second_hand_order
         set order_status = 5
+        where id = #{orderId}
+    </update>
+
+    <update id="buyerCancelOrder">
+        update second_hand_order
+        set order_status = 6
         where id = #{orderId}
     </update>
 
