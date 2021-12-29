@@ -228,22 +228,24 @@
 * Main Application
  
 - [ ] Second Hand Good Orders
-  - The hard point is Baidu Map API
+  - [x] Baidu Map API
+  - [ ] Different Status
+- [ ] Credit history
 
 * Background Manage System
 
-- [ ] Front user controller
-- [ ] Order Controller
-- [ ] Privilege management
+- [x] Front user controller
+- [x] Order Controller
+- [x] Privilege management
   - use `v-if`
-- [ ] Credit management
+- [x] Credit management
 
 * Backend
 
 - [x] Three tables: event, input record and credit record
 - [x] Database function of renewing the credit records
   - note that the points recovered by login can only up to 90
-- [ ] Add feat: add events to change credit
-- [ ] Add feat: users can only trade if the credit is 85 or higher
-- [ ] Baidu Map API
-- [ ] 
+- [x] Add feat: add events to change credit
+- [x] Add feat: users can only trade if the credit is 85 or higher
+- [x] Baidu Map API
+- [ ] Add feat: when a user's credit is 50 or lower, ban
