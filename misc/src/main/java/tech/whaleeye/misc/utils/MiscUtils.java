@@ -18,9 +18,9 @@ import java.util.UUID;
 
 public class MiscUtils {
 
-    public static void main(String[] args) {
-        System.out.println(getDistance(Values.CENTER_LATITUDE, Values.CENTER_LONGITUDE, "22.615318", "114.008647"));
-    }
+//    public static void main(String[] args) {
+//        System.out.println(getDistance(Values.CENTER_LATITUDE, Values.CENTER_LONGITUDE, "22.615318", "114.008647"));
+//    }
 
     private static final double EARTH_RADIUS = 6371393;
 
