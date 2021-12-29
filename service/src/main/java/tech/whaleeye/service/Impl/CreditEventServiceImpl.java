@@ -5,6 +5,7 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.whaleeye.mapper.CreditEventMapper;
+import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.model.vo.CreditSystem.CreditEventVO;
 import tech.whaleeye.service.CreditEventService;
 
@@ -28,6 +29,9 @@ public class CreditEventServiceImpl implements CreditEventService {
 
     @Override
     public Boolean updateCreditChange(Integer eventId, BigDecimal creditChange) {
+        if (creditChange.doubleValue() < 0) {
+            throw new InvalidValueException();
+        }
         return creditEventMapper.updateCreditChange(eventId, creditChange) > 0;
     }
 

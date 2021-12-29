@@ -8,6 +8,7 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import tech.whaleeye.misc.ajax.AjaxResult;
+import tech.whaleeye.misc.exceptions.InvalidValueException;
 import tech.whaleeye.service.CreditEventService;
 
 import java.math.BigDecimal;
@@ -42,6 +43,8 @@ public class CreditEventController {
                 return AjaxResult.setSuccess(true).setMsg("Success.");
             }
             return AjaxResult.setSuccess(false).setMsg("Failed to update");
+        } catch (InvalidValueException ive) {
+            return AjaxResult.setSuccess(false).setMsg("Illegal credit change");
         } catch (Exception e) {
             log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to update");
