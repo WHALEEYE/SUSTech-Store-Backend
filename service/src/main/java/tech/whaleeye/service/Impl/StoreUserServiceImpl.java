@@ -114,7 +114,7 @@ public class StoreUserServiceImpl implements StoreUserService {
 
     @Override
     public Boolean followUser(Integer userId, Integer followedId) {
-        return storeUserMapper.followUser(userId, followedId) < 0;
+        return storeUserMapper.followUser(userId, followedId) > 0;
     }
 
     @Override
