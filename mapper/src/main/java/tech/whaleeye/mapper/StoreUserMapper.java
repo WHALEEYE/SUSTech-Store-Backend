@@ -35,7 +35,7 @@ public interface StoreUserMapper {
 
     Integer followUser(@Param("followerId") Integer userId, @Param("followedId") Integer followedId);
 
-    Integer unfollowUser(@Param("followerId") Integer followerId, @Param("followingId") Integer followingId);
+    Integer unfollowUser(@Param("followerId") Integer followerId, @Param("followedId") Integer followedId);
 
     Integer updatePassword(@Param("userId") Integer userId, @Param("password") String password, @Param("salt") String salt);
 
