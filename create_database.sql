@@ -335,8 +335,8 @@ create or replace function buyer_ack(order_id int, d_code char(6), r_code char(6
     returns bool as
 $$
 declare
-    v_balance  numeric(12, 2);
-    v_price    numeric(12, 2);
+    v_balance  decimal(12, 2);
+    v_price    decimal(12, 2);
     v_buyer_id int;
     v_good_id  int;
 begin
@@ -373,23 +373,30 @@ create or replace function order_confirm(order_id int)
     returns void as
 $$
 declare
-    v_balance   numeric(12, 2);
-    v_price     numeric(12, 2);
-    v_seller_id int;
+    v_balance    decimal(12, 2);
+    v_price      decimal(12, 2);
+    v_sold_value decimal(12, 2);
+    v_seller_id  int;
 begin
     select sho.actual_price, shg.publisher
     into v_price, v_seller_id
     from second_hand_order sho
              join second_hand_good shg on shg.id = sho.good_id
     where sho.id = order_id;
-    select account_balance into v_balance from store_user where id = v_seller_id for update;
+
+    select account_balance, total_sold_value
+    into v_balance, v_sold_value
+    from store_user
+    where id = v_seller_id for update;
 
     update second_hand_order
     set order_status = 3,
         updated_time = now()
     where id = order_id;
 
-    update store_user set account_balance = v_balance + v_price where id = v_seller_id;
+    update store_user
+    set account_balance = v_balance + v_price, total_sold_value = v_sold_value + v_price
+    where id = v_seller_id;
 end
 $$ language plpgsql;
 
@@ -397,8 +404,8 @@ create or replace function order_refund(order_id int)
     returns void as
 $$
 declare
-    v_balance  numeric(12, 2);
-    v_price    numeric(12, 2);
+    v_balance  decimal(12, 2);
+    v_price    decimal(12, 2);
     v_buyer_id int;
 begin
     select actual_price, buyer_id into v_price from second_hand_order where id = order_id;
