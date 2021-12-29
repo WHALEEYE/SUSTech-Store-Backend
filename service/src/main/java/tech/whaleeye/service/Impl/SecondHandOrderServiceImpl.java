@@ -264,9 +264,13 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
         secondHandOrderMapper.orderRefund(orderId);
 
         inputHistoryMapper.insertInputHistory(userId, orderId, refundCode, true);
-        SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
-        String phoneNumber = storeUserMapper.getUserById(secondHandOrder.getBuyerId()).getPhoneNumber();
-        TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.REFUND);
+
+        StoreUser storeUser = storeUserMapper.getUserById(secondHandOrder.getBuyerId());
+        if (storeUser.getSecondHandNotification()) {
+            SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
+            String phoneNumber = storeUser.getPhoneNumber();
+            TencentCloudUtils.sendRenewInfo(phoneNumber, secondHandGood.getTitle(), orderId, OrderState.REFUND);
+        }
         return true;
     }
 
