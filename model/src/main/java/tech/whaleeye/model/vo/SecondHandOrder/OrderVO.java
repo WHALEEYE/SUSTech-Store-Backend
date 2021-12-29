@@ -2,6 +2,7 @@ package tech.whaleeye.model.vo.SecondHandOrder;
 
 import lombok.Getter;
 import lombok.Setter;
+import tech.whaleeye.model.vo.GoodType.GoodTypeVO;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -48,5 +49,9 @@ public class OrderVO implements Serializable {
      * false: Seller; true: Buyer
      */
     private Boolean userType;
+
+    private String mainPicPath;
+
+    private String Title;
 
 }

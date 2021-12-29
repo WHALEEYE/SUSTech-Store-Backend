@@ -2,7 +2,6 @@ package tech.whaleeye.service.Impl;
 
 import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import org.modelmapper.ModelMapper;
-import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import tech.whaleeye.mapper.*;
@@ -50,23 +49,36 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
     @Autowired
     private CreditHistoryMapper creditHistoryMapper;
 
+    @Autowired
+    private GoodPictureMapper goodPictureMapper;
+
     @Override
     public OrderVO getOrderById(Integer userId, Integer orderId) {
         Boolean userType = secondHandOrderMapper.getUserType(userId, orderId);
         if (userType == null) {
             throw new BadIdentityException();
         }
-        OrderVO order = modelMapper.map(secondHandOrderMapper.getOrderById(orderId), OrderVO.class);
-        order.setUserType(userType);
-        return order;
+        SecondHandOrder secondHandOrder = secondHandOrderMapper.getOrderById(orderId);
+        OrderVO orderVO = modelMapper.map(secondHandOrder, OrderVO.class);
+        orderVO.setMainPicPath(goodPictureMapper.getMainPicPathByGoodId(secondHandOrder.getGoodId()));
+        orderVO.setTitle(secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId()).getTitle());
+        orderVO.setUserType(userType);
+        return orderVO;
     }
 
     @Override
     public PageList<OrderVO> getOrderByUserId(Integer userId, Boolean userType, Integer orderStatus, Integer pageSize, Integer pageNo) {
-        List<OrderVO> orderList = modelMapper.map(secondHandOrderMapper.getOrderByUserId(userId, userType, orderStatus, pageSize, pageSize * (pageNo - 1)), new TypeToken<List<OrderVO>>() {
-        }.getType());
+        List<SecondHandOrder> secondHandOrderList = secondHandOrderMapper.getOrderByUserId(userId, userType, orderStatus, pageSize, pageSize * (pageNo - 1));
+        List<OrderVO> orderVOList = new ArrayList<>();
+        OrderVO orderVO;
+        for (SecondHandOrder secondHandOrder : secondHandOrderList) {
+            orderVO = modelMapper.map(secondHandOrder, OrderVO.class);
+            orderVO.setMainPicPath(goodPictureMapper.getMainPicPathByGoodId(secondHandOrder.getGoodId()));
+            orderVO.setTitle(secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId()).getTitle());
+            orderVOList.add(orderVO);
+        }
         Integer total = secondHandOrderMapper.countOrderByUserId(userId, userType, orderStatus);
-        return new PageList<>(orderList, pageSize, pageNo, total);
+        return new PageList<>(orderVOList, pageSize, pageNo, total);
     }
 
     @Override
@@ -76,10 +88,17 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
         if (!secondHandGood.getPublisher().equals(MiscUtils.currentUserId())) {
             throw new BadIdentityException();
         }
-        List<OrderVO> orderList = modelMapper.map(secondHandOrderMapper.getOrderByGoodId(MiscUtils.currentUserId(), goodId, pageSize, pageSize * (pageNo - 1)), new TypeToken<List<OrderVO>>() {
-        }.getType());
+        List<SecondHandOrder> secondHandOrderList = secondHandOrderMapper.getOrderByGoodId(MiscUtils.currentUserId(), goodId, pageSize, pageSize * (pageNo - 1));
+        List<OrderVO> orderVOList = new ArrayList<>();
+        OrderVO orderVO;
+        for (SecondHandOrder secondHandOrder : secondHandOrderList) {
+            orderVO = modelMapper.map(secondHandOrder, OrderVO.class);
+            orderVO.setMainPicPath(goodPictureMapper.getMainPicPathByGoodId(secondHandOrder.getGoodId()));
+            orderVO.setTitle(secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId()).getTitle());
+            orderVOList.add(orderVO);
+        }
         Integer total = secondHandOrderMapper.countOrderByGoodId(publisher, goodId);
-        return new PageList<>(orderList, pageSize, pageNo, total);
+        return new PageList<>(orderVOList, pageSize, pageNo, total);
     }
 
     @Override
