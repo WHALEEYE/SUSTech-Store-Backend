@@ -395,7 +395,8 @@ begin
     where id = order_id;
 
     update store_user
-    set account_balance = v_balance + v_price, total_sold_value = v_sold_value + v_price
+    set account_balance  = v_balance + v_price,
+        total_sold_value = v_sold_value + v_price
     where id = v_seller_id;
 end
 $$ language plpgsql;
@@ -408,7 +409,7 @@ declare
     v_price    decimal(12, 2);
     v_buyer_id int;
 begin
-    select actual_price, buyer_id into v_price from second_hand_order where id = order_id;
+    select actual_price, buyer_id into v_price, v_buyer_id from second_hand_order where id = order_id;
     select account_balance into v_balance from store_user where id = v_buyer_id for update;
 
     update second_hand_order
