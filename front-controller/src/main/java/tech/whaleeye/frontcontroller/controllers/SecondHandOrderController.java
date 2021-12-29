@@ -4,6 +4,7 @@ import com.tencentcloudapi.common.exception.TencentCloudSDKException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ import java.util.Map;
 @Api("Second Hand Order Controller")
 @RestController
 @RequestMapping("/order")
+@Log4j2
 public class SecondHandOrderController {
 
     @Autowired
@@ -42,6 +44,7 @@ public class SecondHandOrderController {
         } catch (BadIdentityException bie) {
             return AjaxResult.setSuccess(false).setMsg("Not allowed to check the order");
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to get the info of the order");
         }
     }
@@ -56,6 +59,7 @@ public class SecondHandOrderController {
             PageList<OrderVO> orderList = secondHandOrderService.getOrderByUserId(MiscUtils.currentUserId(), userType, orderStatus, pageSize, pageNo);
             return AjaxResult.setSuccess(true).setData(orderList);
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to get the info of the orders");
         }
     }
@@ -71,6 +75,7 @@ public class SecondHandOrderController {
         } catch (BadIdentityException bie) {
             return AjaxResult.setSuccess(false).setMsg("You are not allowed to check the orders");
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to get the info of the orders");
         }
     }
@@ -97,6 +102,7 @@ public class SecondHandOrderController {
         } catch (InvalidValueException ive) {
             return AjaxResult.setSuccess(false).setMsg("The trade location is too far from SUSTech");
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Failed to create the order");
         }
     }
@@ -127,6 +133,7 @@ public class SecondHandOrderController {
         } catch (TencentCloudSDKException tcse) {
             return AjaxResult.setSuccess(false).setMsg("Failed to send SMS. Please contact with the administrator.");
         } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Operation failed");
         }
     }
@@ -156,6 +163,21 @@ public class SecondHandOrderController {
         } catch (TencentCloudSDKException tcse) {
             return AjaxResult.setSuccess(true).setMsg("Succeeded but failed to send SMS. Please contact with the administrator.");
         } catch (Exception e) {
+            log.error(e.getMessage());
+            return AjaxResult.setSuccess(false).setMsg("Operation failed");
+        }
+    }
+
+    @ApiOperation("resend trade codes")
+    @GetMapping("/code/resend/{orderId}")
+    AjaxResult resendCode(@PathVariable("orderId") Integer orderId) {
+        try {
+            secondHandOrderService.resendCodes(orderId);
+            return AjaxResult.setSuccess(true).setMsg("Code sent successfully");
+        } catch (TencentCloudSDKException tcse) {
+            return AjaxResult.setSuccess(false).setMsg("Failed to send SMS");
+        } catch (Exception e) {
+            log.error(e.getMessage());
             return AjaxResult.setSuccess(false).setMsg("Operation failed");
         }
     }
@@ -175,6 +197,8 @@ public class SecondHandOrderController {
             return AjaxResult.setSuccess(false).setMsg("Bad order status");
         } catch (TencentCloudSDKException tcse) {
             return AjaxResult.setSuccess(true).setMsg("Succeeded but failed to send SMS. Please contact with the administrator.");
+        } catch (InvalidValueException ive) {
+            return AjaxResult.setSuccess(false).setMsg("Wrong Code. You will get a deduction in credit if you fail too many times.");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Deal confirmation failed");
         }
@@ -195,6 +219,8 @@ public class SecondHandOrderController {
             return AjaxResult.setSuccess(false).setMsg("Bad order status");
         } catch (TencentCloudSDKException tcse) {
             return AjaxResult.setSuccess(true).setMsg("Succeeded but failed to send SMS. Please contact with the administrator.");
+        } catch (InvalidValueException ive) {
+            return AjaxResult.setSuccess(false).setMsg("Wrong Code. You will get a deduction in credit if you fail too many times.");
         } catch (Exception e) {
             return AjaxResult.setSuccess(false).setMsg("Operation failed");
         }

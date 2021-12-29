@@ -110,6 +110,21 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
     }
 
     @Override
+    public void resendCodes(Integer orderId) throws TencentCloudSDKException {
+        Boolean userType = secondHandOrderMapper.getUserType(MiscUtils.currentUserId(), orderId);
+        SecondHandOrder secondHandOrder = secondHandOrderMapper.getOrderById(orderId);
+        SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
+        StoreUser storeUser = storeUserMapper.getUserById(MiscUtils.currentUserId());
+        if (userType == null) {
+            throw new BadIdentityException();
+        } else if (userType) {
+            TencentCloudUtils.sendTradeEstablishedInfoToBuyer(storeUser.getPhoneNumber(), secondHandGood.getTitle(), orderId, secondHandOrder.getTradePassword(), secondHandOrder.getDealCode());
+        } else {
+            TencentCloudUtils.sendTradeEstablishedInfoToSeller(storeUser.getPhoneNumber(), secondHandGood.getTitle(), orderId, secondHandOrder.getTradePassword(), secondHandOrder.getRefundCode());
+        }
+    }
+
+    @Override
     public boolean sellerAcknowledge(Integer userId, Integer orderId, BigDecimal actualPrice) throws TencentCloudSDKException {
         SecondHandOrder secondHandOrder = secondHandOrderMapper.getOrderById(orderId);
         SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
@@ -165,7 +180,8 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
         SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrder.getGoodId());
         String sellerNumber = storeUserMapper.getUserById(secondHandGood.getPublisher()).getPhoneNumber();
         String buyerNumber = storeUserMapper.getUserById(userId).getPhoneNumber();
-        TencentCloudUtils.sendTradeEstablishedInfo(sellerNumber, buyerNumber, secondHandGood.getTitle(), orderId, tradePassword, dealCode, refundCode);
+        TencentCloudUtils.sendTradeEstablishedInfoToBuyer(buyerNumber, secondHandGood.getTitle(), orderId, tradePassword, dealCode);
+        TencentCloudUtils.sendTradeEstablishedInfoToSeller(sellerNumber, secondHandGood.getTitle(), orderId, tradePassword, refundCode);
         return true;
     }
 

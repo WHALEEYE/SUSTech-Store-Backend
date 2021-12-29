@@ -39,16 +39,22 @@ public class TencentCloudUtils {
         sendSMS(OrderState.ACK_PENDING.getSmsTemplate(), phoneNumberSet, templateParamSet);
     }
 
-    public static void sendTradeEstablishedInfo(String sellerNumber, String buyerNumber, String goodTitle, Integer orderId, String password, String dealCode, String refundCode) throws TencentCloudSDKException {
+    public static void sendTradeEstablishedInfoToBuyer(String buyerNumber, String goodTitle, Integer orderId, String password, String dealCode) throws TencentCloudSDKException {
+        if (goodTitle.length() > 5) {
+            goodTitle = goodTitle.substring(0, 5).concat("...");
+        }
+        String[] buyerNumberSet = {"+86" + buyerNumber};
+        String[] buyerParamSet = {goodTitle, orderId.toString(), password, dealCode};
+        sendSMS(SMSTemplate.TRADE_BUYER, buyerNumberSet, buyerParamSet);
+    }
+
+    public static void sendTradeEstablishedInfoToSeller(String sellerNumber, String goodTitle, Integer orderId, String password, String refundCode) throws TencentCloudSDKException {
         if (goodTitle.length() > 5) {
             goodTitle = goodTitle.substring(0, 5).concat("...");
         }
         String[] sellerNumberSet = {"+86" + sellerNumber};
         String[] sellerParamSet = {goodTitle, orderId.toString(), password, refundCode};
         sendSMS(SMSTemplate.TRADE_SELLER, sellerNumberSet, sellerParamSet);
-        String[] buyerNumberSet = {"+86" + buyerNumber};
-        String[] buyerParamSet = {goodTitle, orderId.toString(), password, dealCode};
-        sendSMS(SMSTemplate.TRADE_BUYER, buyerNumberSet, buyerParamSet);
     }
 
     public static void sendRenewInfo(String phoneNumber, String goodTitle, Integer orderId, OrderState renewedState) throws TencentCloudSDKException {

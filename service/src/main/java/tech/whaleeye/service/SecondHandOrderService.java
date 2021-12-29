@@ -19,6 +19,8 @@ public interface SecondHandOrderService {
 
     Integer insertSecondHandOrder(SecondHandOrderDTO secondHandOrderDTO) throws TencentCloudSDKException;
 
+    void resendCodes(Integer orderId) throws TencentCloudSDKException;
+
     boolean sellerAcknowledge(Integer userId, Integer orderId, BigDecimal actualPrice) throws TencentCloudSDKException;
 
     boolean sellerCancel(Integer userId, Integer orderId) throws TencentCloudSDKException;

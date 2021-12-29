@@ -491,6 +491,10 @@ begin
     insert into credit_history (user_id, is_add, credit_change, after_credit_score, event_id, change_time)
     values (p_user_id, v_is_add, v_credit_change, v_credit_score, p_event_id, default);
 
+    if v_credit_score < 50 then
+        update store_user set banned = true where id = p_user_id;
+    end if;
+
 end;
 $$ language plpgsql;
 
