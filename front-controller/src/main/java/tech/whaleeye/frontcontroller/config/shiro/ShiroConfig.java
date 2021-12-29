@@ -98,19 +98,7 @@ public class ShiroConfig {
         // APIs in second hand good controller
         filterChainDefinitionMap.put("/good/brief/current", "jwtFilter");
         filterChainDefinitionMap.put("/good/brief/**", "anon");
-        filterChainDefinitionMap.put("/good/detail/**", "anon");
         filterChainDefinitionMap.put("/good/type/**", "anon");
-
-        // APIs in store user controller
-        filterChainDefinitionMap.put("/storeUser/info", "jwtFilter");
-        filterChainDefinitionMap.put("/storeUser/followers", "jwtFilter");
-        filterChainDefinitionMap.put("/storeUser/followings", "jwtFilter");
-        filterChainDefinitionMap.put("/storeUser/collected", "jwtFilter");
-        filterChainDefinitionMap.put("/storeUser/info/**", "anon");
-        filterChainDefinitionMap.put("/storeUser/followers/**", "anon");
-        filterChainDefinitionMap.put("/storeUser/followings/**", "anon");
-        filterChainDefinitionMap.put("/storeUser/collected/**", "anon");
-
 
         filterChainDefinitionMap.put("/upload/**", "anon");
         filterChainDefinitionMap.put("/login/**", "anon");
