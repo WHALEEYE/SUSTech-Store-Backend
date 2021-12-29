@@ -120,6 +120,7 @@
         from collect_relation cr
                  join second_hand_good shg on shg.id = cr.good_id
         where cr.collector_id = #{userId}
+        and not sold
         order by cr.create_time desc
         limit #{pageSize} offset #{offset}
     </select>
