@@ -2,18 +2,14 @@ package tech.whaleeye.misc.utils;
 
 import com.sun.mail.util.MailSSLSocketFactory;
 
-import javax.activation.DataHandler;
-import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
-import java.io.File;
 import java.security.GeneralSecurityException;
 import java.util.Properties;
 
-import static tech.whaleeye.misc.constants.Values.STATIC_RESOURCE_PATH;
 
 public class EmailUtils {
     private static final String EMAIL = System.getenv("SUSTechStoreEmail");
@@ -110,21 +106,12 @@ public class EmailUtils {
         // set subject
         mimeMessage.setSubject("[Deal!] Your Verification Code");
 
-        // set the content of the email
-        // prepare pictures
-        MimeBodyPart image = new MimeBodyPart();
-        DataHandler handler = new DataHandler(new FileDataSource(new File(STATIC_RESOURCE_PATH, "logo.png")));
-        image.setDataHandler(handler);
-        // set the id of the picture (can be used by cid)
-        image.setContentID("logo.png");
-
         // prepare text
         MimeBodyPart text = new MimeBodyPart();
         text.setContent(String.format(EMAIL_TEMPLATE, VCode), "text/html;charset=utf-8");
 
         // assemble the pictures and the text into an email
         MimeMultipart mimeMultipart = new MimeMultipart();
-        mimeMultipart.addBodyPart(image);
         mimeMultipart.addBodyPart(text);
         mimeMultipart.setSubType("related");
 

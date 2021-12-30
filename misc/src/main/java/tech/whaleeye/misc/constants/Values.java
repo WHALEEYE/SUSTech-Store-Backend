@@ -21,9 +21,6 @@ public class Values {
     // path to store uploaded files
     public final static String FILE_UPLOAD_PATH = System.getenv("SUSTechStoreUpload");
 
-    // path to static resources
-    public final static String STATIC_RESOURCE_PATH = System.getenv("SUSTechStoreStatic");
-
     // Used in order service
     public final static String CENTER_LATITUDE = "22.60593";
     public final static String CENTER_LONGITUDE = "114.006689";
