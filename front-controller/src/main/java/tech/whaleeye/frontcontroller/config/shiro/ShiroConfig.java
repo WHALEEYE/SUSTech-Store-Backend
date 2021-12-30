@@ -97,6 +97,7 @@ public class ShiroConfig {
 
         // APIs in second hand good controller
         filterChainDefinitionMap.put("/good/brief/current", "jwtFilter");
+        filterChainDefinitionMap.put("/good/all", "anon");
         filterChainDefinitionMap.put("/good/brief/**", "anon");
         filterChainDefinitionMap.put("/good/type/**", "anon");
 
