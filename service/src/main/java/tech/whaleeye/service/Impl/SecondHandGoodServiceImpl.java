@@ -11,6 +11,7 @@ import tech.whaleeye.mapper.StoreUserMapper;
 import tech.whaleeye.misc.ajax.PageList;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
+import tech.whaleeye.misc.exceptions.LowCreditException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.dto.SecondHandGoodDTO;
 import tech.whaleeye.model.entity.GoodType;
@@ -142,7 +143,10 @@ public class SecondHandGoodServiceImpl implements SecondHandGoodService {
 
     @Override
     public Boolean insertSecondHandGood(SecondHandGoodDTO secondHandGoodDTO) {
-        if (secondHandGoodDTO.getPrice().doubleValue() < 0f || secondHandGoodDTO.getPicturePathList().isEmpty()) {
+        StoreUser storeUser = storeUserMapper.getUserById(MiscUtils.currentUserId());
+        if (storeUser.getCreditScore().doubleValue() < 85 || storeUser.getCardNumber() == null) {
+            throw new LowCreditException();
+        } else if (secondHandGoodDTO.getPrice().doubleValue() < 0f || secondHandGoodDTO.getPicturePathList().isEmpty()) {
             throw new InvalidValueException();
         }
         SecondHandGood secondHandGood = modelMapper.map(secondHandGoodDTO, SecondHandGood.class);

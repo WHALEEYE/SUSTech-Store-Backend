@@ -11,6 +11,7 @@ import tech.whaleeye.misc.ajax.AjaxResult;
 import tech.whaleeye.misc.constants.UploadFileType;
 import tech.whaleeye.misc.exceptions.BadIdentityException;
 import tech.whaleeye.misc.exceptions.InvalidValueException;
+import tech.whaleeye.misc.exceptions.LowCreditException;
 import tech.whaleeye.misc.utils.MiscUtils;
 import tech.whaleeye.model.dto.SecondHandGoodDTO;
 import tech.whaleeye.model.vo.GoodType.GoodTypeVO;
@@ -142,6 +143,8 @@ public class SecondHandGoodController {
                 return AjaxResult.setSuccess(true).setMsg("Good created successfully.");
             }
             return AjaxResult.setSuccess(false).setMsg("Failed to create new good.");
+        } catch (LowCreditException lce) {
+            return AjaxResult.setSuccess(false).setMsg("Your credit is too low or no card bounded");
         } catch (InvalidValueException ive) {
             return AjaxResult.setSuccess(false).setMsg("Invalid good price.");
         } catch (Exception e) {

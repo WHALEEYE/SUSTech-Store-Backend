@@ -92,11 +92,11 @@ public class SecondHandOrderController {
             }
             return AjaxResult.setSuccess(false).setMsg("Failed to create the order");
         } catch (LowCreditException lce) {
-            return AjaxResult.setSuccess(false).setMsg("Your credit score is too low");
+            return AjaxResult.setSuccess(false).setMsg("Your credit is too low or no card bounded");
         } catch (BadIdentityException bie) {
             return AjaxResult.setSuccess(false).setMsg("You are not allowed to buy this good");
         } catch (BadOrderStatusException bse) {
-            return AjaxResult.setSuccess(false).setMsg("You already have a order of this good");
+            return AjaxResult.setSuccess(false).setMsg("You already have an order of this good");
         } catch (TencentCloudSDKException tcse) {
             return AjaxResult.setSuccess(true).setMsg("Succeeded but failed to send SMS. Please contact with the administrator.");
         } catch (InvalidValueException ive) {
@@ -153,7 +153,7 @@ public class SecondHandOrderController {
                 }
             } else {
                 if (secondHandOrderService.buyerCancel(MiscUtils.currentUserId(), orderId)) {
-                    return AjaxResult.setSuccess(false).setMsg("Canceled successfully");
+                    return AjaxResult.setSuccess(true).setMsg("Canceled successfully");
                 } else {
                     return AjaxResult.setSuccess(false).setMsg("Operation failed");
                 }

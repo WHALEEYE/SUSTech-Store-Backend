@@ -104,7 +104,8 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
     @Override
     public Integer insertSecondHandOrder(SecondHandOrderDTO secondHandOrderDTO) throws TencentCloudSDKException {
         SecondHandGood secondHandGood = secondHandGoodMapper.getGoodById(secondHandOrderDTO.getGoodId());
-        if (storeUserMapper.getUserById(MiscUtils.currentUserId()).getCreditScore().doubleValue() < 85) {
+        StoreUser storeUser = storeUserMapper.getUserById(MiscUtils.currentUserId());
+        if (storeUser.getCreditScore().doubleValue() < 85 || storeUser.getCardNumber() == null) {
             throw new LowCreditException();
         } else if (secondHandGood.getPublisher().equals(MiscUtils.currentUserId())) {
             throw new BadIdentityException();
@@ -119,7 +120,6 @@ public class SecondHandOrderServiceImpl implements SecondHandOrderService {
             return null;
         }
 
-        StoreUser storeUser = storeUserMapper.getUserById(secondHandGood.getPublisher());
         if (storeUser.getSecondHandNotification()) {
             String phoneNumber = storeUser.getPhoneNumber();
             TencentCloudUtils.sendNewOrderInfo(phoneNumber, secondHandGood.getTitle());
