@@ -95,7 +95,7 @@
                su.nickname,
                su.avatar_path
         from follow_relation fr
-                 join store_user su on su.id = fr.followed_id
+                 join store_user su on su.id = fr.follower_id
         where fr.followed_id = #{userId}
         order by fr.created_time desc
         limit #{pageSize} offset #{offset}
